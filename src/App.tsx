@@ -1,11 +1,11 @@
-import './App.css'
-
+// import './App.css'
+import style from './style.module.scss'
 function App() {
 
 
   return (
     <>
-      <div>
+      <div className={style.new} >
         hello
       </div>
     </>
