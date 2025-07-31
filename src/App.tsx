@@ -1,5 +1,6 @@
 // import './App.css'
 import style from './style.module.scss'
+import FetchDataExample from './Axios/DataExample'
 function App() {
 
 
@@ -8,6 +9,7 @@ function App() {
       <div className={style.new} >
         hello
       </div>
+       <FetchDataExample></FetchDataExample>
     </>
   )
 }
