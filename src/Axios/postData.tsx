@@ -1,48 +1,9 @@
-// import axios from 'axios';
-
-// const postData = async ({url, data, headers = {}, isCookie = false,urlRefreshToken=''}) => {
-//   try {
-//     const response = await axios.post(url, data, {
-//       headers, // Truyền headers tùy chỉnh nếu có
-//       withCredentials: isCookie, // Nếu cần gửi cookie
-//     });
-//     return response.data; // Trả về dữ liệu phản hồi từ server
-//   } catch (error) {
-//         if (error.response?.status === 401) {
-//             try {
-//                 const response = await axios.post(urlRefreshToken, "", {
-//                     headers, // Truyền headers tùy chỉnh nếu có
-//                     withCredentials: true, // gui cookie refesh token
-//                 });
-//                 // gọi lại hàm fetchData với accessToken mới
-//                 sessionStorage.setItem("token", response.data.accessToken);
-//                 const newheaders = {
-//                     ...headers,
-//                     Authorization: `Bearer ${response.data.accessToken}`,
-//                     // Thêm headers khác nếu cần
-//                 };
-//                 const retryResponse = await axios.post(url,data, { headers: newheaders, withCredentials: isCookie });
-//                 return retryResponse.data; // Trả về dữ liệu phản hồi từ server
-//             } catch (refreshError) {
-//                 console.error("Lỗi khi làm mới token:", refreshError);
-//                 return { status: false, message: "Token hết hạn, vui lòng đăng nhập lại." };
-//             }
-//         } else {
-//             console.error('Lỗi khi lấy dữ liệu:', error);
-//             return { status: false, message: "Lỗi khi kết nối dữ liệu." };
-//         }
-//   }
-// };
-
-// export default postData;
-
-
 import axios from 'axios';
 
 interface PostDataParams {
   url: string;
   data: any;
-  headers?: Record<string, string>;
+  headers?: Record<string, any>;
   isCookie?: boolean;
   urlRefreshToken?: string;
 }
@@ -94,6 +55,9 @@ const postData = async ({
           message: 'Token hết hạn, vui lòng đăng nhập lại.',
         };
       }
+    } else if (error.response) {
+      // Lấy dữ liệu lỗi từ server (ví dụ: lỗi SQL, trùng ID, v.v.)
+      return error.response;
     } else {
       console.error('Lỗi khi gửi dữ liệu:', error);
       return {
