@@ -23,6 +23,7 @@ interface RegistrationFormProps {
   urlInsertUser?: string;
   urlRefreshToken?: string;
   zoneId?: string;
+  onRegisterSuccess: () => void
 }
 
 const registrationSchema: RuleSchema = {
@@ -30,7 +31,7 @@ const registrationSchema: RuleSchema = {
   password: { type: "string", required: true, min: 8, max: 30 },
   fullName: { type: "string", required: true, min: 2, max: 50 },
   email: { type: "string", required: true, format: "email" },
-  phone: { type: "string", required: true, format: "phone" }
+  phone: { type: "string", required: false, format: "phone" }
 };
 
 
@@ -47,7 +48,8 @@ export default function RegistrationForm({
   urlCheckUser = 'http://localhost:3000/auth/user/check-user',
   urlInsertUser = 'http://localhost:3000/auth/user/detail/insert',
   urlRefreshToken = 'http://localhost:3000/auth/refresh-token',
-  zoneId = '8e522402-3611-11f0-b432-0242ac110002'
+  zoneId = '8e522402-3611-11f0-b432-0242ac110002',
+  onRegisterSuccess,
 }: RegistrationFormProps) {
   const [userData, setUserData] = useState<User>({
     id: "",
@@ -58,8 +60,6 @@ export default function RegistrationForm({
     phone: ""
   });
   const [errors, setErrors] = useState<Partial<Record<keyof User, string>>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
 
   const checkUserAvailability = async (username: string, email: string): Promise<UserCheckResult> => {
     const token = sessionStorage.getItem("token");
@@ -99,14 +99,11 @@ export default function RegistrationForm({
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (userData.username || userData.email) {
-        setIsChecking(true);
         const result = await checkUserAvailability(userData.username, userData.email);
-        console.log("result", result)
         const newErrors: Partial<User> = {};
         if (result.username) newErrors.username = "Tên đăng nhập đã tồn tại";
         if (result.email) newErrors.email = "Email đã tồn tại";
         setErrors((prev) => ({ ...prev, ...newErrors }));
-        setIsChecking(false);
       }
     }, 500);
     return () => clearTimeout(timer);
@@ -147,8 +144,6 @@ export default function RegistrationForm({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
     try {
       // check trùng
       const checkResult = await checkUserAvailability(userData.username, userData.email);
@@ -166,7 +161,8 @@ export default function RegistrationForm({
       // insert user
       const token = sessionStorage.getItem("token");
       const headers = {
-        "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+        // "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
+        "Content-Type": "application/json;charset=utf-8",
         Authorization: `Bearer ${token}`,
         zone: zoneId,
         is_child_zone: true
@@ -187,13 +183,15 @@ export default function RegistrationForm({
 
       const result = await postData({
         url: urlInsertUser,
-        data: formData.toString(),
+        data: insertUser,
         headers,
         urlRefreshToken,
         isCookie: true
       });
 
-      console.log("Insert result:", result);
+      if (result.status === true) {
+        onRegisterSuccess(true)
+      }
 
       setUserData({ id: "", username: "", password: "", fullName: "", email: "", phone: "" });
       setErrors({});
@@ -203,14 +201,11 @@ export default function RegistrationForm({
         username: "Có lỗi xảy ra khi đăng ký",
         email: "Có lỗi xảy ra khi đăng ký"
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-  const isDisabled = isSubmitting || isChecking || Object.values(errors).some(Boolean);
-
-
+  // Xem còn lỗi hay không (để đổi style/hiển thị thông báo)
+  const hasErrors = Object.values(errors).some(Boolean);
 
   return (
     <div className={styles.registrationContainer}>
@@ -241,8 +236,12 @@ export default function RegistrationForm({
             )}
           </div>
         ))}
-        <button type="submit" className={styles.submitBtn} disabled={isDisabled}>
-          {isSubmitting || isChecking ? "Đang kiểm tra..." : "Đăng Ký"}
+        <button
+          type="submit"
+          className={`${styles.submitBtn} ${(hasErrors) ? styles.disabled : ""}`}
+          disabled={hasErrors ? true : false}
+        >
+          {hasErrors ? "Pending" : "Đăng ký"}
         </button>
       </form>
     </div>
