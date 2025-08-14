@@ -1,37 +1,36 @@
 import axios from 'axios';
 
-interface DeleteDataParams {
+interface UpdateDataParams {
   url: string;
+  data: any;
   headers?: Record<string, any>;
   isCookie?: boolean;
-  urlRefreshToken: string,
-  data: Record<string, any>;
+  urlRefreshToken: string;
 }
 
 interface ApiResponse {
   status?: boolean;
   message?: string;
-  [key: string]: any; // Cho phép mở rộng với các key tùy ý
+  [key: string]: any;
 }
 
-const deleteData = async ({
+const putData = async ({
   url,
+  data,
   headers = {},
   isCookie = false,
-  urlRefreshToken = '',
-  data = {},
-}: DeleteDataParams): Promise<ApiResponse | null> => {
+  urlRefreshToken='',
+}: UpdateDataParams): Promise<ApiResponse> => {
   try {
-    const response = await axios.delete(url, {
+    const response= await axios.put(url, data, {
       headers,
       withCredentials: isCookie,
-      data
     });
-    return response.data ? response.data : { status: true, message: 'Xóa thành công' };
+    return response.data;
   } catch (error: any) {
     if (error.response?.status === 401) {
       try {
-        const refreshResponse = await axios.post(urlRefreshToken, '', {
+        const refreshResponse= await axios.post(urlRefreshToken, '', {
           headers,
           withCredentials: true,
         });
@@ -44,21 +43,24 @@ const deleteData = async ({
           Authorization: `Bearer ${newAccessToken}`,
         };
 
-        const retryResponse = await axios.delete(url, {
+        const retryResponse = await axios.put(url, data, {
           headers: newHeaders,
           withCredentials: isCookie,
         });
 
-        return retryResponse.data ? retryResponse.data : { status: true, message: 'Xóa thành công' };
-      } catch (refreshError: any) {
+        return retryResponse.data;
+      } catch (refreshError) {
         console.error('Lỗi khi làm mới token:', refreshError);
         return {
           status: false,
           message: 'Token hết hạn, vui lòng đăng nhập lại.',
         };
       }
+    }else if (error.response) {
+      // Lấy dữ liệu lỗi từ server (ví dụ: lỗi SQL, trùng ID, v.v.)
+      return error.response;
     } else {
-      console.error('Lỗi khi lấy dữ liệu:', error);
+      console.error('Lỗi khi gửi dữ liệu:', error);
       return {
         status: false,
         message: 'Lỗi khi kết nối dữ liệu.',
@@ -67,4 +69,4 @@ const deleteData = async ({
   }
 };
 
-export default deleteData;
+export default putData;

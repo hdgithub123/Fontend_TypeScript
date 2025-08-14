@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios from 'axios';
 
 interface UpdateDataParams {
   url: string;
@@ -14,25 +14,23 @@ interface ApiResponse {
   [key: string]: any;
 }
 
-const updateData = async ({
+const patchData = async ({
   url,
   data,
   headers = {},
   isCookie = false,
-  urlRefreshToken='',
+  urlRefreshToken = '',
 }: UpdateDataParams): Promise<ApiResponse> => {
   try {
-    const response: AxiosResponse<ApiResponse> = await axios.put(url, data, {
+    const response = await axios.patch(url, data, {
       headers,
       withCredentials: isCookie,
     });
     return response.data;
-  } catch (error) {
-    const err = error as AxiosError;
-
-    if (err.response?.status === 401) {
+  } catch (error: any) {
+    if (error.response?.status === 401) {
       try {
-        const refreshResponse: AxiosResponse<{ accessToken: string }> = await axios.post(urlRefreshToken, '', {
+        const refreshResponse = await axios.post(urlRefreshToken, '', {
           headers,
           withCredentials: true,
         });
@@ -45,27 +43,30 @@ const updateData = async ({
           Authorization: `Bearer ${newAccessToken}`,
         };
 
-        const retryResponse: AxiosResponse<ApiResponse> = await axios.put(url, data, {
+        const retryResponse = await axios.patch(url, data, {
           headers: newHeaders,
           withCredentials: isCookie,
         });
 
         return retryResponse.data;
-      } catch (refreshError) {
+      } catch (refreshError: any) {
         console.error('Lỗi khi làm mới token:', refreshError);
         return {
           status: false,
           message: 'Token hết hạn, vui lòng đăng nhập lại.',
         };
       }
+    } else if (error.response) {
+      // Lấy dữ liệu lỗi từ server (ví dụ: lỗi SQL, trùng ID, v.v.)
+      return error.response;
+    } else {
+      console.error('Lỗi khi gửi dữ liệu:', error);
+      return {
+        status: false,
+        message: 'Lỗi khi kết nối dữ liệu.',
+      };
     }
-
-    console.error('Lỗi khi gửi dữ liệu:', error);
-    return {
-      status: false,
-      message: 'Lỗi khi kết nối dữ liệu.',
-    };
   }
 };
 
-export default updateData;
+export default patchData;

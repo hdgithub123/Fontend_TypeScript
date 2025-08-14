@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import fetchData from './fetchData'
+import getData from './getData'
 import postData from './postData';
 import deleteData from './deleteData';
 
@@ -9,8 +9,18 @@ const zoneId = '8e522402-3611-11f0-b432-0242ac110002'; //-- chi nhanh HCM-- con
 
 
 const tmpBody = `{
-  "username" : "user1",
+  "username" : "admin",
   "password": "admin"
+}`
+
+
+const checkUser = `{
+"fields":{ 
+"id":"803fc59d-3404-11f0-9c72-0242ac110002",
+"username": "061719",
+"email":"vanvukieu2111@gmail.com"
+},
+"excludeField":"id"
 }`
 
 function FetchDataExample() {
@@ -21,10 +31,17 @@ function FetchDataExample() {
   const [postUrl, setPostUrl] = useState('http://localhost:3000/auth/login');
   const urlRefreshToken = 'http://localhost:3000/auth/refresh-token';
 
+const handleTestUserClick = () => {
+  setPostUrl("http://localhost:3000/auth/user/check-user")
+  setBody(checkUser)
+
+}
+
 
   const handleClick = async () => {
     const token = sessionStorage.getItem('token');
     const newheaders = {
+      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
       zone: zoneId,
       is_child_zone: true,
@@ -32,7 +49,7 @@ function FetchDataExample() {
     // setHeaders(`Authorization: ${token}`);
 
     setHeaders(newheaders);
-    const result = await fetchData({ url: url, headers: newheaders, urlRefreshToken, isCookie: false });
+    const result = await getData({ url: url, headers: newheaders, urlRefreshToken, isCookie: false });
     console.log("result", result)
     if (result) {
       setData(result);
@@ -45,8 +62,10 @@ function FetchDataExample() {
   }
 
   const handlePostClick = async () => {
+     console.log("body", body);
     const parsedBody = body ? JSON.parse(body) : {};
     // const parsedHeaders = headers ? JSON.parse(headers) : {};
+    
     console.log("headers", headers);
     const result = await postData({ url: postUrl, data: parsedBody, headers: headers, isCookie: true,urlRefreshToken });
      console.log("result222", result);
@@ -105,10 +124,12 @@ function FetchDataExample() {
       <div>http://localhost:3000/auth/user-zone-role/list</div>
       <div>http://localhost:3000/auth/right/list</div>
       <div>http://localhost:3000/auth/role-right/list</div>
+      <div>http://localhost:3000/auth/user/check-user</div>
 
 
       <div>http://localhost:3000/auth/refresh-token</div>
       <div>http://localhost:3000/auth/activity-logs</div>
+       <button onClick={handleTestUserClick}>Click test user</button>
       <br />
       <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} />
       <button onClick={handleClick}>Click me</button>
@@ -126,14 +147,14 @@ function FetchDataExample() {
         value={JSON.stringify(headers, null, 2)}
         onChange={handleChangeHeaders}
         rows={3}
-        style={{ width: '100%', height: '300px', resize: 'none' }}
+        style={{ width: '100%', height: '50px', resize: 'none' }}
       />
       <h1>Body</h1>
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
         rows={3}
-        style={{ width: '100%', height: '300px', resize: 'none' }}
+        style={{ width: '100%', height: '50px', resize: 'none' }}
       />
 
     </>

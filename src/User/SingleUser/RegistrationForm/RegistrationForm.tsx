@@ -35,12 +35,13 @@ const registrationSchema: RuleSchema = {
 };
 
 
-const fields: Record<string, string> = {
-  username: "Tên đăng nhập",
-  password: "Mật khẩu",
-  fullName: "Họ và tên",
-  email: "Email",
-  phone: "Điện thoại"
+const fieldLabels: Record<string, { label: string; type: string; placeholder?: string }> = {
+  username: { label: "Tên đăng nhập(*)", type: "text", placeholder: "Nhập tên đăng nhập" },
+  password: { label: "Mật khẩu (*)", type: "password", placeholder: "Nhập mật khẩu" },
+  repassword: { label: "Nhập lại mật khẩu (*)", type: "password", placeholder: "Nhập lại mật khẩu" },
+  fullName: { label: "Họ và tên (*)", type: "text", placeholder: "Nhập họ và tên" },
+  email: { label: "Email (*)", type: "email", placeholder: "Nhập email" },
+  phone: { label: "Điện thoại", type: "text", placeholder: "Nhập số điện thoại" },
 };
 
 
@@ -59,9 +60,10 @@ export default function RegistrationForm({
     email: "",
     phone: ""
   });
+  const [rePassword, setRePassword] = useState("")
   const [errors, setErrors] = useState<Partial<Record<keyof User, string>>>({});
 
-  const checkUserAvailability = async (username: string, email: string): Promise<UserCheckResult> => {
+  const checkUserAvailability = async (username: string, email: string, id: string | null | undefined): Promise<UserCheckResult> => {
     const token = sessionStorage.getItem("token");
     const headers = {
       "Content-Type": "application/json;charset=utf-8",
@@ -70,14 +72,24 @@ export default function RegistrationForm({
       is_child_zone: true
     };
     try {
-
-      const myUserCheck = {
-        "fields": {
-          "username": username,
-          "email": email
+      let myUserCheck;
+      if (!id || id === "") {
+        myUserCheck = {
+          "fields": {
+            "username": username,
+            "email": email
+          },
+        }
+      } else {
+        myUserCheck = {
+          "fields": {
+            "id": id,
+            "username": username,
+            "email": email
+          },
+          "excludeField": "id"
         }
       }
-
       const res = await postData({
         url: urlCheckUser,
         data: myUserCheck,
@@ -95,11 +107,10 @@ export default function RegistrationForm({
     }
   };
 
-  // debounce check
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (userData.username || userData.email) {
-        const result = await checkUserAvailability(userData.username, userData.email);
+        const result = await checkUserAvailability(userData.username, userData.email, userData.id);
         const newErrors: Partial<User> = {};
         if (result.username) newErrors.username = "Tên đăng nhập đã tồn tại";
         if (result.email) newErrors.email = "Email đã tồn tại";
@@ -112,7 +123,6 @@ export default function RegistrationForm({
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-
     // Cập nhật state userData
     setUserData((prev) => ({ ...prev, [name]: value }));
 
@@ -132,6 +142,48 @@ export default function RegistrationForm({
     }
   };
 
+  const handleRepasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setRePassword(value);
+    if (value !== userData.password) {
+      setErrors((prev) => ({ ...prev, password: "Mật khẩu không khớp", repassword: "Mật khẩu không khớp" }));
+    } else {
+      setErrors((prev) => ({ ...prev, password: "", repassword: "" }));
+    }
+  };
+
+
+  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    const singleFieldData = { [name]: value };
+    const result = validateDataArray([singleFieldData], registrationSchema, messagesVi);
+
+          console.log("rePassword", rePassword);
+              console.log("value", value);
+              console.log("result.status", result);
+
+    if (!result.status) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: result.results[0]?.errors?.[name] || ""
+      }));
+    }
+
+    if (!rePassword || String(value) !== String(rePassword) || rePassword === "") {
+      setErrors((prev) => ({
+        ...prev,
+        password: "Mật khẩu không khớp",
+        repassword: "Mật khẩu không khớp"
+      }));
+    } else {
+      setErrors((prev) => ({ ...prev, password: "", repassword: "" }));
+    }
+
+
+    setUserData((prev) => ({ ...prev, password: value }));
+  };
+
 
   const validateForm = () => {
     const result = validateDataArray([userData], registrationSchema, messagesVi);
@@ -146,7 +198,7 @@ export default function RegistrationForm({
     e.preventDefault();
     try {
       // check trùng
-      const checkResult = await checkUserAvailability(userData.username, userData.email);
+      const checkResult = await checkUserAvailability(userData.username, userData.email, userData.id);
       const checkErrors: Partial<User> = {};
       if (checkResult.username) checkErrors.username = "Tên đăng nhập đã tồn tại";
       if (checkResult.email) checkErrors.email = "Email đã tồn tại";
@@ -161,7 +213,6 @@ export default function RegistrationForm({
       // insert user
       const token = sessionStorage.getItem("token");
       const headers = {
-        // "Content-Type": "application/x-www-form-urlencoded;charset=utf-8",
         "Content-Type": "application/json;charset=utf-8",
         Authorization: `Bearer ${token}`,
         zone: zoneId,
@@ -194,6 +245,7 @@ export default function RegistrationForm({
       }
 
       setUserData({ id: "", username: "", password: "", fullName: "", email: "", phone: "" });
+      setRePassword("");
       setErrors({});
     } catch (err) {
       console.error("Registration error:", err);
@@ -211,28 +263,48 @@ export default function RegistrationForm({
     <div className={styles.registrationContainer}>
       <h2 className={styles.title}>Đăng Ký Tài Khoản</h2>
       <form onSubmit={handleSubmit} className={styles.registrationForm}>
-        {Object.entries(fields).map(([field, label]) => (
+        {Object.entries(fieldLabels).map(([field, { label, type, placeholder }]) => (
           <div className={styles.formGroup} key={field}>
             <label htmlFor={field}>{label}:</label>
-            <input
-              type={
-                field === "password"
-                  ? "password"
-                  : field === "email"
-                    ? "email"
-                    : "text"
-              }
-              id={field}
-              name={field}
-              value={userData[field as keyof User]}
-              onChange={handleChange}
-              placeholder={`Nhập ${label}`}
-              className={errors[field as keyof User] ? styles.errorInput : ""}
-            />
+            {field === "repassword" ?
+              <input
+                type="password"
+                id={field}
+                name={field}
+                value={rePassword}
+                placeholder={placeholder}
+                onChange={handleRepasswordChange}
+              />
+              : field === "password" ?
+                <input
+                  type="password"
+                  id={field}
+                  name={field}
+                  value={userData.password ?? ''}
+                  placeholder={placeholder}
+                  onChange={handlePasswordChange}
+                />
+                : type === "checkbox" ? (
+                  <input
+                    type="checkbox"
+                    id={field}
+                    name={field}
+                    checked={Boolean(userData[field as keyof User])}
+                    onChange={handleChange}
+                  />
+                ) : (
+                  <input
+                    type={type}
+                    id={field}
+                    name={field}
+                    value={String((userData as any)[field]) ?? ''}
+                    onChange={handleChange}
+                    placeholder={placeholder}
+                    className={errors[field as keyof User] ? styles.errorInput : ""}
+                  />
+                )}
             {errors[field as keyof User] && (
-              <span className={styles.error}>
-                {errors[field as keyof User]}
-              </span>
+              <span className={styles.error}>{errors[field as keyof User]}</span>
             )}
           </div>
         ))}
