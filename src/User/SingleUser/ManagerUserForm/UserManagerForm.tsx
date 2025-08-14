@@ -34,7 +34,7 @@ interface UserManagementFormProps {
 const userSchema: RuleSchema = {
   id: {type: "string",format: "uuid",min: 2,required: false},
   username: { type: "string", required: true, min: 6, max: 20, regex: "^[a-zA-Z0-9_]+$" },
-  password: { type: "string", required: false, min: 8, max: 30 },
+  password: { type: "string", required: false, min: 6, max: 30 },
   fullName: { type: "string", required: true, min: 2, max: 50 },
   email: { type: "string", required: true, format: "email" },
   phone: { type: "string", required: false, format: "phone" }

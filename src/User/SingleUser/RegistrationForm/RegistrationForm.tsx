@@ -28,7 +28,7 @@ interface RegistrationFormProps {
 
 const registrationSchema: RuleSchema = {
   username: { type: "string", required: true, min: 6, max: 20, regex: "^[a-zA-Z0-9_]+$" },
-  password: { type: "string", required: true, min: 8, max: 30 },
+  password: { type: "string", required: true, min: 6, max: 30 },
   fullName: { type: "string", required: true, min: 2, max: 50 },
   email: { type: "string", required: true, format: "email" },
   phone: { type: "string", required: false, format: "phone" }
@@ -148,7 +148,27 @@ export default function RegistrationForm({
     if (value !== userData.password) {
       setErrors((prev) => ({ ...prev, password: "Mật khẩu không khớp", repassword: "Mật khẩu không khớp" }));
     } else {
-      setErrors((prev) => ({ ...prev, password: "", repassword: "" }));
+
+      const singleFieldData = { password: userData.password };
+      const result = validateDataArray([singleFieldData], registrationSchema, messagesVi);
+
+      let newValidateErrors: Partial<Record<keyof User, string>> = {};
+      let newNotEqualErrors = {
+        password: "",
+        repassword: ""
+      };
+
+      if (!result.status) {
+        newValidateErrors = {
+          password: result.results[0]?.errors?.password || ""
+        };
+      }
+
+      if (newValidateErrors.password === "" || !newValidateErrors.password) {
+        setErrors((prev) => ({ ...prev, ...newNotEqualErrors }));
+      } else {
+        setErrors((prev) => ({ ...prev, ...newValidateErrors }));
+      }
     }
   };
 
@@ -159,27 +179,32 @@ export default function RegistrationForm({
     const singleFieldData = { [name]: value };
     const result = validateDataArray([singleFieldData], registrationSchema, messagesVi);
 
-          console.log("rePassword", rePassword);
-              console.log("value", value);
-              console.log("result.status", result);
+    let newValidateErrors: Partial<Record<keyof User, string>> = {};
+    let newNotEqualErrors
 
     if (!result.status) {
-      setErrors((prev) => ({
-        ...prev,
+      newValidateErrors = {
         [name]: result.results[0]?.errors?.[name] || ""
-      }));
+      };
     }
 
-    if (!rePassword || String(value) !== String(rePassword) || rePassword === "") {
-      setErrors((prev) => ({
-        ...prev,
+    if (!rePassword || value !== rePassword || rePassword === "") {
+      newNotEqualErrors = {
         password: "Mật khẩu không khớp",
         repassword: "Mật khẩu không khớp"
-      }));
+      };
     } else {
-      setErrors((prev) => ({ ...prev, password: "", repassword: "" }));
+      newNotEqualErrors = {
+        password: "",
+        repassword: ""
+      };
     }
 
+    if (newValidateErrors.password === "" || !newValidateErrors.password) {
+      setErrors((prev) => ({ ...prev, ...newNotEqualErrors }));
+    } else {
+      setErrors((prev) => ({ ...prev, ...newValidateErrors }));
+    }
 
     setUserData((prev) => ({ ...prev, password: value }));
   };
