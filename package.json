@@ -10,11 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.11.0",
     "hrich-text-editor": "file:../HRichTextEditor/dist",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-table": "file:../ReactTable/dist"
+    "react-redux": "^9.2.0",
+    "react-table": "file:../ReactTable/dist",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

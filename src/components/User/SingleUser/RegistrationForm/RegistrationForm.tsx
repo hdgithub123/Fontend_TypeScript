@@ -1,8 +1,8 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import styles from "./RegistrationForm.module.scss";
-import { validateDataArray, messagesVi } from "../../../validation";
-import type { RuleSchema } from "../../../validation";
-import { postData } from "../../../Axios";
+import { validateDataArray, messagesVi } from "../../../../utils/validation";
+import type { RuleSchema } from "../../../../utils/validation";
+import { postData } from "../../../../utils/axios";
 
 interface User {
   id: string;
@@ -27,8 +27,8 @@ interface RegistrationFormProps {
 }
 
 const registrationSchema: RuleSchema = {
-  username: { type: "string", required: true, min: 6, max: 20, regex: "^[a-zA-Z0-9_]+$" },
-  password: { type: "string", required: true, min: 6, max: 30 },
+  username: { type: "string", required: true, min: 2, max: 20, regex: "^[a-zA-Z0-9_]+$" },
+  password: { type: "string", required: true, min: 2, max: 30 },
   fullName: { type: "string", required: true, min: 2, max: 50 },
   email: { type: "string", required: true, format: "email" },
   phone: { type: "string", required: false, format: "phone" }

@@ -1,7 +1,7 @@
 // import './App.css'
 import style from './style.module.scss'
-import FetchDataExample from './Axios/DataExample'
-import ListUser from './User/ListUser/ListUser'
+import FetchDataExample from './utils/axios/DataExample'
+import ListUser from './components/User/ListUser/ListUser'
 function App() {
 
 

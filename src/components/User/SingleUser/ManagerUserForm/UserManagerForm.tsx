@@ -1,8 +1,10 @@
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
 import styles from "./UserManagerForm.module.scss";
-import { validateDataArray, messagesVi } from "../../../validation";
-import type { RuleSchema } from "../../../validation";
-import { postData, deleteData, putData } from "../../../Axios";
+import { validateDataArray, messagesVi } from "../../../../utils/validation";
+import type { RuleSchema } from "../../../../utils/validation";
+import { postData, deleteData, putData } from "../../../../utils/axios/index";
+import { AlertDialog, type AlertInfo } from '../../../../utils/AlertDialog';
+import { v4 as uuidv4 } from 'uuid';
 
 interface User {
   id?: string; // Changed from id to id
@@ -28,13 +30,13 @@ interface UserManagementFormProps {
   urlRefreshToken?: string;
   zoneId?: string;
   user?: User | null; // Changed from initialUser to user
-  onSuccess?: (action: 'create' | 'update' | 'delete', user?: User) => void;
+  onSuccess?: (action: 'create' | 'update' | 'delete' | 'cancel', user?: User) => void;
 }
 
 const userSchema: RuleSchema = {
-  id: {type: "string",format: "uuid",min: 2,required: false},
-  username: { type: "string", required: true, min: 6, max: 20, regex: "^[a-zA-Z0-9_]+$" },
-  password: { type: "string", required: false, min: 6, max: 30 },
+  id: { type: "string", format: "uuid", min: 2, required: false },
+  username: { type: "string", required: true, min: 2, max: 20, regex: "^[a-zA-Z0-9_]+$" },
+  password: { type: "string", required: false, min: 2, max: 30 },
   fullName: { type: "string", required: true, min: 2, max: 50 },
   email: { type: "string", required: true, format: "email" },
   phone: { type: "string", required: false, format: "phone" }
@@ -71,6 +73,15 @@ export default function UserManagerForm({
     isActive: true
   });
 
+  const [userDefaultData, setUserDefaultData] = useState<User>({
+    username: "",
+    password: "",
+    fullName: "",
+    email: "",
+    phone: "",
+    isActive: true
+  });
+
   const [errors, setErrors] = useState<Partial<Record<keyof User, string>>>({});
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -85,10 +96,19 @@ export default function UserManagerForm({
         fullName: user.fullName,
         email: user.email,
         phone: user.phone,
-        isActive: user.isActive
+        isActive: user.isActive ===1? true: false
       });
       setIsEditing(true);
       setErrors({})
+      setUserDefaultData({
+        id: user.id,
+        username: user.username,
+        password: "", // Don't pre-fill password
+        fullName: user.fullName,
+        email: user.email,
+        phone: user.phone,
+        isActive: user.isActive ===1? true: false
+      });
     } else {
       resetForm();
     }
@@ -188,54 +208,76 @@ export default function UserManagerForm({
     return true;
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
 
+  const handleConfirmSubmit = async () => {
     try {
-      if (!validateForm()) return;
-
-      const checkResult = await checkUserAvailability(userData.username, userData.email, userData.id);
-      const checkErrors: Partial<User> = {};
-      if (checkResult.username) checkErrors.username = "Tên đăng nhập đã tồn tại";
-      if (checkResult.email) checkErrors.email = "Email đã tồn tại";
-      if (Object.keys(checkErrors).length > 0) {
-        setErrors(prev => ({ ...prev, ...checkErrors }));
-        return;
-      }
-
       const headers = getAuthHeaders();
       let result;
 
       if (isEditing) {
-        // Update existing user
-        let payload: Partial<User> = { ...userData, isActive: userData.isActive === 1 || userData.isActive === true ? true : false };
-        if (payload.password) {
+        const payload: Partial<User> = {
+          ...userData,
+          isActive: userData.isActive === 1 || userData.isActive === true,
+        };
+
+        if (payload.password === "") {
           delete payload.password;
         }
 
+        // so sánh với payload với user lấy ra các trường khác nhau để đưa vào update, không tính password
+        const updatedFields = Object.keys(payload).reduce((acc, key) => {
+          if (
+            key === "id" || // luôn lấy id
+            userDefaultData[key as keyof User] !== payload[key as keyof User]
+          ) {
+            acc[key as keyof User] = payload[key as keyof User];
+          }
+          return acc;
+        }, {} as Partial<User>);
 
         result = await putData({
           url: `${urlUpdateUser}/${userData.id}`,
-          data: payload,
+          data: updatedFields,
           headers,
-          urlRefreshToken
+          urlRefreshToken,
         });
 
-        onSuccess?.('update', userData);
+        if (result?.status) {
+          setUserDefaultData((prev) => ({ ...prev, ...payload }));
+          setAlertinfo({
+            isAlertShow: true,
+            alertMessage: "Cập nhật người dùng thành công",
+            type: "success",
+            title: "Thành công",
+            onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+            onConfirm: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+            showCancel: false,
+            showConfirm: true,
+          });
+          onSuccess?.("update", userData);
+        }
+
+
+
       } else {
-        // Create new user
+        const newId = uuidv4();
+        const userToCreate: User = {
+          ...userData,
+          id: newId,
+        };
+
         result = await postData({
           url: urlInsertUser,
-          data: userData,
+          data: userToCreate,
           headers,
-          urlRefreshToken
+          urlRefreshToken,
         });
-        onSuccess?.('create', result.data);
-      }
-
-      if (result.status) {
-        resetForm();
+        if (result?.status) {
+          setUserData(userToCreate);
+          setUserDefaultData(userToCreate);
+          setIsEditing(true);
+          onSuccess?.("create", result.data);
+        }
       }
     } catch (err) {
       console.error("Operation failed:", err);
@@ -248,25 +290,103 @@ export default function UserManagerForm({
     }
   };
 
-  const handleDelete = async () => {
-    if (!userData.id || !confirm("Bạn có chắc chắn muốn xóa người dùng này?")) return;
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
 
     try {
-      const result = await deleteData({
-        url: `${urlDeleteUser}/${userData.id}`,
-        headers: getAuthHeaders(),
-        data: {},
-        urlRefreshToken
-      });
-
-      if (result?.status) {
-        onSuccess?.('delete', userData);
-        resetForm();
+      if (!validateForm()) {
+        setIsSubmitting(false);
+        return;
       }
+
+      const checkResult = await checkUserAvailability(userData.username, userData.email, userData.id);
+      const checkErrors: Partial<User> = {};
+
+      if (checkResult.username) checkErrors.username = "Tên đăng nhập đã tồn tại";
+      if (checkResult.email) checkErrors.email = "Email đã tồn tại";
+
+      if (Object.keys(checkErrors).length > 0) {
+        setErrors(prev => ({ ...prev, ...checkErrors }));
+        setIsSubmitting(false);
+        return;
+      }
+
+      // ✅ Hiển thị cảnh báo xác nhận
+      setAlertinfo({
+        isAlertShow: true,
+        alertMessage: isEditing
+          ? "Bạn có chắc chắn muốn cập nhật người dùng này?"
+          : "Bạn có chắc chắn muốn tạo người dùng mới?",
+        type: "warning",
+        title: "Xác nhận",
+        onConfirm: () => {
+          handleConfirmSubmit()
+          setAlertinfo(prev => ({ ...prev, isAlertShow: false }));
+        },
+        onCancel: () => {
+          setAlertinfo(prev => ({ ...prev, isAlertShow: false }));
+          setIsSubmitting(false);
+        },
+        onClose: () => {
+          setAlertinfo(prev => ({ ...prev, isAlertShow: false }));
+          setIsSubmitting(false);
+        }
+      });
     } catch (err) {
-      console.error("Delete failed:", err);
+      console.error("Validation failed:", err);
+      setErrors({
+        username: "Có lỗi xảy ra",
+        email: "Có lỗi xảy ra"
+      });
+      setIsSubmitting(false);
     }
   };
+
+
+  const handleDelete = () => {
+    if (!userData.id) return;
+
+    setAlertinfo({
+      isAlertShow: true,
+      alertMessage: "Bạn có chắc chắn muốn xóa người dùng này?",
+      type: "warning", // "error" thường dùng cho lỗi, "warning" hợp hơn cho xác nhận
+      title: "Xác nhận xóa",
+      onConfirm: async () => {
+        try {
+          const result = await deleteData({
+            url: `${urlDeleteUser}/${userData.id}`,
+            headers: getAuthHeaders(),
+            data: {},
+            urlRefreshToken,
+          });
+
+          if (result?.status) {
+            onSuccess?.("delete", userData);
+            resetForm();
+          }
+        } catch (err) {
+          console.error("Delete failed:", err);
+        } finally {
+          setAlertinfo((prev) => ({ ...prev, isAlertShow: false }));
+        }
+      },
+      onCancel: () => {
+        console.log("Delete cancelled");
+        setAlertinfo((prev) => ({ ...prev, isAlertShow: false }));
+      },
+      onClose: () => {
+        console.log("Đóng hộp thoại");
+        setAlertinfo((prev) => ({ ...prev, isAlertShow: false }));
+      },
+    });
+  };
+
+
+  const cancelForm = () => {
+    resetForm();
+    onSuccess?.("cancel", userData);
+  }
 
   const resetForm = () => {
     setUserData({
@@ -285,8 +405,29 @@ export default function UserManagerForm({
   const isFormValid = !hasErrors &&
     (isEditing ? true : (!!userData.username && !!userData.password));
 
+
+  const [alertinfo, setAlertinfo] = useState<AlertInfo>({
+    isAlertShow: false,
+    alertMessage: '',
+    type: 'error',
+    title: 'Lỗi',
+    showConfirm: true,
+    showCancel: true
+  });
+
   return (
     <div className={styles.userManagementContainer}>
+      <AlertDialog
+        type={alertinfo.type || "error"}
+        title={alertinfo.title || "Lỗi"}
+        message={alertinfo.alertMessage || ""}
+        show={alertinfo.isAlertShow || false}
+        onClose={alertinfo.onClose ?? (() => { })}
+        onConfirm={alertinfo.onConfirm ?? (() => { })}
+        onCancel={alertinfo.onCancel ?? (() => { })}
+        showConfirm={alertinfo.showConfirm ?? true}
+        showCancel={alertinfo.showCancel ?? true}
+      />
       <h2 className={styles.title}>
         {isEditing ? `Cập nhật người dùng` : "Thêm người dùng mới"}
       </h2>
@@ -329,25 +470,24 @@ export default function UserManagerForm({
           </button>
 
           {isEditing && (
-            <>
-              <button
-                type="button"
-                className={styles.deleteBtn}
-                onClick={handleDelete}
-                disabled={isSubmitting}
-              >
-                Xóa
-              </button>
-              <button
-                type="button"
-                className={styles.cancelBtn}
-                onClick={resetForm}
-                disabled={isSubmitting}
-              >
-                Hủy
-              </button>
-            </>
+            <button
+              type="button"
+              className={styles.deleteBtn}
+              onClick={handleDelete}
+              disabled={isSubmitting}
+            >
+              Xóa
+            </button>
           )}
+
+          <button
+            type="button"
+            className={styles.cancelBtn}
+            onClick={cancelForm}
+            disabled={isSubmitting}
+          >
+            Hủy
+          </button>
         </div>
       </form>
     </div>

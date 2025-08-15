@@ -1,4 +1,4 @@
-import generateRandomObjects from '../../functionTest/generateRandomObjects'
+import generateRandomObjects from '../../../nhap/functionTest/generateRandomObjects'
 
 // tạo component hiển thị list user
 import React, { useState } from "react";
@@ -36,7 +36,7 @@ import {
   putData,
   deleteData,
   patchData
-} from '../../Axios'
+} from '../../../utils/axios'
 
 import RegistrationForm from '../SingleUser/RegistrationForm/RegistrationForm';
 import UserManagerForm from '../SingleUser/ManagerUserForm/UserManagerForm';
@@ -267,7 +267,7 @@ const handleOnRegisterSuccess = (on) => {
       <button onClick={handleTempuser1}>Tempuser1</button>
       <button onClick={handleTempuser2}>Tempuser2</button>
       <div style={{ height: '500px' }}>
-        <ReactTableFull
+        <ReactTableBasicArrowkey
           data={data}
           columns={columnsUser}
           isGlobalFilter={true}
@@ -275,15 +275,15 @@ const handleOnRegisterSuccess = (on) => {
           onRowsSelect={handleOnRowsSelect}
           fieldUnique={'id'}
         >
-        </ReactTableFull>
+        </ReactTableBasicArrowkey>
         <button onClick={handleCheckUser}>handleCheckUser</button>
-        <RegistrationForm
+        {/* <RegistrationForm
           onRegisterSuccess={handleOnRegisterSuccess}
-        ></RegistrationForm>
+        ></RegistrationForm> */}
 
-        {/* <UserManagerForm
+        <UserManagerForm
         user={activeUser}
-        ></UserManagerForm> */}
+        ></UserManagerForm>
         {/* <ReactTableFull
           data={makeData1}
           columns={columns1headercof}
