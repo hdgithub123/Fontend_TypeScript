@@ -40,7 +40,7 @@ const getData = async ({
         );
 
         const newAccessToken = refreshResponse.data.accessToken;
-        sessionStorage.setItem('token', newAccessToken);
+        localStorage.setItem('token', newAccessToken);
 
         const newHeaders: Record<string, string> = {
           ...headers,

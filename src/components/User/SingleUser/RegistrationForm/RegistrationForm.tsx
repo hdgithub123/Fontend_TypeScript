@@ -50,7 +50,7 @@ export default function RegistrationForm({
   urlInsertUser = 'http://localhost:3000/auth/user/detail/insert',
   urlRefreshToken = 'http://localhost:3000/auth/refresh-token',
   zoneId = '8e522402-3611-11f0-b432-0242ac110002',
-  onRegisterSuccess,
+  onRegisterSuccess= ()=>{},
 }: RegistrationFormProps) {
   const [userData, setUserData] = useState<User>({
     id: "",

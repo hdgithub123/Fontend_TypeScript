@@ -2,9 +2,12 @@ import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
 import styles from "./UserManagerForm.module.scss";
 import { validateDataArray, messagesVi } from "../../../../utils/validation";
 import type { RuleSchema } from "../../../../utils/validation";
-import { postData, deleteData, putData } from "../../../../utils/axios/index";
+import { postData, deleteData, putData,getAuthHeaders } from "../../../../utils/axios/index";
 import { AlertDialog, type AlertInfo } from '../../../../utils/AlertDialog';
 import { v4 as uuidv4 } from 'uuid';
+
+
+
 
 interface User {
   id?: string; // Changed from id to id
@@ -62,7 +65,7 @@ export default function UserManagerForm({
   urlRefreshToken = 'http://localhost:3000/auth/refresh-token',
   zoneId = '8e522402-3611-11f0-b432-0242ac110002',
   user = null, // Changed parameter name
-  onSuccess
+  onSuccess = () =>{}
 }: UserManagementFormProps) {
   const [userData, setUserData] = useState<User>({
     username: "",
@@ -114,25 +117,9 @@ export default function UserManagerForm({
     }
   }, [user]);
 
-  const getAuthHeaders = () => {
-    const token = sessionStorage.getItem("token");
-    return {
-      "Content-Type": "application/json;charset=utf-8",
-      Authorization: `Bearer ${token}`,
-      zone: zoneId,
-      is_child_zone: true
-    };
-  };
-
 
   const checkUserAvailability = async (username: string, email: string, id: string | null | undefined): Promise<UserCheckResult> => {
-    const token = sessionStorage.getItem("token");
-    const headers = {
-      "Content-Type": "application/json;charset=utf-8",
-      Authorization: `Bearer ${token}`,
-      zone: zoneId,
-      is_child_zone: true
-    };
+    const headers = getAuthHeaders();
     try {
       let myUserCheck;
       if (!id || id === "") {
@@ -244,16 +231,16 @@ export default function UserManagerForm({
 
         if (result?.status) {
           setUserDefaultData((prev) => ({ ...prev, ...payload }));
-          setAlertinfo({
-            isAlertShow: true,
-            alertMessage: "Cập nhật người dùng thành công",
-            type: "success",
-            title: "Thành công",
-            onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
-            onConfirm: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
-            showCancel: false,
-            showConfirm: true,
-          });
+          // setAlertinfo({
+          //   isAlertShow: true,
+          //   alertMessage: "Cập nhật người dùng thành công",
+          //   type: "success",
+          //   title: "Thành công",
+          //   onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+          //   onConfirm: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+          //   showCancel: false,
+          //   showConfirm: true,
+          // });
           onSuccess?.("update", userData);
         }
 
