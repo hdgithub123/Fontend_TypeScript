@@ -1,7 +1,5 @@
-import generateRandomObjects from '../../../nhap/functionTest/generateRandomObjects'
-
-// tạo component hiển thị list user
 import React, { useState } from "react";
+
 // ...existing code...
 import {
   ReactTableBasic,
@@ -31,6 +29,7 @@ import {
 
 
 import {
+  getAuthHeaders,
   getData,
   postData,
   putData,
@@ -40,7 +39,6 @@ import {
 
 import UserManagerForm from '../SingleUser/ManagerUserForm/UserManagerForm';
 import columnsUser from './columUser'
-import { getAuthHeaders } from '../../../utils/axios';
 
 interface User {
   id: string,
@@ -86,8 +84,10 @@ const ListUser = () => {
 
   const handleOnSuccess = (data) => {
     console.log("data", data)
+    if (data.action === 'insert' || data.action === 'update' || data.action === 'delete') {
+      handleGetUser();
+    }
     setIsShowManagerForm(false);
-    handleGetUser();
   }
 
   const handleCreateUser = () => {

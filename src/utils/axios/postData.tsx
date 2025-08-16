@@ -6,6 +6,7 @@ interface PostDataParams {
   headers?: Record<string, any>;
   isCookie?: boolean;
   urlRefreshToken?: string;
+  redirect?: string;
 }
 
 interface ApiResponse {
@@ -20,6 +21,7 @@ const postData = async ({
   headers = {},
   isCookie = false,
   urlRefreshToken = '',
+  redirect = '/login',
 }: PostDataParams): Promise<ApiResponse> => {
   try {
     const response = await axios.post(url, data, {
@@ -50,6 +52,7 @@ const postData = async ({
         return retryResponse.data;
       } catch (refreshError: any) {
         console.error('Lỗi khi làm mới token:', refreshError);
+        window.location.href = redirect; // Redirect luôn
         return {
           status: false,
           message: 'Token hết hạn, vui lòng đăng nhập lại.',

@@ -5,7 +5,7 @@ import type { RuleSchema } from "../../../../utils/validation";
 import { postData, deleteData, putData,getAuthHeaders } from "../../../../utils/axios/index";
 import { AlertDialog, type AlertInfo } from '../../../../utils/AlertDialog';
 import { v4 as uuidv4 } from 'uuid';
-
+import checkUserAvailability from "../checkUserAvailability";
 
 
 
@@ -20,10 +20,6 @@ interface User {
   createdDate?: string;
 }
 
-interface UserCheckResult {
-  username?: boolean;
-  email?: boolean;
-}
 
 interface UserManagementFormProps {
   urlCheckUser?: string;
@@ -33,7 +29,7 @@ interface UserManagementFormProps {
   urlRefreshToken?: string;
   zoneId?: string;
   user?: User | null; // Changed from initialUser to user
-  onSuccess?: (action: 'create' | 'update' | 'delete' | 'cancel', user?: User) => void;
+  onSuccess?: (params: {action: 'insert' | 'update' | 'delete' | 'cancel', user?: User}) => void;
 }
 
 const userSchema: RuleSchema = {
@@ -47,12 +43,12 @@ const userSchema: RuleSchema = {
 
 
 const fieldLabels: Record<string, { label: string; type: string; placeholder?: string }> = {
-  username: { label: "Tên đăng nhập", type: "text", placeholder: "Nhập tên đăng nhập" },
-  password: { label: "Mật khẩu", type: "password", placeholder: "Nhập mật khẩu" },
-  fullName: { label: "Họ và tên", type: "text", placeholder: "Nhập họ và tên" },
-  email: { label: "Email", type: "email", placeholder: "Nhập email" },
+  username: { label: "Tên đăng nhập (*)", type: "text", placeholder: "Nhập tên đăng nhập" },
+  password: { label: "Mật khẩu (*)", type: "password", placeholder: "Nhập mật khẩu" },
+  fullName: { label: "Họ và tên (*)", type: "text", placeholder: "Nhập họ và tên" },
+  email: { label: "Email (*)", type: "email", placeholder: "Nhập email" },
   phone: { label: "Điện thoại", type: "text", placeholder: "Nhập số điện thoại" },
-  isActive: { label: "Trạng thái", type: "checkbox" }
+  isActive: { label: "Trạng thái (*)", type: "checkbox" }
 };
 
 
@@ -116,50 +112,11 @@ export default function UserManagerForm({
     }
   }, [user]);
 
-
-  const checkUserAvailability = async (username: string, email: string, id: string | null | undefined): Promise<UserCheckResult> => {
-    const headers = getAuthHeaders();
-    try {
-      let myUserCheck;
-      if (!id || id === "") {
-        myUserCheck = {
-          "fields": {
-            "username": username,
-            "email": email
-          },
-        }
-      } else {
-        myUserCheck = {
-          "fields": {
-            "id": id,
-            "username": username,
-            "email": email
-          },
-          "excludeField": "id"
-        }
-      }
-      const res = await postData({
-        url: urlCheckUser,
-        data: myUserCheck,
-        headers,
-        urlRefreshToken,
-        isCookie: false
-      });
-      return {
-        username: res.data.username,
-        email: res.data.email
-      };
-    } catch (err) {
-      console.error("Error checking user:", err);
-      return {};
-    }
-  };
-
   useEffect(() => {
     // if (isEditing) return;
     const timer = setTimeout(async () => {
       if (userData.username || userData.email) {
-        const result = await checkUserAvailability(userData.username, userData.email, userData.id);
+        const result = await checkUserAvailability({urlCheckUser, urlRefreshToken, username: userData.username, email: userData.email, id: userData.id});
         const newErrors: Partial<User> = {};
         if (result.username) newErrors.username = "Tên đăng nhập đã tồn tại";
         if (result.email) newErrors.email = "Email đã tồn tại";
@@ -230,7 +187,7 @@ export default function UserManagerForm({
 
         if (result?.status) {
           setUserDefaultData((prev) => ({ ...prev, ...payload }));
-          onSuccess?.("update", userData);
+          onSuccess?.({action: "update", user: userData});
         }
 
 
@@ -252,7 +209,7 @@ export default function UserManagerForm({
           setUserData(userToCreate);
           setUserDefaultData(userToCreate);
           setIsEditing(true);
-          onSuccess?.("create", result.data);
+          onSuccess?.({action: "insert", user: result.data});
         }
       }
     } catch (err) {
@@ -276,7 +233,7 @@ export default function UserManagerForm({
         return;
       }
 
-      const checkResult = await checkUserAvailability(userData.username, userData.email, userData.id);
+      const checkResult = await checkUserAvailability({urlCheckUser, urlRefreshToken, username: userData.username, email: userData.email, id: userData.id});
       const checkErrors: Partial<User> = {};
 
       if (checkResult.username) checkErrors.username = "Tên đăng nhập đã tồn tại";
@@ -338,7 +295,7 @@ export default function UserManagerForm({
           });
 
           if (result?.status) {
-            onSuccess?.("delete", userData);
+            onSuccess?.({action: "delete", user: userData});
             resetForm();
           }
         } catch (err) {
@@ -361,7 +318,7 @@ export default function UserManagerForm({
 
   const cancelForm = () => {
     resetForm();
-    onSuccess?.("cancel", userData);
+    onSuccess?.({action: "cancel", user: userData});
   }
 
   const resetForm = () => {

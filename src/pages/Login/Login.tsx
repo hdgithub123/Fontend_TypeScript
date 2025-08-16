@@ -6,8 +6,8 @@ function Login() {
   const urlLogin = 'http://localhost:3000/auth/login';
   const urlRefreshToken = 'http://localhost:3000/auth/refresh-token';
   const [user, setUser] = useState({
-    username: '',
-    password: ''
+    username: 'admin',
+    password: 'admin'
   });
 
   const navigate = useNavigate();

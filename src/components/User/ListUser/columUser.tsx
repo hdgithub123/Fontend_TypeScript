@@ -67,7 +67,7 @@ const columnsUser = [
         accessorKey: 'isActive',
         header: 'Kích Hoạt',
         id: 'isActive',
-        accessorFn: row => row.isActive === 0 ?"Không kích hoạt": "Đã kích hoạt",
+        accessorFn: row => row.isActive === undefined ? "": row.isActive === 0 ?"Không kích hoạt": "Đã kích hoạt",
         filterType: 'text',
         // cell: (cell)=>{
         //     console.log("cell.getValue()",cell.getValue())
@@ -83,7 +83,7 @@ const columnsUser = [
         header: 'Ngày tạo',
         id: 'createdAt',
         filterType: 'dateTime',
-        cell: (info) => formatDateTime(info.getValue()),
+        cell: (info) => info.getValue(),
         enableGlobalFilter: false
     },
             {

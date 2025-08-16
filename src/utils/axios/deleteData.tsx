@@ -6,6 +6,7 @@ interface DeleteDataParams {
   isCookie?: boolean;
   urlRefreshToken: string,
   data: Record<string, any>;
+  redirect?: string;
 }
 
 interface ApiResponse {
@@ -20,6 +21,7 @@ const deleteData = async ({
   isCookie = false,
   urlRefreshToken = '',
   data = {},
+  redirect = '/login',
 }: DeleteDataParams): Promise<ApiResponse | null> => {
   try {
     const response = await axios.delete(url, {
@@ -52,6 +54,7 @@ const deleteData = async ({
         return retryResponse.data ? retryResponse.data : { status: true, message: 'Xóa thành công' };
       } catch (refreshError: any) {
         console.error('Lỗi khi làm mới token:', refreshError);
+         window.location.href = redirect; // Redirect luôn
         return {
           status: false,
           message: 'Token hết hạn, vui lòng đăng nhập lại.',

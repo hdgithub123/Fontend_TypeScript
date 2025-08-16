@@ -1,10 +1,13 @@
 import axios, { AxiosError, type AxiosResponse } from 'axios';
 
+
+
 interface FetchDataParams {
   url: string;
   headers?: Record<string, any>;
   isCookie?: boolean;
   urlRefreshToken?: string;
+  redirect?: string;
 }
 
 interface ApiResponse {
@@ -18,6 +21,7 @@ const getData = async ({
   headers = {},
   isCookie = false,
   urlRefreshToken = '',
+  redirect = '/login',
 }: FetchDataParams): Promise<ApiResponse> => {
   try {
     const response: AxiosResponse<ApiResponse> = await axios.get(url, {
@@ -56,6 +60,7 @@ const getData = async ({
       } catch (refreshError) {
         const refreshErr = refreshError as AxiosError;
         console.error('Lỗi khi làm mới token:', refreshErr.message);
+        window.location.href = redirect; // Redirect luôn
         return {
           status: false,
           message: 'Token hết hạn, vui lòng đăng nhập lại.',

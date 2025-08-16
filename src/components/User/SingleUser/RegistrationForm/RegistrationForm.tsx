@@ -3,6 +3,8 @@ import styles from "./RegistrationForm.module.scss";
 import { validateDataArray, messagesVi } from "../../../../utils/validation";
 import type { RuleSchema } from "../../../../utils/validation";
 import { getAuthHeaders, postData } from "../../../../utils/axios";
+import checkUserAvailability from "../checkUserAvailability";
+
 
 interface User {
   id: string;
@@ -13,17 +15,12 @@ interface User {
   phone: string;
 }
 
-interface UserCheckResult {
-  username?: boolean;
-  email?: boolean;
-}
-
 interface RegistrationFormProps {
   urlCheckUser?: string;
   urlInsertUser?: string;
   urlRefreshToken?: string;
   zoneId?: string;
-  onRegisterSuccess?: (action: 'create' | 'cancel', user?: User) => void;
+  onRegisterSuccess?: (params: {action: 'insert' | 'cancel', user?: User}) => void;
 }
 
 const registrationSchema: RuleSchema = {
@@ -49,7 +46,6 @@ export default function RegistrationForm({
   urlCheckUser = 'http://localhost:3000/auth/user/check-user',
   urlInsertUser = 'http://localhost:3000/auth/user/detail/insert',
   urlRefreshToken = 'http://localhost:3000/auth/refresh-token',
-  zoneId = '8e522402-3611-11f0-b432-0242ac110002',
   onRegisterSuccess = () => { },
 }: RegistrationFormProps) {
   const [userData, setUserData] = useState<User>({
@@ -63,54 +59,10 @@ export default function RegistrationForm({
   const [rePassword, setRePassword] = useState("")
   const [errors, setErrors] = useState<Partial<Record<keyof User, string>>>({});
 
-  const checkUserAvailability = async (username: string, email: string, id: string | null | undefined): Promise<UserCheckResult> => {
-    const token = sessionStorage.getItem("token");
-    const headers = {
-      "Content-Type": "application/json;charset=utf-8",
-      Authorization: `Bearer ${token}`,
-      zone: zoneId,
-      is_child_zone: true
-    };
-    try {
-      let myUserCheck;
-      if (!id || id === "") {
-        myUserCheck = {
-          "fields": {
-            "username": username,
-            "email": email
-          },
-        }
-      } else {
-        myUserCheck = {
-          "fields": {
-            "id": id,
-            "username": username,
-            "email": email
-          },
-          "excludeField": "id"
-        }
-      }
-      const res = await postData({
-        url: urlCheckUser,
-        data: myUserCheck,
-        headers,
-        urlRefreshToken,
-        isCookie: false
-      });
-      return {
-        username: res.data.username,
-        email: res.data.email
-      };
-    } catch (err) {
-      console.error("Error checking user:", err);
-      return {};
-    }
-  };
-
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (userData.username || userData.email) {
-        const result = await checkUserAvailability(userData.username, userData.email, userData.id);
+        const result = await checkUserAvailability({urlCheckUser, urlRefreshToken, username: userData.username, email: userData.email, id: userData.id});
         const newErrors: Partial<User> = {};
         if (result.username) newErrors.username = "Tên đăng nhập đã tồn tại";
         if (result.email) newErrors.email = "Email đã tồn tại";
@@ -223,7 +175,7 @@ export default function RegistrationForm({
     e.preventDefault();
     try {
       // check trùng
-      const checkResult = await checkUserAvailability(userData.username, userData.email, userData.id);
+      const checkResult = await checkUserAvailability({urlCheckUser, urlRefreshToken,username: userData.username, email: userData.email, id: userData.id});
       const checkErrors: Partial<User> = {};
       if (checkResult.username) checkErrors.username = "Tên đăng nhập đã tồn tại";
       if (checkResult.email) checkErrors.email = "Email đã tồn tại";
@@ -260,7 +212,7 @@ export default function RegistrationForm({
       });
 
       if (result.status === true) {
-        onRegisterSuccess?.("create", userData);
+        onRegisterSuccess?.({action: "insert", user: userData});
       }
 
       setUserData({ id: "", username: "", password: "", fullName: "", email: "", phone: "" });
@@ -280,7 +232,7 @@ export default function RegistrationForm({
     setUserData({ id: "", username: "", password: "", fullName: "", email: "", phone: "" });
     setRePassword("");
     setErrors({});
-    onRegisterSuccess?.("cancel", userData);
+    onRegisterSuccess?.({action: "cancel", user: userData});
   }
   // Xem còn lỗi hay không (để đổi style/hiển thị thông báo)
   const hasErrors = Object.values(errors).some(Boolean);

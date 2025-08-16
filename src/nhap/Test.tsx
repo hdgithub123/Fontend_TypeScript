@@ -20,8 +20,8 @@ const urlList = [
 
 function Test() {
     const [data, setData] = useState('');
-    const [body, setBody] = useState('');
-    const [url, setUrl] = useState('');
+    const [body, setBody] = useState('{}');
+    const [url, setUrl] = useState('http://localhost:3000/auth/activity-logs');
     const urlLogin = 'http://localhost:3000/auth/login';
     const urlRefreshToken = 'http://localhost:3000/auth/refresh-token';
 
@@ -33,6 +33,22 @@ function Test() {
 
     const handlePostClick = async () => {
         const result = await postData({ url: url, data: body, headers: getAuthHeaders(), urlRefreshToken, isCookie: false });
+        console.log(result);
+        setData(result.data);
+    }
+
+    const handleDeleteClick = async () => {
+        const parsedBody = body ? JSON.parse(body) : {};
+        const result = await deleteData({ url: url, data: parsedBody, headers: getAuthHeaders(), urlRefreshToken, isCookie: false });
+        console.log(result);
+        // setData(result.data);
+         setData({});
+    }
+
+
+
+    const handlePutClick = async () => {
+        const result = await putData({ url: url, data: body, headers: getAuthHeaders(), urlRefreshToken, isCookie: false });
         console.log(result);
         setData(result.data);
     }
@@ -67,8 +83,8 @@ function Test() {
             <input type="text" value={url} onChange={(e) => setUrl(e.target.value)} style={{ width: '100%' }} />
             <button onClick={handleGetClick}>Get me</button>
             <button onClick={handlePostClick}>Post me</button>
-            {/* <button onClick={handleDeleteClick}>Delete me</button>
-            <button onClick={handlePutClick}>Put me</button> */}
+            <button onClick={handleDeleteClick}>Delete me</button>
+            <button onClick={handlePutClick}>Put me</button>
             <button onClick={() => setData("")}>clear me</button>
             <p>data: {JSON.stringify(data)}</p>
         </div>
