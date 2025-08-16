@@ -2,7 +2,8 @@
 const link: Record<string, string> = {
   home: "/",
   user: "/user",
-  register: "/register"
+  register: "/register",
+  logout: "/logout"
 };
 
 

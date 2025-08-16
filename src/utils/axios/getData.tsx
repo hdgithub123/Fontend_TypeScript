@@ -32,7 +32,7 @@ const getData = async ({
       try {
         const refreshResponse: AxiosResponse<{ accessToken: string }> = await axios.post(
           urlRefreshToken,
-          '',
+          {},
           {
             headers,
             withCredentials: true,

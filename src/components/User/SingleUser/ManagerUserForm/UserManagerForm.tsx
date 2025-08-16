@@ -63,7 +63,6 @@ export default function UserManagerForm({
   urlDeleteUser = 'http://localhost:3000/auth/user/detail',
 
   urlRefreshToken = 'http://localhost:3000/auth/refresh-token',
-  zoneId = '8e522402-3611-11f0-b432-0242ac110002',
   user = null, // Changed parameter name
   onSuccess = () =>{}
 }: UserManagementFormProps) {
@@ -231,16 +230,6 @@ export default function UserManagerForm({
 
         if (result?.status) {
           setUserDefaultData((prev) => ({ ...prev, ...payload }));
-          // setAlertinfo({
-          //   isAlertShow: true,
-          //   alertMessage: "Cập nhật người dùng thành công",
-          //   type: "success",
-          //   title: "Thành công",
-          //   onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
-          //   onConfirm: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
-          //   showCancel: false,
-          //   showConfirm: true,
-          // });
           onSuccess?.("update", userData);
         }
 

@@ -30,8 +30,8 @@ const postData = async ({
   } catch (error: any) {
     if (error.response?.status === 401) {
       try {
-        const refreshResponse = await axios.post(urlRefreshToken, '', {
-          headers,
+        const refreshResponse = await axios.post(urlRefreshToken,{}, {
+          headers: headers,
           withCredentials: true,
         });
 

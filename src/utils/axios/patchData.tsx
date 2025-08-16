@@ -30,7 +30,7 @@ const patchData = async ({
   } catch (error: any) {
     if (error.response?.status === 401) {
       try {
-        const refreshResponse = await axios.post(urlRefreshToken, '', {
+        const refreshResponse = await axios.post(urlRefreshToken, {}, {
           headers,
           withCredentials: true,
         });

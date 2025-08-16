@@ -2,7 +2,7 @@ import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import styles from "./RegistrationForm.module.scss";
 import { validateDataArray, messagesVi } from "../../../../utils/validation";
 import type { RuleSchema } from "../../../../utils/validation";
-import { postData } from "../../../../utils/axios";
+import { getAuthHeaders, postData } from "../../../../utils/axios";
 
 interface User {
   id: string;
@@ -23,7 +23,7 @@ interface RegistrationFormProps {
   urlInsertUser?: string;
   urlRefreshToken?: string;
   zoneId?: string;
-  onRegisterSuccess: () => void
+  onRegisterSuccess?: (action: 'create' | 'cancel', user?: User) => void;
 }
 
 const registrationSchema: RuleSchema = {
@@ -50,7 +50,7 @@ export default function RegistrationForm({
   urlInsertUser = 'http://localhost:3000/auth/user/detail/insert',
   urlRefreshToken = 'http://localhost:3000/auth/refresh-token',
   zoneId = '8e522402-3611-11f0-b432-0242ac110002',
-  onRegisterSuccess= ()=>{},
+  onRegisterSuccess = () => { },
 }: RegistrationFormProps) {
   const [userData, setUserData] = useState<User>({
     id: "",
@@ -236,13 +236,7 @@ export default function RegistrationForm({
       if (!validateForm()) return;
 
       // insert user
-      const token = sessionStorage.getItem("token");
-      const headers = {
-        "Content-Type": "application/json;charset=utf-8",
-        Authorization: `Bearer ${token}`,
-        zone: zoneId,
-        is_child_zone: true
-      };
+      const headers = getAuthHeaders();
 
       const insertUser = {
         username: userData.username,
@@ -251,7 +245,7 @@ export default function RegistrationForm({
         email: userData.email,
         phone: userData.phone,
         isActive: true,
-        createdBy: "admin"
+        createdBy: "Register"
       };
 
       const formData = new URLSearchParams();
@@ -266,7 +260,7 @@ export default function RegistrationForm({
       });
 
       if (result.status === true) {
-        onRegisterSuccess(true)
+        onRegisterSuccess?.("create", userData);
       }
 
       setUserData({ id: "", username: "", password: "", fullName: "", email: "", phone: "" });
@@ -281,6 +275,13 @@ export default function RegistrationForm({
     }
   };
 
+
+  const handleCancelForm = () => {
+    setUserData({ id: "", username: "", password: "", fullName: "", email: "", phone: "" });
+    setRePassword("");
+    setErrors({});
+    onRegisterSuccess?.("cancel", userData);
+  }
   // Xem còn lỗi hay không (để đổi style/hiển thị thông báo)
   const hasErrors = Object.values(errors).some(Boolean);
 
@@ -333,13 +334,16 @@ export default function RegistrationForm({
             )}
           </div>
         ))}
-        <button
-          type="submit"
-          className={`${styles.submitBtn} ${(hasErrors) ? styles.disabled : ""}`}
-          disabled={hasErrors ? true : false}
-        >
-          {hasErrors ? "Pending" : "Đăng ký"}
-        </button>
+        <div className={styles.buttonGroup}>
+          <button
+            type="submit"
+            className={`${styles.submitBtn} ${(hasErrors) ? styles.disabled : ""}`}
+            disabled={hasErrors ? true : false}
+          >
+            {hasErrors ? "Pending" : "Đăng ký"}
+          </button>
+          <button onClick={handleCancelForm}>Hủy</button>
+        </div>
       </form>
     </div>
   );
