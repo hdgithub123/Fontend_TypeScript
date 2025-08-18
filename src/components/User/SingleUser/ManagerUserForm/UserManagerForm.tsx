@@ -2,12 +2,12 @@ import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
 import styles from "./UserManagerForm.module.scss";
 import { validateDataArray, messagesVi } from "../../../../utils/validation";
 import type { RuleSchema } from "../../../../utils/validation";
-import { postData, deleteData, putData,getAuthHeaders } from "../../../../utils/axios/index";
+import { postData, deleteData, putData, getAuthHeaders } from "../../../../utils/axios/index";
 import { AlertDialog, type AlertInfo } from '../../../../utils/AlertDialog';
 import { v4 as uuidv4 } from 'uuid';
 import checkUserAvailability from "../checkUserAvailability";
-
-
+import { HRichTextEditor, HRichTextEditorPrintPreview, HRichTextEditorPreview } from 'hrich-text-editor'
+import ReactDOM from 'react-dom';
 
 interface User {
   id?: string; // Changed from id to id
@@ -29,7 +29,7 @@ interface UserManagementFormProps {
   urlRefreshToken?: string;
   zoneId?: string;
   user?: User | null; // Changed from initialUser to user
-  onSuccess?: (params: {action: 'insert' | 'update' | 'delete' | 'cancel', user?: User}) => void;
+  onSuccess?: (params: { action: 'insert' | 'update' | 'delete' | 'cancel', user?: User }) => void;
 }
 
 const userSchema: RuleSchema = {
@@ -60,7 +60,7 @@ export default function UserManagerForm({
 
   urlRefreshToken = 'http://localhost:3000/auth/refresh-token',
   user = null, // Changed parameter name
-  onSuccess = () =>{}
+  onSuccess = () => { }
 }: UserManagementFormProps) {
   const [userData, setUserData] = useState<User>({
     username: "",
@@ -94,7 +94,7 @@ export default function UserManagerForm({
         fullName: user.fullName,
         email: user.email,
         phone: user.phone,
-        isActive: user.isActive ===1? true: false
+        isActive: user.isActive === 1 ? true : false
       });
       setIsEditing(true);
       setErrors({})
@@ -105,7 +105,7 @@ export default function UserManagerForm({
         fullName: user.fullName,
         email: user.email,
         phone: user.phone,
-        isActive: user.isActive ===1? true: false
+        isActive: user.isActive === 1 ? true : false
       });
     } else {
       resetForm();
@@ -116,7 +116,7 @@ export default function UserManagerForm({
     // if (isEditing) return;
     const timer = setTimeout(async () => {
       if (userData.username || userData.email) {
-        const result = await checkUserAvailability({urlCheckUser, urlRefreshToken, username: userData.username, email: userData.email, id: userData.id});
+        const result = await checkUserAvailability({ urlCheckUser, urlRefreshToken, username: userData.username, email: userData.email, id: userData.id });
         const newErrors: Partial<User> = {};
         if (result.username) newErrors.username = "Tên đăng nhập đã tồn tại";
         if (result.email) newErrors.email = "Email đã tồn tại";
@@ -187,7 +187,7 @@ export default function UserManagerForm({
 
         if (result?.status) {
           setUserDefaultData((prev) => ({ ...prev, ...payload }));
-          onSuccess?.({action: "update", user: userData});
+          onSuccess?.({ action: "update", user: userData });
         }
 
 
@@ -209,7 +209,7 @@ export default function UserManagerForm({
           setUserData(userToCreate);
           setUserDefaultData(userToCreate);
           setIsEditing(true);
-          onSuccess?.({action: "insert", user: result.data});
+          onSuccess?.({ action: "insert", user: result.data });
         }
       }
     } catch (err) {
@@ -233,7 +233,7 @@ export default function UserManagerForm({
         return;
       }
 
-      const checkResult = await checkUserAvailability({urlCheckUser, urlRefreshToken, username: userData.username, email: userData.email, id: userData.id});
+      const checkResult = await checkUserAvailability({ urlCheckUser, urlRefreshToken, username: userData.username, email: userData.email, id: userData.id });
       const checkErrors: Partial<User> = {};
 
       if (checkResult.username) checkErrors.username = "Tên đăng nhập đã tồn tại";
@@ -295,7 +295,7 @@ export default function UserManagerForm({
           });
 
           if (result?.status) {
-            onSuccess?.({action: "delete", user: userData});
+            onSuccess?.({ action: "delete", user: userData });
             resetForm();
           }
         } catch (err) {
@@ -318,7 +318,7 @@ export default function UserManagerForm({
 
   const cancelForm = () => {
     resetForm();
-    onSuccess?.({action: "cancel", user: userData});
+    onSuccess?.({ action: "cancel", user: userData });
   }
 
   const resetForm = () => {
@@ -347,6 +347,11 @@ export default function UserManagerForm({
     showConfirm: true,
     showCancel: true
   });
+
+  const [isPrintDesign, setIsPrintDesign] = useState(false);
+  const [isPrintView, setIsPrintView] = useState(false);
+
+
 
   return (
     <div className={styles.userManagementContainer}>
@@ -421,8 +426,157 @@ export default function UserManagerForm({
           >
             Hủy
           </button>
+
+          <button
+            type="button"
+            className={styles.cancelBtn}
+            onClick={() => { setIsPrintDesign(true) }}
+            disabled={isSubmitting}
+          >
+            Design print
+          </button>
+
+          <button
+            type="button"
+            className={styles.cancelBtn}
+            onClick={() => { setIsPrintView(true) }}
+            disabled={isSubmitting}
+          >
+            print view
+          </button>
+
         </div>
       </form>
+
+      {isPrintDesign &&
+        ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh',scale:'0.8', overflowY:'visible',overflowX:'visible' }} >
+          <button onClick={() => { setIsPrintDesign(false) }}>Close</button>
+          <HRichTextEditor
+            dynamicTexts={userData}
+            contentStateObject={blockUser}
+          >
+          </HRichTextEditor>
+
+        </div>, document.body)
+      }
+
+      {isPrintView &&
+        ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh',scale:"0.8" }} >
+          <button onClick={() => { setIsPrintView(false) }}>Close</button>
+          <HRichTextEditorPrintPreview
+            dynamicTexts={userData}
+            contentStateObject={blockUser}
+          >
+          </HRichTextEditorPrintPreview>
+
+        </div>, document.body)
+      }
+
     </div>
   );
+}
+
+
+const blockUser = {
+  "blocks": [
+    {
+      "key": "1fuk8",
+      "text": "Đây là thông tin của user :",
+      "type": "unstyled",
+      "depth": 0,
+      "inlineStyleRanges": [],
+      "entityRanges": [],
+      "data": {}
+    },
+    {
+      "key": "dmv25",
+      "text": "Tên Đăng nhập: {{username}}",
+      "type": "unstyled",
+      "depth": 0,
+      "inlineStyleRanges": [],
+      "entityRanges": [],
+      "data": {}
+    },
+    {
+      "key": "3jvnr",
+      "text": "Mật khẩu: {{password}}",
+      "type": "unstyled",
+      "depth": 0,
+      "inlineStyleRanges": [],
+      "entityRanges": [],
+      "data": {}
+    },
+    {
+      "key": "b6ifd",
+      "text": "Họ và tên: {{fullName}}",
+      "type": "unstyled",
+      "depth": 0,
+      "inlineStyleRanges": [],
+      "entityRanges": [],
+      "data": {}
+    },
+    {
+      "key": "bt2jg",
+      "text": "Email: {{email}}",
+      "type": "unstyled",
+      "depth": 0,
+      "inlineStyleRanges": [],
+      "entityRanges": [],
+      "data": {}
+    },
+    {
+      "key": "a38h3",
+      "text": "Điện thoại: {{phone}}",
+      "type": "unstyled",
+      "depth": 0,
+      "inlineStyleRanges": [],
+      "entityRanges": [],
+      "data": {}
+    },
+    {
+      "key": "6knof",
+      "text": "Trạng Thái:[{isActive !== true? 'Không hoạt động' : 'Hoạt động'}]",
+      "type": "unstyled",
+      "depth": 0,
+      "inlineStyleRanges": [],
+      "entityRanges": [],
+      "data": {}
+    },
+    {
+      "key": "mainBlock",
+      "text": "",
+      "type": "MAIN_BLOCK",
+      "depth": 0,
+      "inlineStyleRanges": [],
+      "entityRanges": [],
+      "data": {
+        "blockStyle": {
+          "paddingTop": "20mm",
+          "width": "210mm",
+          "marginTop": "0mm",
+          "height": "auto",
+          "paddingRight": "15mm",
+          "marginRight": "0mm",
+          "marginLeft": "0mm",
+          "paddingLeft": "30mm",
+          "marginBottom": "0mm",
+          "paddingBottom": "20mm"
+        },
+        "pageSetup": {
+          "pageHeight": "148mm",
+          "isRepeatThead": true,
+          "pageNumber": {
+            "position": "",
+            "format": "",
+            "style": {
+              "display": "none"
+            }
+          }
+        },
+        "backgroundCss": {},
+        "unit": "mm"
+      }
+    }
+  ],
+  "entityMap": {}
 }
