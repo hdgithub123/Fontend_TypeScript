@@ -40,6 +40,8 @@ import {
 import UserManagerForm from '../SingleUser/ManagerUserForm/UserManagerForm';
 import columnsUser from './columUser'
 import DesignPrint from '../../Print/DesignPrint/DesignPrint';
+import MakeReportTable from '../../MakeReportTable/MakeReportTable'
+
 
 
 interface User {
@@ -119,6 +121,9 @@ const ListUser = () => {
         ></UserManagerForm>}
       </div>
 
+          <MakeReportTable
+          
+          ></MakeReportTable>
     </div>
   );
 };

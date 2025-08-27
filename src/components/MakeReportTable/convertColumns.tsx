@@ -25,6 +25,10 @@ import {
     NumberCell,
     NumberUsCell,
     NumberVnCell,
+
+        formatVnDateTime,
+    formatUsDateTime,
+    formatDateTime,
 } from 'react-table'
 
 
@@ -147,7 +151,7 @@ function convertCell(cellStr?: string): ((cell: any) => React.ReactNode) | undef
 
     return (cellProps) => (
         <Component
-            {...cellProps}
+            initialValue={cellProps.getValue()}
             minFractionDigits={minFractionDigits}
             maxFractionDigits={maxFractionDigits}
             option={option}
@@ -155,35 +159,6 @@ function convertCell(cellStr?: string): ((cell: any) => React.ReactNode) | undef
     );
 }
 
-
-// function convertFooter(str?: string): Convertible {
-//     if (!str) return undefined;
-
-
-//     const footerMap: Record<string, React.FC<any>> = {
-
-//     };
-
-//     // Nếu là key có sẵn trong map thì dùng luôn
-//     if (footerMap[str]) return footerMap[str];
-
-//     // Regex để bắt kiểu SumFooter("Tổng:")
-//     const match = str.match(/^(\w+)\s*\(\s*['"](.+?)['"]\s*\)$/);
-//     if (!match) return str;
-
-//     const [, type, label] = match;
-
-//     switch (type) {
-//         case 'SumFooter':
-//             return (info) => `${label} ${SumFooter(info.column, info.table, 0, 2)}`;
-//         case 'AverageFooter':
-//             return (info) => `${label} ${AverageFooter(info.column, info.table, 1, 2)}`;
-//         case 'CountFooter':
-//             return (info) => `${label} ${CountFooter(info.table)}`;
-//         default:
-//             return str;
-//     }
-// }
 
 function convertFooter(str?: string): Convertible {
     if (!str) return undefined;
@@ -218,8 +193,10 @@ function convertFooter(str?: string): Convertible {
             return (info) =>
                 `${label} ${formatNumber(AverageFooter(info.column, info.table), minFractionDigits, maxFractionDigits, option)}`;
         case 'CountFooter':
-            return (info) =>
-                `${label} ${CountFooter(info.table)}`;
+            return (info) => {
+                const count = CountFooter(info.table);
+                return `${label} ${formatNumber(count, minFractionDigits, maxFractionDigits, option)}`;
+            };
         default:
             return str;
     }
@@ -254,7 +231,7 @@ function convertColumn(config: ColumnConfig): any {
 }
 
 
-export function convertColumns(configs: ColumnConfig[]): any[] {
+export default function convertColumns(configs: ColumnConfig[]): any[] {
     return configs.map(convertColumn);
 }
 
