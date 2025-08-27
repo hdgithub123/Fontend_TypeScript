@@ -39,6 +39,8 @@ import {
 
 import UserManagerForm from '../SingleUser/ManagerUserForm/UserManagerForm';
 import columnsUser from './columUser'
+import DesignPrint from '../../Print/DesignPrint/DesignPrint';
+
 
 interface User {
   id: string,
@@ -101,7 +103,6 @@ const ListUser = () => {
         <button onClick={handleGetUser}>get url user</button>
         <button onClick={handleCreateUser}>create new user</button>
       </div>
-
       <div style={{ height: '500px' }}>
         <ReactTableBasicArrowkey
           data={data}

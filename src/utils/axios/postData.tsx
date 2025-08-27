@@ -1,4 +1,6 @@
 import axios from 'axios';
+import getAuthHeaders from './getAuthHeaders';
+import urlRefreshTokenDefault from './urlRefeshToken';
 
 interface PostDataParams {
   url: string;
@@ -18,9 +20,9 @@ interface ApiResponse {
 const postData = async ({
   url,
   data,
-  headers = {},
+  headers = getAuthHeaders() ?? {},
   isCookie = false,
-  urlRefreshToken = '',
+  urlRefreshToken = urlRefreshTokenDefault ? urlRefreshTokenDefault : '',
   redirect = '/login',
 }: PostDataParams): Promise<ApiResponse> => {
   try {
@@ -32,7 +34,7 @@ const postData = async ({
   } catch (error: any) {
     if (error.response?.status === 401) {
       try {
-        const refreshResponse = await axios.post(urlRefreshToken,{}, {
+        const refreshResponse = await axios.post(urlRefreshToken, {}, {
           headers: headers,
           withCredentials: true,
         });
@@ -51,8 +53,15 @@ const postData = async ({
         });
         return retryResponse.data;
       } catch (refreshError: any) {
-        console.error('Lỗi khi làm mới token:', refreshError);
-        window.location.href = redirect; // Redirect luôn
+
+        const refreshErr = refreshError;
+        console.error('Lỗi khi làm mới token:', refreshErr.message);
+
+        const statusCode = refreshErr.response?.status;
+        if (statusCode === 401 || statusCode === 403) {
+          window.location.href = redirect;
+        }
+
         return {
           status: false,
           message: 'Token hết hạn, vui lòng đăng nhập lại.',
@@ -60,7 +69,7 @@ const postData = async ({
       }
     } else if (error.response) {
       // Lấy dữ liệu lỗi từ server (ví dụ: lỗi SQL, trùng ID, v.v.)
-      return error.response;
+      return error.response.data;
     } else {
       console.error('Lỗi khi gửi dữ liệu:', error);
       return {

@@ -1,10 +1,12 @@
 import axios from 'axios';
+import getAuthHeaders from './getAuthHeaders';
+import urlRefreshTokenDefault from './urlRefeshToken';
 
 interface DeleteDataParams {
   url: string;
   headers?: Record<string, any>;
   isCookie?: boolean;
-  urlRefreshToken: string,
+  urlRefreshToken?: string;
   data: Record<string, any>;
   redirect?: string;
 }
@@ -17,9 +19,9 @@ interface ApiResponse {
 
 const deleteData = async ({
   url,
-  headers = {},
+  headers = getAuthHeaders() ?? {},
   isCookie = false,
-  urlRefreshToken = '',
+  urlRefreshToken = urlRefreshTokenDefault ? urlRefreshTokenDefault : '',
   data = {},
   redirect = '/login',
 }: DeleteDataParams): Promise<ApiResponse | null> => {
@@ -53,8 +55,13 @@ const deleteData = async ({
 
         return retryResponse.data ? retryResponse.data : { status: true, message: 'Xóa thành công' };
       } catch (refreshError: any) {
-        console.error('Lỗi khi làm mới token:', refreshError);
-         window.location.href = redirect; // Redirect luôn
+        const refreshErr: any = refreshError;
+        console.error('Lỗi khi làm mới token:', refreshErr.message);
+
+        const statusCode = refreshErr.response?.status;
+        if (statusCode === 401 || statusCode === 403) {
+          window.location.href = redirect;
+        }
         return {
           status: false,
           message: 'Token hết hạn, vui lòng đăng nhập lại.',

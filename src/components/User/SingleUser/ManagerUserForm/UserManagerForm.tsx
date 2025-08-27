@@ -8,6 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import checkUserAvailability from "../checkUserAvailability";
 import { HRichTextEditor, HRichTextEditorPrintPreview, HRichTextEditorPreview } from 'hrich-text-editor'
 import ReactDOM from 'react-dom';
+import DesignPrint from "../../../Print/DesignPrint/DesignPrint";
+import PrintPreview from '../../../Print/PrintPreview/PrintPreview';
 
 interface User {
   id?: string; // Changed from id to id
@@ -36,7 +38,7 @@ const userSchema: RuleSchema = {
   id: { type: "string", format: "uuid", min: 2, required: false },
   username: { type: "string", required: true, min: 2, max: 20, regex: "^[a-zA-Z0-9_]+$" },
   password: { type: "string", required: false, min: 2, max: 30 },
-  fullName: { type: "string", required: true, min: 2, max: 50 },
+  fullName: { type: "string", required: true, min: 2, max: 100 },
   email: { type: "string", required: true, format: "email" },
   phone: { type: "string", required: false, format: "phone" }
 };
@@ -348,6 +350,16 @@ export default function UserManagerForm({
     showCancel: true
   });
 
+  const handleOnCancel = (cancel: boolean) => {
+    setIsPrintDesign(!cancel)
+  }
+  const handleOnPrintCancel = (cancel: boolean) => {
+    setIsPrintView(!cancel)
+  }
+
+
+
+
   const [isPrintDesign, setIsPrintDesign] = useState(false);
   const [isPrintView, setIsPrintView] = useState(false);
 
@@ -427,7 +439,7 @@ export default function UserManagerForm({
             Hủy
           </button>
 
-          <button
+          {isEditing && (<button
             type="button"
             className={styles.cancelBtn}
             onClick={() => { setIsPrintDesign(true) }}
@@ -435,8 +447,8 @@ export default function UserManagerForm({
           >
             Design print
           </button>
-
-          <button
+          )}
+          {isEditing && (<button
             type="button"
             className={styles.cancelBtn}
             onClick={() => { setIsPrintView(true) }}
@@ -444,30 +456,35 @@ export default function UserManagerForm({
           >
             print view
           </button>
-
+          )}
         </div>
       </form>
 
       {isPrintDesign &&
-        ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh',scale:'0.8', overflowY:'visible',overflowX:'visible' }} >
-          <button onClick={() => { setIsPrintDesign(false) }}>Close</button>
-          <HRichTextEditor
+        ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '100vh', scale: '0.9', overflowY: 'auto', overflowX: 'auto' }} >
+          <DesignPrint
+            urlGet="http://localhost:3000/template-contents/user/list"
+            urlUpdate="http://localhost:3000/template-contents/user/detail"
+            urlDelete="http://localhost:3000/template-contents/user/detail"
+            urlInsert="http://localhost:3000/template-contents/user/detail/insert"
             dynamicTexts={userData}
-            contentStateObject={blockUser}
+            // contentStateObject={blockUser}
+            onCancel={handleOnCancel}
           >
-          </HRichTextEditor>
+          </DesignPrint>
 
         </div>, document.body)
       }
 
       {isPrintView &&
-        ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh',scale:"0.8" }} >
-          <button onClick={() => { setIsPrintView(false) }}>Close</button>
-          <HRichTextEditorPrintPreview
+        ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
+          <PrintPreview
             dynamicTexts={userData}
-            contentStateObject={blockUser}
+            // contentStateObject={blockUser}
+            urlGet="http://localhost:3000/template-contents/user/list"
+            onCancel={handleOnPrintCancel}
           >
-          </HRichTextEditorPrintPreview>
+          </PrintPreview>
 
         </div>, document.body)
       }
