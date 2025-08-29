@@ -40,9 +40,11 @@ import {
 import UserManagerForm from '../SingleUser/ManagerUserForm/UserManagerForm';
 import columnsUser from './columUser'
 import DesignPrint from '../../Print/DesignPrint/DesignPrint';
+import PrintPreview from '../../Print/PrintPreview/PrintPreview';
 import MakeReportTable from '../../MakeReportTable/MakeReportTable'
-
-
+import ReactDOM from 'react-dom';
+// import DesignPrint from "../../Print/DesignPrint/DesignPrint";
+import PrintUsers from '../SingleUser/PrintUsers/PrintUsers'
 
 interface User {
   id: string,
@@ -66,6 +68,12 @@ const ListUser = () => {
   const [data, setData] = useState<Array<{ [key: string]: any }>>([{}]);
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [isShowManagerForm, setIsShowManagerForm] = useState(false);
+  const [isPrintListDesign, setIsPrintListDesign] = useState(false);
+  const [isPrintList, setIsPrintList] = useState(false);
+  const [isPrintMoreUsers, setIsPrintMoreUsers] = useState(false);
+  const [selectUsers, setSelectUsers] = useState([]);
+
+
 
   const handleGetUser = async () => {
     const result = await getData({ url: url, headers: getAuthHeaders(), urlRefreshToken, isCookie: false });
@@ -83,7 +91,8 @@ const ListUser = () => {
     // console.log("value", value)
   }
   const handleOnRowsSelect = (value) => {
-    console.log("value", value)
+      console.log(value)
+      setSelectUsers(value)
   }
 
   const handleOnSuccess = (data) => {
@@ -95,15 +104,40 @@ const ListUser = () => {
   }
 
   const handleCreateUser = () => {
-    setActiveUser(null);
+    // setActiveUser(null);
     setIsShowManagerForm(true);
   }
+
+  const handlePrintListDesignUser = () => {
+    setIsPrintListDesign(true)
+  }
+
+  const handleOnCancelDesign = (cancel: boolean) => {
+    setIsPrintListDesign(!cancel)
+  }
+
+const handlePrintListUser = () =>{
+  setIsPrintList(true)
+}
+
+  const handleOnCancelPrint = (cancel: boolean) => {
+    setIsPrintList(!cancel)
+  }
+
+  const handlePrintMoreUsers = () =>{
+  setIsPrintMoreUsers(true)
+  
+  }
+
 
   return (
     <div>
       <div>
         <button onClick={handleGetUser}>get url user</button>
         <button onClick={handleCreateUser}>create new user</button>
+        <button onClick={handlePrintListDesignUser}>Design Print list user</button>
+        <button onClick={handlePrintListUser}>Print list user</button>
+        <button onClick={handlePrintMoreUsers}>Print more users</button>
       </div>
       <div style={{ height: '500px' }}>
         <ReactTableBasicArrowkey
@@ -119,11 +153,63 @@ const ListUser = () => {
           user={activeUser}
           onSuccess={handleOnSuccess}
         ></UserManagerForm>}
-      </div>
 
-          <MakeReportTable
-          
-          ></MakeReportTable>
+        {isPrintListDesign &&
+          ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '100vh', scale: '0.9', overflowY: 'auto', overflowX: 'auto' }} >
+            <DesignPrint
+              urlGet="http://localhost:3000/template-contents/user/list"
+              urlUpdate="http://localhost:3000/template-contents/user/detail"
+              urlDelete="http://localhost:3000/template-contents/user/detail"
+              urlInsert="http://localhost:3000/template-contents/user/detail/insert"
+              dynamicTables={{
+                user: data
+              }}
+              // contentStateObject={blockUser}
+              onCancel={handleOnCancelDesign}
+            >
+            </DesignPrint>
+
+          </div>, document.body)
+        }
+
+
+        {isPrintList &&
+          ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
+            <PrintPreview
+              // dynamicTexts={userData}
+              dynamicTables={{
+                user: selectUsers
+              }}
+              // contentStateObject={blockUser}
+              urlGet="http://localhost:3000/template-contents/user/list"
+              onCancel={handleOnCancelPrint}
+            >
+            </PrintPreview>
+
+          </div>, document.body)
+        } 
+
+        {isPrintMoreUsers &&
+          ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
+            <PrintUsers
+              data = {selectUsers}
+              // dynamicTexts={userData}
+              // dynamicTables={{
+              //   user: data
+              // }}
+              // contentStateObject={blockUser}
+              urlGet="http://localhost:3000/template-contents/user/list"
+              onCancel={()=>{
+                setIsPrintMoreUsers(false)
+              }}
+            >
+            </PrintUsers>
+
+          </div>, document.body)
+        } 
+
+
+      </div>
     </div>
   );
 };

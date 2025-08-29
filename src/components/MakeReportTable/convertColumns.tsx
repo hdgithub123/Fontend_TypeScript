@@ -115,9 +115,9 @@ function convertCell(cellStr?: string): ((cell: any) => React.ReactNode) | undef
         DateTimeCell,
         DateTimeUsCell,
         DateTimeVnCell,
-        NumberCell,
-        NumberUsCell,
-        NumberVnCell,
+        // NumberCell,
+        // NumberUsCell,
+        // NumberVnCell,
     };
 
     const match = cellStr.match(/^(\w+)\s*\((.*)\)$/);
@@ -159,7 +159,9 @@ function convertCell(cellStr?: string): ((cell: any) => React.ReactNode) | undef
     );
 }
 
-
+//"SumFooter('Tổng:', 0, 2, 'currency', 'usd')"
+// "CountFooter('Số dòng:')",
+// AverageFooter('trung bình:', 0, 2, 'currency', 'usd')"
 function convertFooter(str?: string): Convertible {
     if (!str) return undefined;
 
