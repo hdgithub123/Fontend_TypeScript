@@ -33,9 +33,9 @@ import convertColumns from '../../MakeReportTable/convertColumns'
 
 const columnsUser = [
     {
-        accessorKey: 'username',
+        accessorKey: 'code',
         header: 'Username',
-        id: 'username',
+        id: 'code',
         filterType: 'text',
         footer: info => `Count: ${CountFooter(info.table)}`,
         cell: TextCell,
@@ -43,9 +43,9 @@ const columnsUser = [
         
     },
     {
-        accessorKey: 'fullName',
+        accessorKey: 'name',
         header: 'Full Name',
-        id: 'fullName',
+        id: 'name',
         filterType: 'text',
         cell: TextCell,
         groupCell: TextGroupCell,
@@ -68,7 +68,7 @@ const columnsUser = [
         
     },
         {
-        accessorKey: 'isActive',
+        // accessorKey: 'isActive',
         header: 'Kích Hoạt',
         id: 'isActive',
         accessorFn: row => row.isActive === undefined ? "": row.isActive === 0 ?"Không kích hoạt": "Đã kích hoạt",

@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { postData,getAuthHeaders } from '../../utils/axios';
+import { postData, getAuthHeaders } from '../../utils/axios';
 
 function Login() {
   const urlLogin = 'http://localhost:3000/auth/login';
   const urlRefreshToken = 'http://localhost:3000/auth/refresh-token';
   const [user, setUser] = useState({
     username: 'admin',
-    password: 'admin'
+    password: 'admin',
+    organization: 'ORG001'
   });
 
   const navigate = useNavigate();
@@ -26,9 +27,9 @@ function Login() {
     if (result.status) {
       // lưu result.token vào localStorage
       localStorage.setItem('token', result.token);
-       navigate('/');
+      navigate('/');
     } else {
-       alert('Sai tên đăng nhập hoặc mật khẩu!');
+      alert('Sai tên đăng nhập hoặc mật khẩu!');
     }
   };
 
@@ -71,6 +72,18 @@ function Login() {
             type="password"
             name="password"
             value={user.password}
+            onChange={handleChange}
+            required
+            style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
+          />
+        </div>
+
+        <div style={{ marginBottom: '1rem' }}>
+          <label>Mã tổ chức</label>
+          <input
+            type="text"
+            name="organization"
+            value={user.organization}
             onChange={handleChange}
             required
             style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}

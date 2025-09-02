@@ -78,7 +78,6 @@ const ListUser = () => {
   const handleGetUser = async () => {
     const result = await getData({ url: url, headers: getAuthHeaders(), urlRefreshToken, isCookie: false });
     if (result.data) {
-      console.log("result", result.data)
       setData(result.data);
     } else {
 
@@ -88,7 +87,7 @@ const ListUser = () => {
   const handleOnRowSelect = (value) => {
     setActiveUser(value);
     setIsShowManagerForm(true);
-    // console.log("value", value)
+    
   }
   const handleOnRowsSelect = (value) => {
       console.log(value)
@@ -96,7 +95,6 @@ const ListUser = () => {
   }
 
   const handleOnSuccess = (data) => {
-    console.log("data", data)
     if (data.action === 'insert' || data.action === 'update' || data.action === 'delete') {
       handleGetUser();
     }
@@ -140,15 +138,15 @@ const handlePrintListUser = () =>{
         <button onClick={handlePrintMoreUsers}>Print more users</button>
       </div>
       <div style={{ height: '500px' }}>
-        <ReactTableBasicArrowkey
+        <ReactTableFull
           data={data}
           columns={columnsUser}
           isGlobalFilter={true}
-          onRowSelect={handleOnRowSelect}
-          onRowsSelect={handleOnRowsSelect}
+          onOriginalRowSelect={handleOnRowSelect}
+          onOriginalRowsSelect={handleOnRowsSelect}
           fieldUnique={'id'}
         >
-        </ReactTableBasicArrowkey>
+        </ReactTableFull>
         {isShowManagerForm && <UserManagerForm
           user={activeUser}
           onSuccess={handleOnSuccess}
@@ -157,10 +155,10 @@ const handlePrintListUser = () =>{
         {isPrintListDesign &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '100vh', scale: '0.9', overflowY: 'auto', overflowX: 'auto' }} >
             <DesignPrint
-              urlGet="http://localhost:3000/template-contents/user/list"
-              urlUpdate="http://localhost:3000/template-contents/user/detail"
-              urlDelete="http://localhost:3000/template-contents/user/detail"
-              urlInsert="http://localhost:3000/template-contents/user/detail/insert"
+              urlGet="http://localhost:3000/template-contents/users/list"
+              urlUpdate="http://localhost:3000/template-contents/users/detail"
+              urlDelete="http://localhost:3000/template-contents/users/detail"
+              urlInsert="http://localhost:3000/template-contents/users/detail/insert"
               dynamicTables={{
                 user: data
               }}
@@ -181,7 +179,7 @@ const handlePrintListUser = () =>{
                 user: selectUsers
               }}
               // contentStateObject={blockUser}
-              urlGet="http://localhost:3000/template-contents/user/list"
+              urlGet="http://localhost:3000/template-contents/users/list"
               onCancel={handleOnCancelPrint}
             >
             </PrintPreview>
