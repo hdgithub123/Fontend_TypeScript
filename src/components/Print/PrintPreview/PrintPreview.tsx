@@ -176,7 +176,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                             globalFilterValue={viewContent?.code || ""}
                             className={styles.inputField}
                             placeholder="Mã..."
-                            autocomplete="new-password"
+                            // autoComplete="new-password"
                            // style={{ padding: '10px 12px', width: '100%', height: '100%', zIndex: '1001', border: '#ddd 1px solid' }}
                         />
                     </div>
