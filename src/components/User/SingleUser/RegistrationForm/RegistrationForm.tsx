@@ -7,12 +7,14 @@ import checkUserAvailability from "../checkUserAvailability";
 
 
 interface User {
-  id: string;
-  username: string;
-  password: string;
-  fullName: string;
-  email: string;
-  phone: string;
+  id?: string;
+  code?: string;
+  password?: string;
+  name?: string;
+  address?: string;
+  email?: string;
+  phone?: string;
+  image?: string;
 }
 
 interface RegistrationFormProps {
@@ -20,24 +22,29 @@ interface RegistrationFormProps {
   urlInsertUser?: string;
   urlRefreshToken?: string;
   zoneId?: string;
-  onRegisterSuccess?: (params: {action: 'insert' | 'cancel', user?: User}) => void;
+  onRegisterSuccess?: (params: { action: 'insert' | 'cancel', user?: User }) => void;
 }
 
 const registrationSchema: RuleSchema = {
-  username: { type: "string", required: true, min: 2, max: 20, regex: "^[a-zA-Z0-9_]+$" },
-  password: { type: "string", required: true, min: 2, max: 30 },
-  fullName: { type: "string", required: true, min: 2, max: 50 },
-  email: { type: "string", required: true, format: "email" },
-  phone: { type: "string", required: false, format: "phone" }
+  id: { type: "string", format: "uuid", required: false },
+  code: { type: "string", required: true, min: 2, max: 100 },
+  password: { type: "string", required: false, max: 255 },
+  name: { type: "string", required: true, min: 2, max: 255 },
+  address: { type: "string", required: false, max: 255 },
+  email: { type: "string", format: "email", required: true, max: 100 },
+  phone: { type: "string", required: false, format: "phone", max: 20 },
+  image: { type: "string", required: false, max: 255 },
 };
 
 
 const fieldLabels: Record<string, { label: string; type: string; placeholder?: string }> = {
-  username: { label: "Tên đăng nhập(*)", type: "text", placeholder: "Nhập tên đăng nhập" },
+  code: { label: "Tên đăng nhập(*)", type: "text", placeholder: "Nhập tên đăng nhập" },
   password: { label: "Mật khẩu (*)", type: "password", placeholder: "Nhập mật khẩu" },
   repassword: { label: "Nhập lại mật khẩu (*)", type: "password", placeholder: "Nhập lại mật khẩu" },
-  fullName: { label: "Họ và tên (*)", type: "text", placeholder: "Nhập họ và tên" },
+  name: { label: "Họ và tên (*)", type: "text", placeholder: "Nhập họ và tên" },
+  address: { label: "Địa chỉ", type: "text", placeholder: "Nhập địa chỉ" },
   email: { label: "Email (*)", type: "email", placeholder: "Nhập email" },
+  image: { label: "Avata", type: "text", placeholder: "Nhập Avata link" },
   phone: { label: "Điện thoại", type: "text", placeholder: "Nhập số điện thoại" },
 };
 
@@ -49,28 +56,32 @@ export default function RegistrationForm({
   onRegisterSuccess = () => { },
 }: RegistrationFormProps) {
   const [userData, setUserData] = useState<User>({
-    id: "",
-    username: "",
+    code: "",
     password: "",
-    fullName: "",
+    name: "",
+    address: "",
     email: "",
-    phone: ""
+    phone: "",
+    image: "",
   });
   const [rePassword, setRePassword] = useState("")
   const [errors, setErrors] = useState<Partial<Record<keyof User, string>>>({});
 
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (userData.username || userData.email) {
-        const result = await checkUserAvailability({urlCheckUser, urlRefreshToken, username: userData.username, email: userData.email, id: userData.id});
+      if (userData.code || userData.email) {
+
+        const checkUser = { code: userData.code, email: userData.email, id: userData.id }
+        const result = await checkUserAvailability({ urlCheckUser, urlRefreshToken, user: checkUser });
+        // const result = await checkUserAvailability({urlCheckUser, urlRefreshToken, code: userData.code, email: userData.email, id: userData.id});
         const newErrors: Partial<User> = {};
-        if (result.username) newErrors.username = "Tên đăng nhập đã tồn tại";
+        if (result.code) newErrors.code = "Tên đăng nhập đã tồn tại";
         if (result.email) newErrors.email = "Email đã tồn tại";
         setErrors((prev) => ({ ...prev, ...newErrors }));
       }
     }, 500);
     return () => clearTimeout(timer);
-  }, [userData.username, userData.email]);
+  }, [userData.code, userData.email]);
 
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -175,9 +186,12 @@ export default function RegistrationForm({
     e.preventDefault();
     try {
       // check trùng
-      const checkResult = await checkUserAvailability({urlCheckUser, urlRefreshToken,username: userData.username, email: userData.email, id: userData.id});
+      const checkUser = { code: userData.code, email: userData.email, id: userData.id }
+      const checkResult = await checkUserAvailability({ urlCheckUser, urlRefreshToken, user: checkUser });
+
+      // const checkResult = await checkUserAvailability({ urlCheckUser, urlRefreshToken, code: userData.code, email: userData.email, id: userData.id });
       const checkErrors: Partial<User> = {};
-      if (checkResult.username) checkErrors.username = "Tên đăng nhập đã tồn tại";
+      if (checkResult.code) checkErrors.code = "Tên đăng nhập đã tồn tại";
       if (checkResult.email) checkErrors.email = "Email đã tồn tại";
       if (Object.keys(checkErrors).length > 0) {
         setErrors(checkErrors);
@@ -191,11 +205,13 @@ export default function RegistrationForm({
       const headers = getAuthHeaders();
 
       const insertUser = {
-        username: userData.username,
+        code: userData.code,
         password: userData.password,
-        fullName: userData.fullName,
+        name: userData.name,
+        address: userData.address,
         email: userData.email,
         phone: userData.phone,
+        image: userData.image,
         isActive: true,
         createdBy: "Register"
       };
@@ -212,16 +228,25 @@ export default function RegistrationForm({
       });
 
       if (result.status === true) {
-        onRegisterSuccess?.({action: "insert", user: userData});
+        onRegisterSuccess?.({ action: "insert", user: userData });
       }
 
-      setUserData({ id: "", username: "", password: "", fullName: "", email: "", phone: "" });
+      setUserData({
+        id: "",
+        code: "",
+        password: "",
+        name: "",
+        address: "",
+        email: "",
+        phone: "",
+        image: "",
+      });
       setRePassword("");
       setErrors({});
     } catch (err) {
       console.error("Registration error:", err);
       setErrors({
-        username: "Có lỗi xảy ra khi đăng ký",
+        code: "Có lỗi xảy ra khi đăng ký",
         email: "Có lỗi xảy ra khi đăng ký"
       });
     }
@@ -229,10 +254,19 @@ export default function RegistrationForm({
 
 
   const handleCancelForm = () => {
-    setUserData({ id: "", username: "", password: "", fullName: "", email: "", phone: "" });
+    setUserData({
+      id: "",
+      code: "",
+      password: "",
+      name: "",
+      address: "",
+      email: "",
+      phone: "",
+      image: "",
+    });
     setRePassword("");
     setErrors({});
-    onRegisterSuccess?.({action: "cancel", user: userData});
+    onRegisterSuccess?.({ action: "cancel", user: userData });
   }
   // Xem còn lỗi hay không (để đổi style/hiển thị thông báo)
   const hasErrors = Object.values(errors).some(Boolean);

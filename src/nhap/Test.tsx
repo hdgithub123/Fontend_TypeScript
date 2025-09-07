@@ -8,6 +8,7 @@ import {
     patchData
 } from '../utils/axios';
 
+import columns from './thamso';
 const urlList = [
     "http://localhost:3000/auth/activity-logs",
     'http://localhost:3000/auth/user/list',
@@ -17,6 +18,18 @@ const urlList = [
     "",
     "",
 ]
+
+
+import ButtonExcelUploader from '../utils/UploadExcel/ButtonExcelUploader'
+import DashboardExcelUploadViewer from '../utils/UploadExcel/DashboardExelUploader/DashboardExcelUploadViewer'
+import {columnsUser,userSchema, columnCheckExistance, columnCheckNotExistance } from './thamso'
+import {
+    messagesVi,
+    messagesEn, 
+    validateField,
+    validateDataArray,
+    validateTablesDataArray
+} from '../utils/validation/index'
 
 function Test() {
     const [data, setData] = useState('');
@@ -42,7 +55,7 @@ function Test() {
         const result = await deleteData({ url: url, data: parsedBody, headers: getAuthHeaders(), urlRefreshToken, isCookie: false });
         console.log(result);
         // setData(result.data);
-         setData({});
+        setData({});
     }
 
 
@@ -53,9 +66,27 @@ function Test() {
         setData(result.data);
     }
 
+    const handleOnUploaded = (data: any) => {
+        console.log("data", data)
+    }
+
+
+
+
     return (
         <div>
             <h1>data</h1>
+
+            <DashboardExcelUploadViewer
+                columns={columnsUser}
+                headerRowNumber={1}
+                ruleSchema={ userSchema }
+                translateMessages={ messagesVi}
+                isCheckLocalDuplicates = {true}
+                columnCheckExistance={columnCheckExistance }
+                columnCheckNotExistance={columnCheckNotExistance }
+            // onUploaded={handleOnUploaded}
+            ></DashboardExcelUploadViewer>
             <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}

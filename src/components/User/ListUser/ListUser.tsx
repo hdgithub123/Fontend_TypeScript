@@ -46,6 +46,8 @@ import ReactDOM from 'react-dom';
 // import DesignPrint from "../../Print/DesignPrint/DesignPrint";
 import PrintUsers from '../SingleUser/PrintUsers/PrintUsers'
 
+
+
 interface User {
   id: string,
   username: string;
@@ -65,6 +67,7 @@ const zoneId = '8e522402-3611-11f0-b432-0242ac110002'; //-- chi nhanh HCM-- con
 const ListUser = () => {
   const url: string = 'http://localhost:3000/auth/user/list'
   const urlRefreshToken: string = 'http://localhost:3000/auth/refresh-token'
+  const deleteUrl: string = 'http://localhost:3000/auth/user/list'
   const [data, setData] = useState<Array<{ [key: string]: any }>>([{}]);
   const [activeUser, setActiveUser] = useState<User | null>(null);
   const [isShowManagerForm, setIsShowManagerForm] = useState(false);
@@ -87,11 +90,11 @@ const ListUser = () => {
   const handleOnRowSelect = (value) => {
     setActiveUser(value);
     setIsShowManagerForm(true);
-    
+
   }
   const handleOnRowsSelect = (value) => {
-      console.log(value)
-      setSelectUsers(value)
+    console.log(value)
+    setSelectUsers(value)
   }
 
   const handleOnSuccess = (data) => {
@@ -102,7 +105,7 @@ const ListUser = () => {
   }
 
   const handleCreateUser = () => {
-    // setActiveUser(null);
+    setActiveUser(null);
     setIsShowManagerForm(true);
   }
 
@@ -114,18 +117,38 @@ const ListUser = () => {
     setIsPrintListDesign(!cancel)
   }
 
-const handlePrintListUser = () =>{
-  setIsPrintList(true)
-}
+  const handlePrintListUser = () => {
+    setIsPrintList(true)
+  }
 
   const handleOnCancelPrint = (cancel: boolean) => {
     setIsPrintList(!cancel)
   }
 
-  const handlePrintMoreUsers = () =>{
-  setIsPrintMoreUsers(true)
-  
+  const handlePrintMoreUsers = () => {
+    setIsPrintMoreUsers(true)
+
   }
+
+  const handleDeleteUsers = async () => {
+    // lọc {id:} từ selectUsers gán vào deleteUsers
+    const deleteUsers = selectUsers
+      .filter((user: any) => user && user.id)
+      .map((user: any) => ({ id: user.id }));
+
+    const { status, errorCode } = await deleteData({ url: deleteUrl, data: deleteUsers })
+    if (status) {
+      // xóa đi selectUsers khỏi data gán lại vào setData
+      if (Array.isArray(selectUsers) && selectUsers.length > 0) {
+        const deleteIds = selectUsers.map((user: any) => user.id);
+        setData(prev =>
+          prev.filter((user: any) => !deleteIds.includes(user.id))
+        );
+        setSelectUsers([]);
+      }
+    }
+  }
+
 
 
   return (
@@ -136,9 +159,10 @@ const handlePrintListUser = () =>{
         <button onClick={handlePrintListDesignUser}>Design Print list user</button>
         <button onClick={handlePrintListUser}>Print list user</button>
         <button onClick={handlePrintMoreUsers}>Print more users</button>
+        <button onClick={handleDeleteUsers}>Delete users</button>
       </div>
       <div style={{ height: '500px' }}>
-        <ReactTableFull
+        <ReactTableBasic
           data={data}
           columns={columnsUser}
           isGlobalFilter={true}
@@ -146,7 +170,7 @@ const handlePrintListUser = () =>{
           onOriginalRowsSelect={handleOnRowsSelect}
           fieldUnique={'id'}
         >
-        </ReactTableFull>
+        </ReactTableBasic>
         {isShowManagerForm && <UserManagerForm
           user={activeUser}
           onSuccess={handleOnSuccess}
@@ -185,26 +209,26 @@ const handlePrintListUser = () =>{
             </PrintPreview>
 
           </div>, document.body)
-        } 
+        }
 
         {isPrintMoreUsers &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
             <PrintUsers
-              data = {selectUsers}
+              data={selectUsers}
               // dynamicTexts={userData}
               // dynamicTables={{
               //   user: data
               // }}
               // contentStateObject={blockUser}
               urlGet="http://localhost:3000/template-contents/user/list"
-              onCancel={()=>{
+              onCancel={() => {
                 setIsPrintMoreUsers(false)
               }}
             >
             </PrintUsers>
 
           </div>, document.body)
-        } 
+        }
 
 
       </div>

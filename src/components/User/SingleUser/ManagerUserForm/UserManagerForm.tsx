@@ -12,15 +12,23 @@ import DesignPrint from "../../../Print/DesignPrint/DesignPrint";
 import PrintPreview from '../../../Print/PrintPreview/PrintPreview';
 
 interface User {
-  id?: string; // Changed from id to id
-  username: string;
-  password: string;
-  fullName: string;
-  email: string;
-  phone: string;
+  id?: string;
+  code?: string;
+  password?: string;
+  name?: string;
+  address?: string;
+  email?: string;
+  phone?: string;
+  image?: string;
   isActive: boolean | string | number; // Allow boolean, string, or number
-  createdDate?: string;
+  isSystem?: boolean;
+  createdBy?: string;
+  updatedBy?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+
 
 
 interface UserManagementFormProps {
@@ -34,22 +42,41 @@ interface UserManagementFormProps {
   onSuccess?: (params: { action: 'insert' | 'update' | 'delete' | 'cancel', user?: User }) => void;
 }
 
+// const userSchema: RuleSchema = {
+//   id: { type: "string", format: "uuid", min: 2, required: false },
+//   code: { type: "string", required: true, min: 2, max: 20, regex: "^[a-zA-Z0-9_]+$" },
+//   password: { type: "string", required: false, min: 2, max: 30 },
+//   name: { type: "string", required: true, min: 2, max: 100 },
+//   email: { type: "string", required: true, format: "email" },
+//   phone: { type: "string", required: false, format: "phone" }
+// };
+
+
 const userSchema: RuleSchema = {
-  id: { type: "string", format: "uuid", min: 2, required: false },
-  username: { type: "string", required: true, min: 2, max: 20, regex: "^[a-zA-Z0-9_]+$" },
-  password: { type: "string", required: false, min: 2, max: 30 },
-  fullName: { type: "string", required: true, min: 2, max: 100 },
-  email: { type: "string", required: true, format: "email" },
-  phone: { type: "string", required: false, format: "phone" }
+  id: { type: "string", format: "uuid", required: false },
+  code: { type: "string", required: true, min: 2, max: 100 },
+  password: { type: "string", required: false, max: 255 },
+  name: { type: "string", required: true, min: 2, max: 255 },
+  address: { type: "string", required: false, max: 255 },
+  email: { type: "string", format: "email", required: true, max: 100 },
+  phone: { type: "string", required: false, format: "phone", max: 20 },
+  image: { type: "string", required: false, max: 255 },
+  isActive: { type: "boolean", required: true },
+  // isSystem: { type: "boolean", required: false },
+  // createdBy: { type: "string", required: false, max: 100 },
+  // updatedBy: { type: "string", required: false, max: 100 },
+  // createdAt: { type: "string", format: "datetime", required: false },
+  // updatedAt: { type: "string", format: "datetime", required: false }
 };
 
-
 const fieldLabels: Record<string, { label: string; type: string; placeholder?: string }> = {
-  username: { label: "Tên đăng nhập (*)", type: "text", placeholder: "Nhập tên đăng nhập" },
+  code: { label: "Tên đăng nhập (*)", type: "text", placeholder: "Nhập tên đăng nhập" },
   password: { label: "Mật khẩu (*)", type: "password", placeholder: "Nhập mật khẩu" },
-  fullName: { label: "Họ và tên (*)", type: "text", placeholder: "Nhập họ và tên" },
+  name: { label: "Họ và tên (*)", type: "text", placeholder: "Nhập họ và tên" },
+  address: { label: "Địa chỉ", type: "text", placeholder: "Nhập địa chỉ" },
   email: { label: "Email (*)", type: "email", placeholder: "Nhập email" },
   phone: { label: "Điện thoại", type: "text", placeholder: "Nhập số điện thoại" },
+  image: { label: "Avata", type: "text", placeholder: "Nhập Avata link" },
   isActive: { label: "Trạng thái (*)", type: "checkbox" }
 };
 
@@ -65,20 +92,24 @@ export default function UserManagerForm({
   onSuccess = () => { }
 }: UserManagementFormProps) {
   const [userData, setUserData] = useState<User>({
-    username: "",
+    code: "",
     password: "",
-    fullName: "",
+    name: "",
+    address: "",
     email: "",
     phone: "",
+    image: "",
     isActive: true
   });
 
   const [userDefaultData, setUserDefaultData] = useState<User>({
-    username: "",
+    code: "",
     password: "",
-    fullName: "",
+    name: "",
+    address: "",
     email: "",
     phone: "",
+    image: "",
     isActive: true
   });
 
@@ -91,22 +122,26 @@ export default function UserManagerForm({
     if (user) {
       setUserData({
         id: user.id,
-        username: user.username,
+        code: user.code,
         password: "", // Don't pre-fill password
-        fullName: user.fullName,
+        name: user.name,
+        address: user.address,
         email: user.email,
         phone: user.phone,
+        image: user.image,
         isActive: user.isActive === 1 ? true : false
       });
       setIsEditing(true);
       setErrors({})
       setUserDefaultData({
         id: user.id,
-        username: user.username,
+        code: user.code,
         password: "", // Don't pre-fill password
-        fullName: user.fullName,
+        name: user.name,
+        address: user.address,
         email: user.email,
         phone: user.phone,
+        image: user.image,
         isActive: user.isActive === 1 ? true : false
       });
     } else {
@@ -117,17 +152,18 @@ export default function UserManagerForm({
   useEffect(() => {
     // if (isEditing) return;
     const timer = setTimeout(async () => {
-      if (userData.username || userData.email) {
-        const result = await checkUserAvailability({ urlCheckUser, urlRefreshToken, username: userData.username, email: userData.email, id: userData.id });
+      if (userData.code || userData.email) {
+        const checkUser = { code: userData.code, email: userData.email, id: userData.id }
+        const result = await checkUserAvailability({ urlCheckUser, urlRefreshToken, user: checkUser });
         const newErrors: Partial<User> = {};
-        if (result.username) newErrors.username = "Tên đăng nhập đã tồn tại";
+        if (result.code) newErrors.code = "Tên đăng nhập đã tồn tại";
         if (result.email) newErrors.email = "Email đã tồn tại";
         setErrors(prev => ({ ...prev, ...newErrors }));
       }
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [userData.username, userData.email, userData.id, isEditing]);
+  }, [userData.code, userData.email, userData.id, isEditing]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -217,7 +253,7 @@ export default function UserManagerForm({
     } catch (err) {
       console.error("Operation failed:", err);
       setErrors({
-        username: "Có lỗi xảy ra",
+        code: "Có lỗi xảy ra",
         email: "Có lỗi xảy ra"
       });
     } finally {
@@ -235,10 +271,10 @@ export default function UserManagerForm({
         return;
       }
 
-      const checkResult = await checkUserAvailability({ urlCheckUser, urlRefreshToken, username: userData.username, email: userData.email, id: userData.id });
+      const checkUser = { code: userData.code, email: userData.email, id: userData.id }
+      const checkResult = await checkUserAvailability({ urlCheckUser, urlRefreshToken, user: checkUser });
       const checkErrors: Partial<User> = {};
-
-      if (checkResult.username) checkErrors.username = "Tên đăng nhập đã tồn tại";
+      if (checkResult.code) checkErrors.code = "Tên đăng nhập đã tồn tại";
       if (checkResult.email) checkErrors.email = "Email đã tồn tại";
 
       if (Object.keys(checkErrors).length > 0) {
@@ -271,7 +307,7 @@ export default function UserManagerForm({
     } catch (err) {
       console.error("Validation failed:", err);
       setErrors({
-        username: "Có lỗi xảy ra",
+        code: "Có lỗi xảy ra",
         email: "Có lỗi xảy ra"
       });
       setIsSubmitting(false);
@@ -325,9 +361,9 @@ export default function UserManagerForm({
 
   const resetForm = () => {
     setUserData({
-      username: "",
+      code: "",
       password: "",
-      fullName: "",
+      name: "",
       email: "",
       phone: "",
       isActive: true
@@ -338,7 +374,7 @@ export default function UserManagerForm({
 
   const hasErrors = Object.values(errors).some(Boolean);
   const isFormValid = !hasErrors &&
-    (isEditing ? true : (!!userData.username && !!userData.password));
+    (isEditing ? true : (!!userData.code && !!userData.password));
 
 
   const [alertinfo, setAlertinfo] = useState<AlertInfo>({
@@ -507,7 +543,7 @@ const blockUser = {
     },
     {
       "key": "dmv25",
-      "text": "Tên Đăng nhập: {{username}}",
+      "text": "Tên Đăng nhập: {{code}}",
       "type": "unstyled",
       "depth": 0,
       "inlineStyleRanges": [],
@@ -525,7 +561,7 @@ const blockUser = {
     },
     {
       "key": "b6ifd",
-      "text": "Họ và tên: {{fullName}}",
+      "text": "Họ và tên: {{name}}",
       "type": "unstyled",
       "depth": 0,
       "inlineStyleRanges": [],
