@@ -37,6 +37,7 @@ import React, { useState } from 'react';
 // } from 'react-table';
 
 import ButtonExcelUploader from '../ButtonExcelUploader';
+import ButtonExcelTemplateDownloader from '../ButtonExcelTemplateDownloader'
 import { postData } from '../../../utils/axios';
 import { validateDataArray } from '../../validation';
 import type {
@@ -86,6 +87,20 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
     map[col.id] = col.header;
     return map;
   }, {} as ColumnMap);
+
+
+  // biến đổi ruleSchema thành columnMapSchema bằng cách thay các key ruleSchema thành các key columnMap
+
+  let columnMapSchema: RuleSchema | undefined = undefined;
+if (ruleSchema && columnMap) {
+  columnMapSchema = Object.keys(ruleSchema).reduce((acc, key) => {
+    // Nếu key có trong columnMap thì dùng key mới, ngược lại giữ nguyên key cũ
+    const newKey = columnMap[key] ? columnMap[key] : key;
+    acc[newKey] = ruleSchema[key];
+    return acc;
+  }, {} as RuleSchema);
+}
+
 
 
   const handleUpload = async (rawData: ExcelRow[]) => {
@@ -143,6 +158,11 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
         onUploaded={handleUpload}
         style={{ marginBottom: '1rem' }}
       />
+      <ButtonExcelTemplateDownloader
+      ruleSchema={columnMapSchema}
+      
+      ></ButtonExcelTemplateDownloader>
+      
       <ReactTableBasic
         data={data}
         columns={decorateColumnsWithError(columns)}
