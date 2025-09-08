@@ -9,13 +9,15 @@ interface Props {
   fileName?: string;
   sheetName?: string;
   buttonLabel?: string;
-  messagesMap?:TranslateMessageMap;
+  guideSheet?:string;
+  messagesMap?: TranslateMessageMap;
 }
 
 const ButtonExcelTemplateDownloader: React.FC<Props> = ({
   ruleSchema,
   fileName = 'mau_nhap_du_lieu.xlsx',
-  sheetName = 'Mẫu nhập',
+  sheetName = 'Import Sheet',
+  guideSheet = 'Hướng dẫn',
   buttonLabel = '📥 Tải file mẫu',
   messagesMap = messagesVi,
 }) => {
@@ -40,13 +42,13 @@ const ButtonExcelTemplateDownloader: React.FC<Props> = ({
         },
       };
     });
-
+    worksheet['!cols'] = headers.map(() => ({ wch: 20 }));
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
 
 
     const sheet = createGuideSheet(ruleSchema, messagesMap);
-    XLSX.utils.book_append_sheet(workbook, sheet, "Hướng dẫn");
+    XLSX.utils.book_append_sheet(workbook, sheet, guideSheet);
 
 
 
