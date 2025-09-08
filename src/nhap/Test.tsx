@@ -20,7 +20,7 @@ const urlList = [
 ]
 
 
-import ButtonExcelUploader from '../utils/UploadExcel/ButtonExcelUploader'
+import ButtonExcelUploader from '../utils/UploadExcel/ButtonExcelUploader/ButtonExcelUploader'
 import DashboardExcelUploadViewer from '../utils/UploadExcel/DashboardExelUploader/DashboardExcelUploadViewer'
 import {columnsUser,userSchema, columnCheckExistance, columnCheckNotExistance } from './thamso'
 import {
@@ -85,7 +85,7 @@ function Test() {
                 isCheckLocalDuplicates = {true}
                 columnCheckExistance={columnCheckExistance }
                 columnCheckNotExistance={columnCheckNotExistance }
-            // onUploaded={handleOnUploaded}
+                onCheckUpload = {handleOnUploaded}
             ></DashboardExcelUploadViewer>
             <textarea
                 value={body}

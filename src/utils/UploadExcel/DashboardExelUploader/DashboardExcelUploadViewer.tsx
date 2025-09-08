@@ -31,13 +31,14 @@ import {
 
 
 
-import React, { useState } from 'react';
-// import {
-//   ReactTableNomalArrowkey,
-// } from 'react-table';
+import React, { useEffect, useState } from 'react';
+import styles from './DashboardExcelUploadViewer.module.scss'
+import uploadIcon from './excel.svg'
 
-import ButtonExcelUploader from '../ButtonExcelUploader';
-import ButtonExcelTemplateDownloader from '../ButtonExcelTemplateDownloader'
+import cancelIcon from './cancel.svg'
+
+import ButtonExcelUploader from '../ButtonExcelUploader/ButtonExcelUploader';
+import ButtonExcelTemplateDownloader from '../ButtonExcelTemplateDownloader/ButtonExcelTemplateDownloader'
 import { postData } from '../../../utils/axios';
 import { validateDataArray } from '../../validation';
 import type {
@@ -47,7 +48,10 @@ import type {
 } from '../../validation';
 
 
+
 import type { ExcelRow, ColumnMap } from '../readExcel'
+import firstColumn from './firstColumn';
+
 
 type ColumnConfig = {
   id: string;
@@ -69,17 +73,23 @@ interface Props {
   isCheckLocalDuplicates?: boolean;
   columnCheckExistance?: ColumnValidationConfig[];
   columnCheckNotExistance?: ColumnValidationConfig[];
+  onCheckUpload?: () => void;
+  onCancel?: () => void;
+  title?: string | null;
 }
 
 const DashboardExcelUploadViewer: React.FC<Props> = ({
   columns = [],
   sheetName = 'Sheet1',
   headerRowNumber = 1,
-  ruleSchema,
+  ruleSchema = {},
   translateMessages,
   isCheckLocalDuplicates = true,
   columnCheckExistance = [],
   columnCheckNotExistance = [],
+  onCheckUpload = (e) => { },
+  onCancel = () => { },
+  title = null,
 }) => {
   const [data, setData] = useState<ExcelRow[]>([]);
 
@@ -88,24 +98,24 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
     return map;
   }, {} as ColumnMap);
 
+  const columnsWidthFirst = [firstColumn, ...columns]
 
   // biến đổi ruleSchema thành columnMapSchema bằng cách thay các key ruleSchema thành các key columnMap
 
   let columnMapSchema: RuleSchema | undefined = undefined;
-if (ruleSchema && columnMap) {
-  columnMapSchema = Object.keys(ruleSchema).reduce((acc, key) => {
-    // Nếu key có trong columnMap thì dùng key mới, ngược lại giữ nguyên key cũ
-    const newKey = columnMap[key] ? columnMap[key] : key;
-    acc[newKey] = ruleSchema[key];
-    return acc;
-  }, {} as RuleSchema);
-}
+  if (ruleSchema && columnMap) {
+    columnMapSchema = Object.keys(ruleSchema).reduce((acc, key) => {
+      // Nếu key có trong columnMap thì dùng key mới, ngược lại giữ nguyên key cũ
+      const newKey = columnMap[key] ? columnMap[key] : key;
+      acc[newKey] = ruleSchema[key];
+      return acc;
+    }, {} as RuleSchema);
+  }
 
 
 
-  const handleUpload = async (rawData: ExcelRow[]) => {
+  const handleLoadFile = async (rawData: ExcelRow[]) => {
     let enriched = rawData;
-
     if (isCheckLocalDuplicates) {
       // ✅ Bước 1 kiểm tra xem có bị trùng dữ liệu trong rawData của các columnCheckExistance không. nếu có trả ra lỗi 
       enriched = validateLocalDuplicates(rawData, columnCheckExistance);
@@ -117,7 +127,6 @@ if (ruleSchema && columnMap) {
       }
     }
 
-
     // ✅ Bước 2: validate theo schema
     if (ruleSchema) {
       const { results } = validateDataArray(rawData, ruleSchema, translateMessages);
@@ -128,9 +137,6 @@ if (ruleSchema && columnMap) {
         return; // ⛔ Dừng lại nếu có lỗi
       }
     }
-
-
-
 
     // ✅ Bước 3: kiểm tra với database
     enriched = await validateWithDatabase(
@@ -145,34 +151,84 @@ if (ruleSchema && columnMap) {
   };
 
 
+  const handleUploaded = () => {
+    const allRowsValid = data.length > 0 && data.every(row => {
+      return row._errors && Object.keys(row._errors).length === 0;
+    });
+
+    if (allRowsValid) {
+      // loại bỏ _errors và _valid trên mối phần tử của data gán vào originalData
+      const originalData = data.map(({ _errors, _valid, ...rest }) => rest);
+
+      onCheckUpload?.(originalData);
+    } else {
+      onCheckUpload?.(null);
+    }
+  }
 
 
 
   return (
-    <div>
-      <h2>📥 Upload file Excel</h2>
-      <ButtonExcelUploader
-        columnMap={columnMap}
-        sheetName={sheetName}
-        headerRowNumber={headerRowNumber}
-        onUploaded={handleUpload}
-        style={{ marginBottom: '1rem' }}
-      />
-      <ButtonExcelTemplateDownloader
-      ruleSchema={columnMapSchema}
-      
-      ></ButtonExcelTemplateDownloader>
-      
-      <ReactTableBasic
-        data={data}
-        columns={decorateColumnsWithError(columns)}
-        isGlobalFilter={true}
-      />
+    <div className={styles.container}>
+      {title && <h2 className={styles.title}>{title}</h2>}
+      <div className={styles.controls}>
+        <button
+          className={`${styles.button} ${styles.upload}`}
+          onClick={handleUploaded}
+          disabled={!(data.length > 0 && data.every(row => row._valid))}
+        >
+          <img src={uploadIcon} alt="Update" className={`${styles.img} ${data.every(row => row._valid) ? styles.active : styles.unactive}`} />
+          <span className={styles.span}>Upload</span>
+        </button>
+
+
+        <label className={styles.loadButton}>
+          <img src={uploadIcon} alt="Update" className={`${styles.img} ${styles.active}`} />
+          <span className={styles.span}>Load File</span>
+          <ButtonExcelUploader
+            columnMap={columnMap}
+            sheetName={sheetName}
+            headerRowNumber={headerRowNumber}
+            onUploaded={handleLoadFile}
+            style={{ display: 'none' }}
+          ></ButtonExcelUploader>
+        </label>
+
+        <ButtonExcelTemplateDownloader
+          ruleSchema={columnMapSchema || {}}
+          fileName={'mau_nhap_du_lieu.xlsx'}
+          sheetName={sheetName}
+          guideSheet={'Hướng dẫn'}
+          className={`${styles.button} ${styles.download}`}
+        >
+          <img src={uploadIcon} alt="Update" className={`${styles.img} ${styles.active}`} />
+          <span className={styles.span}>Download Template</span>
+        </ButtonExcelTemplateDownloader>
+        <button
+          className={`${styles.button} ${styles.cancel}`}
+          onClick={() => onCancel(true)}
+        >
+          <img src={cancelIcon} alt="Update" className={`${styles.img} ${styles.active}`} />
+          <span className={styles.span}>Cancel</span>
+        </button>
+
+      </div>
+      <div className={styles.table}>
+        <ReactTableBasic
+          data={data}
+          columns={decorateColumnsWithError(columnsWidthFirst)}
+          isGlobalFilter={true}
+        />
+      </div>
+
+
+
     </div>
   );
 };
 
 export default DashboardExcelUploadViewer;
+
 
 
 
@@ -204,9 +260,6 @@ const validateWithDatabase = async (
 
       try {
         const { data, status, errorCode } = await postData({ url: urlCheck, data: payload });
-
-        console.log("data", data);
-        console.log("errorCode", errorCode);
 
         // ✅ Nếu status OK → xử lý theo data
         if (status && data) {

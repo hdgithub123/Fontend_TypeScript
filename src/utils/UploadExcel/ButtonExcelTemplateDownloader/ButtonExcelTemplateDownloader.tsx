@@ -1,16 +1,25 @@
-import React from 'react';
+import React, { Children } from 'react';
 import * as XLSX from 'xlsx-js-style';
-import { autoGenMessageRulesMultiLang } from '../validation/autoGenMessageRulesMultiLang';
-import { messagesVi, messagesEn } from '../validation';
-import type { RuleSchema, TranslateMessageMap } from '../validation';
+import { autoGenMessageRulesMultiLang } from '../../validation/autoGenMessageRulesMultiLang';
+import { messagesVi, messagesEn } from '../../validation';
+import type { RuleSchema, TranslateMessageMap } from '../../validation';
 
-interface Props {
+// interface Props {
+//   ruleSchema: RuleSchema;
+//   fileName?: string;
+//   sheetName?: string;
+//   buttonLabel?: string;
+//   guideSheet?: string;
+//   messagesMap?: TranslateMessageMap;
+// }
+
+export interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   ruleSchema: RuleSchema;
   fileName?: string;
   sheetName?: string;
-  buttonLabel?: string;
-  guideSheet?:string;
+  guideSheet?: string;
   messagesMap?: TranslateMessageMap;
+  children?: React.ReactNode; // 👈 thêm dòng này
 }
 
 const ButtonExcelTemplateDownloader: React.FC<Props> = ({
@@ -18,8 +27,9 @@ const ButtonExcelTemplateDownloader: React.FC<Props> = ({
   fileName = 'mau_nhap_du_lieu.xlsx',
   sheetName = 'Import Sheet',
   guideSheet = 'Hướng dẫn',
-  buttonLabel = '📥 Tải file mẫu',
   messagesMap = messagesVi,
+  children,
+  ...inputProps
 }) => {
   const handleDownload = () => {
     const headers = Object.keys(ruleSchema);
@@ -56,7 +66,7 @@ const ButtonExcelTemplateDownloader: React.FC<Props> = ({
 
   };
 
-  return <button onClick={handleDownload}>{buttonLabel}</button>;
+  return <button {...inputProps} onClick={handleDownload}>{children}</button>;
 };
 
 export default ButtonExcelTemplateDownloader;
@@ -128,7 +138,6 @@ export function createGuideSheet(
   // Style cho các hàng dữ liệu
   headers.forEach((col, index) => {
     const rowIndex = index + 3; // Bắt đầu từ row 3
-    console.log("rowIndex", rowIndex)
     // Style cho cột tên trường (cột A)
     const colCell = XLSX.utils.encode_cell({ r: rowIndex, c: 0 });
     if (!sheet[colCell]) sheet[colCell] = { t: 's', v: col };

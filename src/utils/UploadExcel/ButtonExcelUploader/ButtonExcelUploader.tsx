@@ -1,5 +1,6 @@
 import React from 'react';
-import readExcel from './readExcel';
+import readExcel from '../readExcel';
+import styles from './ButtonExcelUploader.module.scss'
 
 export interface ExcelRow {
   [key: string]: string | number | boolean | null;
@@ -17,7 +18,7 @@ export interface ExcelUploaderProps
 
 const ButtonExcelUploader: React.FC<ExcelUploaderProps> = ({
   columnMap,
-  sheetName = 'Sheet1',
+  sheetName = 'Import Sheet',
   headerRowNumber = 1,
   onUploaded,
   ...inputProps // nhận tất cả các prop còn lại như className, style, id, etc.
@@ -44,14 +45,12 @@ const ButtonExcelUploader: React.FC<ExcelUploaderProps> = ({
     }
   };
   return (
-    <div>
-      <input
-        type="file"
-        accept=".xlsx,.xls"
-        onChange={handleFileUpload}
-        {...inputProps} // truyền các prop như className, style, id, etc.
-      />
-    </div>
+    <input
+      {...inputProps} // truyền các prop như className, style, id, etc.
+      type="file"
+      accept=".xlsx,.xls,.xlsm"
+      onChange={handleFileUpload}
+    />
   );
 };
 

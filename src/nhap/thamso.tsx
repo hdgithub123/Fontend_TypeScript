@@ -32,14 +32,14 @@ import {
 
 
 const columns = [
-    {
-        accessorFn: (row, index) => index + 2,
-        header: 'Dòng số',
-        id: 'STT',
-        filterType: 'text',
-        cell: TextCell,
-        size: '10'
-    },
+    // {
+    //     accessorFn: (row, index) => index + 2,
+    //     header: 'Dòng số',
+    //     id: 'STT',
+    //     filterType: 'text',
+    //     cell: TextCell,
+    //     size: '10'
+    // },
     {
         accessorKey: 'name',
         header: 'Họ và Tên',
@@ -64,15 +64,15 @@ export default columns
 
 
 const columnsUser = [
-    {
-        accessorKey: 'Stt',
-        accessorFn: (row, index) => index + 1,
-        header: 'STT',
-        id: 'STT',
-        // filterType: 'text',
-        cell: TextCell,
-        size: '20px'
-    },
+    // {
+    //     accessorKey: 'Stt',
+    //     accessorFn: (row, index) => index + 1,
+    //     header: 'STT',
+    //     id: 'STT',
+    //     // filterType: 'text',
+    //     cell: TextCell,
+    //     size: '20'
+    // },
     {
         accessorKey: 'code',
         header: 'Username',
@@ -163,7 +163,7 @@ const columnsUser = [
 
 
 const userSchema: RuleSchema = {
-    id: { type: "string", format: "uuid", required: false },
+    // id: { type: "string", format: "uuid", required: false },
     code: { type: "string", required: true, min: 2, max: 100 },
     password: { type: "string", required: false, max: 255 },
     name: { type: "string", required: true, min: 2, max: 255 },
