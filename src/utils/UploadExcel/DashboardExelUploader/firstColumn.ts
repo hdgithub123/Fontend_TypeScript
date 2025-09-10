@@ -30,7 +30,7 @@ import {
 
 const firstColumn = {
     accessorKey: 'Stt',
-    accessorFn: (row, index) => index + 1,
+    accessorFn: (row, index) => index + 2,
     header: '*',
     id: 'STT',
     // filterType: 'text',

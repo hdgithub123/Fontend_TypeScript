@@ -97,10 +97,24 @@ const columnsUser = [
 
     },
     {
-        // accessorKey: 'isActive',
+        accessorKey: 'isActive',
         header: 'Kích Hoạt',
         id: 'isActive',
         accessorFn: row => row.isActive === undefined ? "" : row.isActive === 0 ? "Không kích hoạt" : "Đã kích hoạt",
+        filterType: 'text',
+        // cell: (cell)=>{
+        //     console.log("cell.getValue()",cell.getValue())
+        //     return cell.getValue() === "0" ? "Đã Đạt": "không đạt"
+        // },
+        cell: TextCell,
+
+        enableGlobalFilter: false
+    },
+        {
+        accessorKey: 'isSystem',
+        header: 'Hệ Thống',
+        id: 'isSystem',
+        accessorFn: row => row.isSystem === undefined ? "" : row.isSystem === 0 ? " " : "✅",
         filterType: 'text',
         // cell: (cell)=>{
         //     console.log("cell.getValue()",cell.getValue())

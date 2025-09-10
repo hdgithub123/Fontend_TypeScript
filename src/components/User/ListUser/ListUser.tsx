@@ -45,8 +45,8 @@ import MakeReportTable from '../../MakeReportTable/MakeReportTable'
 import ReactDOM from 'react-dom';
 // import DesignPrint from "../../Print/DesignPrint/DesignPrint";
 import PrintUsers from '../SingleUser/PrintUsers/PrintUsers'
-
-
+import DashboardUsersExcelInsertViewer from "../SingleUser/DashboardUsersExcelInsertViewer/DashboardUsersExcelInsertViewer";
+import DashboardUsersExcelUpdateViewer from "../SingleUser/DashboardUsersExcelUpdateViewer/DashboardUsersExcelUpdateViewer";
 
 interface User {
   id: string,
@@ -73,6 +73,8 @@ const ListUser = () => {
   const [isShowManagerForm, setIsShowManagerForm] = useState(false);
   const [isPrintListDesign, setIsPrintListDesign] = useState(false);
   const [isPrintList, setIsPrintList] = useState(false);
+  const [isImportExcel, setIsImportExcel] = useState(false);
+  const [isUpdateExcel, setIsUpdateExcel] = useState(false);
   const [isPrintMoreUsers, setIsPrintMoreUsers] = useState(false);
   const [selectUsers, setSelectUsers] = useState([]);
 
@@ -150,6 +152,15 @@ const ListUser = () => {
   }
 
 
+  const handleImportExcel = () => {
+    setIsImportExcel(true)
+  }
+
+const handleUpdateExcel = () => {
+   setIsUpdateExcel(true)
+  }
+
+
 
   return (
     <div>
@@ -160,6 +171,8 @@ const ListUser = () => {
         <button onClick={handlePrintListUser}>Print list user</button>
         <button onClick={handlePrintMoreUsers}>Print more users</button>
         <button onClick={handleDeleteUsers}>Delete users</button>
+        <button onClick={handleImportExcel}>Import by Excel</button>
+        <button onClick={handleUpdateExcel}>Update by Excel</button>
       </div>
       <div style={{ height: '500px' }}>
         <ReactTableBasic
@@ -188,6 +201,7 @@ const ListUser = () => {
               }}
               // contentStateObject={blockUser}
               onCancel={handleOnCancelDesign}
+              title="Thiết Kế Mẫu In Danh Sách Người Dùng"
             >
             </DesignPrint>
 
@@ -229,6 +243,40 @@ const ListUser = () => {
 
           </div>, document.body)
         }
+
+
+        {isImportExcel &&
+          ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
+            <DashboardUsersExcelInsertViewer
+            // onCheckUpload={(data)=>{
+            //   console.log("data",data)
+            // }}
+            urlPost={url}
+            onCancel={()=>{
+              setIsImportExcel(false)
+            }}
+            >
+            </DashboardUsersExcelInsertViewer>
+
+          </div>, document.body)
+        }
+        {isUpdateExcel &&
+          ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
+            <DashboardUsersExcelUpdateViewer
+            // onCheckUpload={(data)=>{
+            //   console.log("data",data)
+            // }}
+            urlPost={url}
+            onCancel={()=>{
+              setIsUpdateExcel(false)
+            }}
+            >
+            </DashboardUsersExcelUpdateViewer>
+
+          </div>, document.body)
+        }
+
+
 
 
       </div>

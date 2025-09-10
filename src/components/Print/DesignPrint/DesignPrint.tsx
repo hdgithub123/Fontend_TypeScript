@@ -107,6 +107,7 @@ interface DesignPrintProps {
     fonts?: string[];
     colors?: string[];
     onCancel: () => void;
+    title?: string;
     urlGet: string;
     urlUpdate: string;
     urlDelete: string;
@@ -121,6 +122,7 @@ const DesignPrint: React.FC<DesignPrintProps> = ({
     fonts,
     colors,
     onCancel = () => { },
+    title = "Thiết Kế Mẫu In",
     urlGet,
     urlUpdate,
     urlInsert,
@@ -360,7 +362,7 @@ const DesignPrint: React.FC<DesignPrintProps> = ({
             />
 
             <div className={styles.header}>
-                <h1>Thiết kế mẫu in</h1>
+                <h1>{title}</h1>
             </div>
             <div className={styles.allGroup}>
                 <div className={styles.buttonGroup}>

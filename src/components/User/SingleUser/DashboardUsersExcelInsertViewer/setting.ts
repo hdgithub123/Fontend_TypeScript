@@ -1,3 +1,4 @@
+import type { RuleSchema } from "../../../../utils/validation";
 import {
     ReactTableBasic,
     ReactTableBasicArrowkey,
@@ -30,62 +31,25 @@ import {
 
 
 
-
 const columns = [
-    // {
-    //     accessorFn: (row, index) => index + 2,
-    //     header: 'Dòng số',
-    //     id: 'STT',
-    //     filterType: 'text',
-    //     cell: TextCell,
-    //     size: '10'
-    // },
-    {
-        accessorKey: 'name',
-        header: 'Họ và Tên',
-        id: 'name',
-        filterType: 'text',
-        cell: TextCell,
-
-    },
-    {
-        accessorKey: 'age',
-        header: 'Tuổi',
-        id: 'age',
-        filterType: 'text',
-        cell: TextCell,
-    },
-
-]
-
-export default columns
-
-
-
-
-const columnsUser = [
-    // {
-    //     accessorKey: 'Stt',
-    //     accessorFn: (row, index) => index + 1,
-    //     header: 'STT',
-    //     id: 'STT',
-    //     // filterType: 'text',
-    //     cell: TextCell,
-    //     size: '20'
-    // },
     {
         accessorKey: 'code',
-        header: 'Username',
+        header: 'Tên Đăng Nhập',
         id: 'code',
         filterType: 'text',
         footer: info => `Count: ${CountFooter(info.table)}`,
         cell: TextCell,
-        groupCell: TextGroupCell,
 
     },
     {
+        accessorKey: 'password',
+        header: 'Mật Khẩu',
+        id: 'password',
+        filterType: 'text',
+    },
+    {
         accessorKey: 'name',
-        header: 'Full Name',
+        header: 'Họ Tên',
         id: 'name',
         filterType: 'text',
         cell: TextCell,
@@ -111,7 +75,7 @@ const columnsUser = [
     },
     {
         accessorKey: 'phone',
-        header: 'Phone',
+        header: 'Điện Thoại',
         id: 'phone',
         filterType: 'number',
         cell: TextCell,
@@ -127,44 +91,35 @@ const columnsUser = [
     },
     {
         accessorKey: 'isActive',
+        accessorFn: row => row.isActive === true ? "TRUE" : row.isActive === false ? "FALSE" : "",
         header: 'Kích Hoạt',
         id: 'isActive',
-        //accessorFn: row => row.isActive === undefined ? "" : row.isActive === 0 ? "Không kích hoạt" : "Đã kích hoạt",
-        filterType: 'text',
-        // cell: (cell)=>{
-        //     console.log("cell.getValue()",cell.getValue())
-        //     return cell.getValue() === "0" ? "Đã Đạt": "không đạt"
-        // },
-        // cell: TextCell,
-        cell: (info) => info.getValue() === true ? 'TRUE' : 'FALSE',
-
-        enableGlobalFilter: true
-    },
-    {
-        accessorKey: 'createdAt',
-        accessorFn: row => formatDateTime(row.createdAt),
-        header: 'Ngày tạo',
-        id: 'createdAt',
-        filterType: 'dateTime',
-        cell: (info) => info.getValue(),
-        // cell: DateTimeCell,
-        enableGlobalFilter: false
-    },
-    {
-        accessorKey: 'createdBy',
-        header: 'Người tạo',
-        id: 'createdBy',
-        filterType: 'text',
+        filterType: 'range',
         cell: TextCell,
         enableGlobalFilter: false
     },
+    // {
+    //     accessorKey: 'createdAt',
+    //     header: 'Ngày tạo',
+    //     id: 'createdAt',
+    //     filterType: 'dateTime',
+    //     cell: DateTimeCell,
+    //     enableGlobalFilter: false
+    // },
+    // {
+    //     accessorKey: 'createdBy',
+    //     header: 'Người tạo',
+    //     id: 'createdBy',
+    //     filterType: 'text',
+    //     cell: TextCell,
+    //     enableGlobalFilter: false
+    // },
 
 ]
 
 
-
-const userSchema: RuleSchema = {
-    // id: { type: "string", format: "uuid", required: false },
+const ruleSchema: RuleSchema = {
+    //id: { type: "string", format: "uuid", required: false },
     code: { type: "string", required: true, min: 2, max: 100 },
     password: { type: "string", required: false, max: 255 },
     name: { type: "string", required: true, min: 2, max: 255 },
@@ -173,11 +128,8 @@ const userSchema: RuleSchema = {
     phone: { type: "string", required: false, format: "phone", max: 20 },
     image: { type: "string", required: false, max: 255 },
     isActive: { type: "boolean", required: false },
-    // isSystem: { type: "boolean", required: false },
-    // createdBy: { type: "string", required: false, max: 100 },
-    // updatedBy: { type: "string", required: false, max: 100 },
     // createdAt: { type: "string", format: "datetime", required: false },
-    // updatedAt: { type: "string", format: "datetime", required: false }
+    // createdBy: { type: "string", required: false, max: 100 },
 };
 
 
@@ -193,6 +145,7 @@ const columnCheckExistance = [
 
 const columnCheckNotExistance = [
     //{ columnNames: ['code', 'email'], urlCheck: 'http://localhost:3000/auth/user/check-users' },
+
 ]
 
-export { columnsUser, userSchema, columnCheckExistance, columnCheckNotExistance }
+export { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance };

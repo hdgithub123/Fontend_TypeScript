@@ -506,6 +506,7 @@ export default function UserManagerForm({
             dynamicTexts={userData}
             // contentStateObject={blockUser}
             onCancel={handleOnCancel}
+            title="Thiết kế mẫu in thông tin người dùng"
           >
           </DesignPrint>
 
