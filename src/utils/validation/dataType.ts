@@ -31,6 +31,8 @@ export type TranslateMessageMap = {
   type: string;            // e.g. "{label} must be of type {type}."
   min: string;             // e.g. "{label} must be at least {min}."
   max: string;             // e.g. "{label} must not exceed {max}."
+  minLength: string;       // e.g. "{label} must be at least {minLength} characters long."
+  maxLength: string;       // e.g. "{label} must not exceed {maxLength} characters."
   enum: string;            // e.g. "{label} must be one of the following: {values}."
   regex: string;           // e.g. "{label} does not match the required pattern."
   hasUpperCase: string;    // e.g. "{label} must include at least one uppercase letter."
@@ -51,6 +53,8 @@ export interface SchemaField {
   format?: 'email' | 'url' | 'date' |'datetime' | 'json' | 'uuid'| 'hexColor'|'creditCard'|'phone'|'ip'|'base64'|'jwt';
   min?: number;
   max?: number;
+  minLength?: number;
+  maxLength?: number;
   enum?: string[];
   regex?: string;
   hasUpperCase?: boolean;
@@ -70,6 +74,8 @@ export interface MessageFieldRules {
   format: string;
   min: string;
   max: string;
+  minLength: string;
+  maxLength: string;
   enum: string;
   regex: string;
   hasUpperCase: string;

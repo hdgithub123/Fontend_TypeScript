@@ -27,15 +27,12 @@ interface UserCheckResult {
 
 const checkUserAvailability = async (
   { urlCheckUser = 'http://localhost:3000/auth/user/check-user',
-    urlRefreshToken = 'http://localhost:3000/auth/refresh-token',
     user = {}
   }: {
     urlCheckUser?: string,
-    urlRefreshToken?: string,
     user: user,
   }): Promise<UserCheckResult> => {
 
-  const headers = getAuthHeaders();
   try {
     const fields: { [key: string]: any } = {};
     for (const key in user) {
@@ -54,9 +51,6 @@ const checkUserAvailability = async (
     const res = await postData({
       url: urlCheckUser,
       data: myUserCheck,
-      headers,
-      urlRefreshToken,
-      isCookie: false
     });
 
     const result: { [key: string]: boolean } = {};

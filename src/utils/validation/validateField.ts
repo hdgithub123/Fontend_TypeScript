@@ -75,6 +75,7 @@ function containsXSS(value: string): boolean {
 }
 
 // ✅ Core: Field-level validation
+
 export function validateField(
   value: any,
   schema: SchemaField,
@@ -83,24 +84,65 @@ export function validateField(
   const errors: string[] = [];
   const type = schema.type;
 
+  // 🔒 Required check
   if (schema.required && (value === undefined || value === null || value === '')) {
     errors.push(messages.required || 'This field is required.');
+    return errors;
   }
 
+  // ⛔ Skip further checks if value is null/undefined
   if (value === undefined || value === null) return errors;
 
+  // ✅ Type check
   const typeValid =
     (type === 'array' && Array.isArray(value)) ||
     (type === 'object' && typeof value === 'object' && !Array.isArray(value)) ||
-    (type !== 'array' && type !== 'object' && typeof value === type);
+    (type === 'boolean' && (typeof value === 'boolean' || value === 0 || value === 1)) ||
+    (type === 'number' && typeof value === 'number') ||
+    (type === 'string' && typeof value === 'string');
 
-  if (!typeValid) errors.push(messages.type || `Expected type ${type}.`);
+  if (!typeValid) {
+    errors.push(messages.type || `Expected type ${type}.`);
+    return errors;
+  }
 
-  // if (type === 'string' && typeof value === 'string') {
-   if (type === 'string') {
-    const strVal = value;
+  // 🧠 Boolean validation
+  if (type === 'boolean') {
+    const boolVal = value === true || value === 'true' || value === 1 || value === '1';
+    const falseVal = value === false || value === 'false' || value === 0 || value === '0';
 
-    // XSS check — đưa lên đầu cho rõ
+    if (!boolVal && !falseVal) {
+      errors.push(messages.type || 'Invalid boolean value.');
+    }
+
+    if (schema.enum && !schema.enum.includes(value)) {
+      errors.push(messages.enum || `Must be one of: ${schema.enum.join(', ')}.`);
+    }
+  }
+
+  // 🔢 Number validation
+  if (type === 'number') {
+    if (isNaN(value)) {
+      errors.push(messages.type || 'Invalid number.');
+    }
+
+    if (schema.min !== undefined && value < schema.min) {
+      errors.push(messages.min || `Minimum value is ${schema.min}.`);
+    }
+
+    if (schema.max !== undefined && value > schema.max) {
+      errors.push(messages.max || `Maximum value is ${schema.max}.`);
+    }
+
+    if (schema.enum && !schema.enum.includes(value)) {
+      errors.push(messages.enum || `Must be one of: ${schema.enum.join(', ')}.`);
+    }
+  }
+
+  // 🔤 String validation
+  if (type === 'string') {
+    const strVal = value.trim?.() ?? value;
+
     if (schema.noCheckXSS !== true && containsXSS(strVal)) {
       errors.push(messages.noCheckXSS || 'Possible XSS content detected.');
     }
@@ -109,12 +151,12 @@ export function validateField(
       errors.push(messages.format || `Invalid ${schema.format} format.`);
     }
 
-    if (schema.min !== undefined && strVal.length < schema.min) {
-      errors.push(messages.min || `Minimum length is ${schema.min}.`);
+    if (schema.minLength !== undefined && strVal.length < schema.minLength) {
+      errors.push(messages.minLength || `Minimum length is ${schema.minLength}.`);
     }
 
-    if (schema.max !== undefined && strVal.length > schema.max) {
-      errors.push(messages.max || `Maximum length is ${schema.max}.`);
+    if (schema.maxLength !== undefined && strVal.length > schema.maxLength) {
+      errors.push(messages.maxLength || `Maximum length is ${schema.maxLength}.`);
     }
 
     if (schema.enum && !schema.enum.includes(strVal)) {
@@ -142,11 +184,15 @@ export function validateField(
     }
   }
 
-
-  if (schema.custom && !schema.custom(value)) {
-    errors.push(messages.custom || 'Custom validation failed.');
+  // 🧩 Custom validation
+  if (schema.custom && typeof schema.custom === 'function') {
+    const customValid = schema.custom(value);
+    if (!customValid) {
+      errors.push(messages.custom || 'Custom validation failed.');
+    }
   }
 
   return errors;
 }
+
 

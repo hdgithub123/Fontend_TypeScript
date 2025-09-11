@@ -27,13 +27,13 @@ interface RegistrationFormProps {
 
 const registrationSchema: RuleSchema = {
   id: { type: "string", format: "uuid", required: false },
-  code: { type: "string", required: true, min: 2, max: 100 },
-  password: { type: "string", required: false, max: 255 },
-  name: { type: "string", required: true, min: 2, max: 255 },
-  address: { type: "string", required: false, max: 255 },
-  email: { type: "string", format: "email", required: true, max: 100 },
-  phone: { type: "string", required: false, format: "phone", max: 20 },
-  image: { type: "string", required: false, max: 255 },
+  code: { type: "string", required: true, minLength: 2, maxLength: 100 },
+  password: { type: "string", required: false, maxLength: 255 },
+  name: { type: "string", required: true, minLength: 2, maxLength: 255 },
+  address: { type: "string", required: false, maxLength: 255 },
+  email: { type: "string", format: "email", required: true, maxLength: 100 },
+  phone: { type: "string", required: false, format: "phone", maxLength: 20 },
+  image: { type: "string", required: false, maxLength: 255 },
 };
 
 

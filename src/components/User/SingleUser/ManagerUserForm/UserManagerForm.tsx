@@ -42,26 +42,19 @@ interface UserManagementFormProps {
   onSuccess?: (params: { action: 'insert' | 'update' | 'delete' | 'cancel', user?: User }) => void;
 }
 
-// const userSchema: RuleSchema = {
-//   id: { type: "string", format: "uuid", min: 2, required: false },
-//   code: { type: "string", required: true, min: 2, max: 20, regex: "^[a-zA-Z0-9_]+$" },
-//   password: { type: "string", required: false, min: 2, max: 30 },
-//   name: { type: "string", required: true, min: 2, max: 100 },
-//   email: { type: "string", required: true, format: "email" },
-//   phone: { type: "string", required: false, format: "phone" }
-// };
+
 
 
 const userSchema: RuleSchema = {
   id: { type: "string", format: "uuid", required: false },
-  code: { type: "string", required: true, min: 2, max: 100 },
-  password: { type: "string", required: false, max: 255 },
-  name: { type: "string", required: true, min: 2, max: 255 },
-  address: { type: "string", required: false, max: 255 },
-  email: { type: "string", format: "email", required: true, max: 100 },
-  phone: { type: "string", required: false, format: "phone", max: 20 },
-  image: { type: "string", required: false, max: 255 },
-  isActive: { type: "boolean", required: true },
+  code: { type: "string", required: true, minLength: 2, maxLength: 100 },
+  password: { type: "string", required: false, maxLength: 255 },
+  name: { type: "string", required: true, minLength: 2, maxLength: 255 },
+  address: { type: "string", required: false, maxLength: 255 },
+  email: { type: "string", format: "email", required: true, maxLength: 100 },
+  phone: { type: "string", required: false, format: "phone", maxLength: 20 },
+  image: { type: "string", required: false, maxLength: 255 },
+  isActive: { type: "boolean", required: false },
   // isSystem: { type: "boolean", required: false },
   // createdBy: { type: "string", required: false, max: 100 },
   // updatedBy: { type: "string", required: false, max: 100 },
@@ -129,7 +122,8 @@ export default function UserManagerForm({
         email: user.email,
         phone: user.phone,
         image: user.image,
-        isActive: user.isActive === 1 ? true : false
+        // isActive: user.isActive === 1 ? true : false
+        isActive: user.isActive,
       });
       setIsEditing(true);
       setErrors({})
@@ -142,7 +136,8 @@ export default function UserManagerForm({
         email: user.email,
         phone: user.phone,
         image: user.image,
-        isActive: user.isActive === 1 ? true : false
+        // isActive: user.isActive === 1 ? true : false
+        isActive: user.isActive,
       });
     } else {
       resetForm();
@@ -154,7 +149,7 @@ export default function UserManagerForm({
     const timer = setTimeout(async () => {
       if (userData.code || userData.email) {
         const checkUser = { code: userData.code, email: userData.email, id: userData.id }
-        const result = await checkUserAvailability({ urlCheckUser, urlRefreshToken, user: checkUser });
+        const result = await checkUserAvailability({ urlCheckUser, user: checkUser });
         const newErrors: Partial<User> = {};
         if (result.code) newErrors.code = "Tên đăng nhập đã tồn tại";
         if (result.email) newErrors.email = "Email đã tồn tại";
@@ -272,7 +267,7 @@ export default function UserManagerForm({
       }
 
       const checkUser = { code: userData.code, email: userData.email, id: userData.id }
-      const checkResult = await checkUserAvailability({ urlCheckUser, urlRefreshToken, user: checkUser });
+      const checkResult = await checkUserAvailability({ urlCheckUser, user: checkUser });
       const checkErrors: Partial<User> = {};
       if (checkResult.code) checkErrors.code = "Tên đăng nhập đã tồn tại";
       if (checkResult.email) checkErrors.email = "Email đã tồn tại";
@@ -503,7 +498,7 @@ export default function UserManagerForm({
             urlUpdate="http://localhost:3000/template-contents/user/detail"
             urlDelete="http://localhost:3000/template-contents/user/detail"
             urlInsert="http://localhost:3000/template-contents/user/detail/insert"
-            dynamicTexts={userData}
+            dynamicTexts={userData || {}}
             // contentStateObject={blockUser}
             onCancel={handleOnCancel}
             title="Thiết kế mẫu in thông tin người dùng"
@@ -528,109 +523,4 @@ export default function UserManagerForm({
 
     </div>
   );
-}
-
-
-const blockUser = {
-  "blocks": [
-    {
-      "key": "1fuk8",
-      "text": "Đây là thông tin của user :",
-      "type": "unstyled",
-      "depth": 0,
-      "inlineStyleRanges": [],
-      "entityRanges": [],
-      "data": {}
-    },
-    {
-      "key": "dmv25",
-      "text": "Tên Đăng nhập: {{code}}",
-      "type": "unstyled",
-      "depth": 0,
-      "inlineStyleRanges": [],
-      "entityRanges": [],
-      "data": {}
-    },
-    {
-      "key": "3jvnr",
-      "text": "Mật khẩu: {{password}}",
-      "type": "unstyled",
-      "depth": 0,
-      "inlineStyleRanges": [],
-      "entityRanges": [],
-      "data": {}
-    },
-    {
-      "key": "b6ifd",
-      "text": "Họ và tên: {{name}}",
-      "type": "unstyled",
-      "depth": 0,
-      "inlineStyleRanges": [],
-      "entityRanges": [],
-      "data": {}
-    },
-    {
-      "key": "bt2jg",
-      "text": "Email: {{email}}",
-      "type": "unstyled",
-      "depth": 0,
-      "inlineStyleRanges": [],
-      "entityRanges": [],
-      "data": {}
-    },
-    {
-      "key": "a38h3",
-      "text": "Điện thoại: {{phone}}",
-      "type": "unstyled",
-      "depth": 0,
-      "inlineStyleRanges": [],
-      "entityRanges": [],
-      "data": {}
-    },
-    {
-      "key": "6knof",
-      "text": "Trạng Thái:[{isActive !== true? 'Không hoạt động' : 'Hoạt động'}]",
-      "type": "unstyled",
-      "depth": 0,
-      "inlineStyleRanges": [],
-      "entityRanges": [],
-      "data": {}
-    },
-    {
-      "key": "mainBlock",
-      "text": "",
-      "type": "MAIN_BLOCK",
-      "depth": 0,
-      "inlineStyleRanges": [],
-      "entityRanges": [],
-      "data": {
-        "blockStyle": {
-          "paddingTop": "20mm",
-          "width": "210mm",
-          "marginTop": "0mm",
-          "height": "auto",
-          "paddingRight": "15mm",
-          "marginRight": "0mm",
-          "marginLeft": "0mm",
-          "paddingLeft": "30mm",
-          "marginBottom": "0mm",
-          "paddingBottom": "20mm"
-        },
-        "pageSetup": {
-          "pageHeight": "148mm",
-          "isRepeatThead": true,
-          "pageNumber": {
-            "position": "",
-            "format": "",
-            "style": {
-              "display": "none"
-            }
-          }
-        },
-        "backgroundCss": {},
-        "unit": "mm"
-      }
-    }
-  ],
-  "entityMap": {}
 }

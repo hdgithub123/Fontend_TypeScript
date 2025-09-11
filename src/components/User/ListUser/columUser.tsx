@@ -19,6 +19,7 @@ import {
     NumberCell,
     NumberUsCell,
     NumberVnCell,
+    CheckboxCell,
 
     formatVnDateTime,
     formatUsDateTime,
@@ -100,13 +101,8 @@ const columnsUser = [
         accessorKey: 'isActive',
         header: 'Kích Hoạt',
         id: 'isActive',
-        accessorFn: row => row.isActive === undefined ? "" : row.isActive === 0 ? "Không kích hoạt" : "Đã kích hoạt",
-        filterType: 'text',
-        // cell: (cell)=>{
-        //     console.log("cell.getValue()",cell.getValue())
-        //     return cell.getValue() === "0" ? "Đã Đạt": "không đạt"
-        // },
-        cell: TextCell,
+        filterType: 'multiSelect',
+        cell: CheckboxCell,
 
         enableGlobalFilter: false
     },
@@ -114,24 +110,19 @@ const columnsUser = [
         accessorKey: 'isSystem',
         header: 'Hệ Thống',
         id: 'isSystem',
-        accessorFn: row => row.isSystem === undefined ? "" : row.isSystem === 0 ? " " : "✅",
-        filterType: 'text',
-        // cell: (cell)=>{
-        //     console.log("cell.getValue()",cell.getValue())
-        //     return cell.getValue() === "0" ? "Đã Đạt": "không đạt"
-        // },
-        cell: TextCell,
+        filterType: 'multiSelect',
+        cell: CheckboxCell,
 
         enableGlobalFilter: false
     },
     {
         accessorKey: 'createdAt',
-        accessorFn: row => formatDateTime(row.createdAt),
+        // accessorFn: row => formatDateTime(row.createdAt),
         header: 'Ngày tạo',
         id: 'createdAt',
         filterType: 'dateTime',
-        cell: (info) => info.getValue(),
-        // cell: DateTimeCell,
+        //cell: (info) => info.getValue(),
+        cell: DateTimeCell,
         enableGlobalFilter: false
     },
     {

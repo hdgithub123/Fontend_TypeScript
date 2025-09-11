@@ -20,6 +20,7 @@ import {
     NumberCell,
     NumberUsCell,
     NumberVnCell,
+    CheckboxCell,
 
     formatVnDateTime,
     formatUsDateTime,
@@ -91,12 +92,12 @@ const columns = [
     },
     {
         accessorKey: 'isActive',
-        accessorFn: row => row.isActive === true ? "TRUE" : row.isActive === false ? "FALSE" : "",
+        //accessorFn: row => row.isActive === true ? "TRUE" : row.isActive === false ? "FALSE" : "",
         header: 'Kích Hoạt',
         id: 'isActive',
-        filterType: 'range',
-        cell: TextCell,
-        enableGlobalFilter: false
+        filterType: 'multiSelect',
+        cell: CheckboxCell,
+        enableGlobalFilter: true
     },
     // {
     //     accessorKey: 'createdAt',
@@ -120,13 +121,13 @@ const columns = [
 
 const ruleSchema: RuleSchema = {
     //id: { type: "string", format: "uuid", required: false },
-    code: { type: "string", required: true, min: 2, max: 100 },
-    password: { type: "string", required: false, max: 255 },
-    name: { type: "string", required: true, min: 2, max: 255 },
-    address: { type: "string", required: false, max: 255 },
-    email: { type: "string", format: "email", required: true, max: 100 },
-    phone: { type: "string", required: false, format: "phone", max: 20 },
-    image: { type: "string", required: false, max: 255 },
+    code: { type: "string", required: true, minLength: 2, maxLength: 100 },
+    password: { type: "string", required: false, maxLength: 255 },
+    name: { type: "string", required: true, minLength: 2, maxLength: 255 },
+    address: { type: "string", required: false, maxLength: 255 },
+    email: { type: "string", format: "email", required: true, maxLength: 100 },
+    phone: { type: "string", required: false, format: "phone", maxLength: 20 },
+    image: { type: "string", required: false, maxLength: 255 },
     isActive: { type: "boolean", required: false },
     // createdAt: { type: "string", format: "datetime", required: false },
     // createdBy: { type: "string", required: false, max: 100 },
