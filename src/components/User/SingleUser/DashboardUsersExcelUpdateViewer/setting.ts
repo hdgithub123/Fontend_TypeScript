@@ -128,7 +128,7 @@ const columns = [
 
 
 const ruleSchema: RuleSchema = {
-    id: { type: "string", format: "uuid", required: false },
+    // id: { type: "string", format: "uuid", required: false },
     oldCode: { type: "string", required: true, minLength: 2, maxLength: 100 },
     code: { type: "string", required: false, minLength: 2, maxLength: 100 },
     password: { type: "string", required: false, maxLength: 255 },
