@@ -66,27 +66,12 @@ function Test() {
         setData(result.data);
     }
 
-    const handleOnUploaded = (data: any) => {
-        console.log("data", data)
-    }
-
 
 
 
     return (
         <div>
             <h1>data</h1>
-
-            <DashboardExcelUploadViewer
-                columns={columnsUser}
-                headerRowNumber={1}
-                ruleSchema={ userSchema }
-                translateMessages={ messagesVi}
-                isCheckLocalDuplicates = {true}
-                columnCheckExistance={columnCheckExistance }
-                columnCheckNotExistance={columnCheckNotExistance }
-                onCheckUpload = {handleOnUploaded}
-            ></DashboardExcelUploadViewer>
             <textarea
                 value={body}
                 onChange={(e) => setBody(e.target.value)}

@@ -187,7 +187,7 @@ export default function UserManagerForm({
 
   const handleConfirmSubmit = async () => {
     try {
-      const headers = getAuthHeaders();
+      // const headers = getAuthHeaders();
       let result;
 
       if (isEditing) {
@@ -214,17 +214,24 @@ export default function UserManagerForm({
         result = await putData({
           url: `${urlUpdateUser}/${userData.id}`,
           data: updatedFields,
-          headers,
-          urlRefreshToken,
+          // headers,
+          // urlRefreshToken,
         });
-
         if (result?.status) {
           setUserDefaultData((prev) => ({ ...prev, ...payload }));
           onSuccess?.({ action: "update", user: userData });
+        } else {
+          setAlertinfo({
+              isAlertShow: true,
+              alertMessage: result?.errorCode?.failData?.code ? "Không được sửa tên đăng nhập admin" : "Có lỗi xảy ra",
+              type: "error",
+              title: "Lỗi",
+              showConfirm: true,
+              showCancel: false,
+              onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+              onConfirm: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+            });
         }
-
-
-
       } else {
         const newId = uuidv4();
         const userToCreate: User = {
@@ -319,23 +326,26 @@ export default function UserManagerForm({
       type: "warning", // "error" thường dùng cho lỗi, "warning" hợp hơn cho xác nhận
       title: "Xác nhận xóa",
       onConfirm: async () => {
-        try {
           const result = await deleteData({
             url: `${urlDeleteUser}/${userData.id}`,
-            headers: getAuthHeaders(),
-            data: {},
-            urlRefreshToken,
           });
 
           if (result?.status) {
             onSuccess?.({ action: "delete", user: userData });
             resetForm();
+          }else{
+            // gán alertMessage bằng errorCode.failData.code
+            setAlertinfo({
+              isAlertShow: true,
+              alertMessage: result?.errorCode?.failData?.code ? "Không được xóa tên đăng nhập admin" : result?.errorCode?.failData?.isSystem ? "Không được xóa thông tin hệ thống" : "Xóa người dùng thất bại",
+              type: "error",
+              title: "Lỗi",
+              showConfirm: true,
+              showCancel: false,
+              onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+              onConfirm: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+            });
           }
-        } catch (err) {
-          console.error("Delete failed:", err);
-        } finally {
-          setAlertinfo((prev) => ({ ...prev, isAlertShow: false }));
-        }
       },
       onCancel: () => {
         console.log("Delete cancelled");
