@@ -334,10 +334,9 @@ export default function UserManagerForm({
             onSuccess?.({ action: "delete", user: userData });
             resetForm();
           }else{
-            // gán alertMessage bằng errorCode.failData.code
             setAlertinfo({
               isAlertShow: true,
-              alertMessage: result?.errorCode?.failData?.code ? "Không được xóa tên đăng nhập admin" : result?.errorCode?.failData?.isSystem ? "Không được xóa thông tin hệ thống" : "Xóa người dùng thất bại",
+              alertMessage: result?.errorCode?.failData?.code === "Not allow delete admin" ? "Không được xóa tên đăng nhập admin" : result?.errorCode?.failData?.isSystem === "Cannot delete system records" ? "Không được xóa thông tin hệ thống" : "Xóa người dùng thất bại",
               type: "error",
               title: "Lỗi",
               showConfirm: true,
