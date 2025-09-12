@@ -68,7 +68,7 @@ const putData = async ({
       }
     }else if (error.response) {
       // Lấy dữ liệu lỗi từ server (ví dụ: lỗi SQL, trùng ID, v.v.)
-      return error.response;
+      return error.response.data;
     } else {
       console.error('Lỗi khi gửi dữ liệu:', error);
       return {
