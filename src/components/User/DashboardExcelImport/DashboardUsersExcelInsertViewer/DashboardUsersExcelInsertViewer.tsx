@@ -4,12 +4,12 @@ import { messagesEn,messagesVi } from "../../../../utils/validation";
 import { postData } from "../../../../utils/axios";
 
 
-const DashboardUsersExcelInsertViewer = ({urlPost, onCancel}) => {
+const DashboardUsersExcelInsertViewer = ({urlPost, onCancel, onDone}) => {
 
     const onCheckUpload = async (dataUpload) => {
         const {data, errorCode, status} = await postData({ url: urlPost, data: dataUpload });
         if (status) {
-            onCancel(true);
+            onDone(true);
         }
         
     }

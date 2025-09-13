@@ -42,6 +42,39 @@ import convertColumns from '../../MakeReportTable/convertColumns'
 // image: { label: "Avata", type: "text", placeholder: "Nhập Avata link" },
 // isActive: { label: "Trạng thái (*)", type: "checkbox" }
 
+import React from 'react';
+
+interface ImageCellProps {
+  getValue: () => string;
+  row: any;
+  column: any;
+  table: any;
+}
+
+const ImageCell: React.FC<ImageCellProps> = ({ getValue }) => {
+  const imageUrl = getValue();
+
+  return (
+    <div style={{ textAlign: 'center' , width: '100px', height: '100px' }}>
+        <img
+          src={imageUrl}
+          alt="preview"
+          style={{
+            width: '80px',
+            height: '80px',
+            objectFit: 'cover',
+            borderRadius: '4px',
+            border: 'none',
+          }}
+        //   onError={(e) => {
+        //     e.currentTarget.src = 'https://via.placeholder.com/40?text=❌';
+        //   }}
+        />
+    </div>
+  );
+};
+
+
 
 
 const columnsUser = [
@@ -94,7 +127,7 @@ const columnsUser = [
         header: 'Avata',
         id: 'image',
         filterType: 'text',
-        cell: TextCell,
+        cell: ImageCell,
 
     },
     {
@@ -209,3 +242,6 @@ const columnsUser = [
 // const columnsUser2 = convertColumns(columnsUserString)
 
 export default columnsUser
+
+
+

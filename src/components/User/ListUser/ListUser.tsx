@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // ...existing code...
 import {
@@ -45,8 +45,9 @@ import MakeReportTable from '../../MakeReportTable/MakeReportTable'
 import ReactDOM from 'react-dom';
 // import DesignPrint from "../../Print/DesignPrint/DesignPrint";
 import PrintUsers from '../SingleUser/PrintUsers/PrintUsers'
-import DashboardUsersExcelInsertViewer from "../SingleUser/DashboardUsersExcelInsertViewer/DashboardUsersExcelInsertViewer";
-import DashboardUsersExcelUpdateViewer from "../SingleUser/DashboardUsersExcelUpdateViewer/DashboardUsersExcelUpdateViewer";
+import DashboardUsersExcelInsertViewer from "../DashboardExcelImport/DashboardUsersExcelInsertViewer/DashboardUsersExcelInsertViewer";
+import DashboardUsersExcelUpdateViewer from "../DashboardExcelImport/DashboardUsersExcelUpdateViewer/DashboardUsersExcelUpdateViewer";
+import DeleteUsers from "./DeleteUsers";
 
 interface User {
   id: string,
@@ -76,7 +77,7 @@ const ListUser = () => {
   const [isImportExcel, setIsImportExcel] = useState(false);
   const [isUpdateExcel, setIsUpdateExcel] = useState(false);
   const [isPrintMoreUsers, setIsPrintMoreUsers] = useState(false);
-  const [selectUsers, setSelectUsers] = useState([]);
+  const [selectUsers, setSelectUsers] = useState<any[]>([]);
 
 
 
@@ -88,6 +89,11 @@ const ListUser = () => {
 
     }
   }
+
+
+useEffect(() => {
+    handleGetUser();
+  }, []);
 
   const handleOnRowSelect = (value) => {
     setActiveUser(value);
@@ -132,24 +138,24 @@ const ListUser = () => {
 
   }
 
-  const handleDeleteUsers = async () => {
-    // lọc {id:} từ selectUsers gán vào deleteUsers
-    const deleteUsers = selectUsers
-      .filter((user: any) => user && user.id)
-      .map((user: any) => ({ id: user.id }));
+  // const handleDeleteUsers = async () => {
+  //   // lọc {id:} từ selectUsers gán vào deleteUsers
+  //   const deleteUsers = selectUsers
+  //     .filter((user: any) => user && user.id)
+  //     .map((user: any) => ({ id: user.id }));
 
-    const { status, errorCode } = await deleteData({ url: deleteUrl, data: deleteUsers })
-    if (status) {
-      // xóa đi selectUsers khỏi data gán lại vào setData
-      if (Array.isArray(selectUsers) && selectUsers.length > 0) {
-        const deleteIds = selectUsers.map((user: any) => user.id);
-        setData(prev =>
-          prev.filter((user: any) => !deleteIds.includes(user.id))
-        );
-        setSelectUsers([]);
-      }
-    }
-  }
+  //   const { status, errorCode } = await deleteData({ url: deleteUrl, data: deleteUsers })
+  //   if (status) {
+  //     // xóa đi selectUsers khỏi data gán lại vào setData
+  //     if (Array.isArray(selectUsers) && selectUsers.length > 0) {
+  //       const deleteIds = selectUsers.map((user: any) => user.id);
+  //       setData(prev =>
+  //         prev.filter((user: any) => !deleteIds.includes(user.id))
+  //       );
+  //       setSelectUsers([]);
+  //     }
+  //   }
+  // }
 
 
   const handleImportExcel = () => {
@@ -170,7 +176,12 @@ const handleUpdateExcel = () => {
         <button onClick={handlePrintListDesignUser}>Design Print list user</button>
         <button onClick={handlePrintListUser}>Print list user</button>
         <button onClick={handlePrintMoreUsers}>Print more users</button>
-        <button onClick={handleDeleteUsers}>Delete users</button>
+        <DeleteUsers
+          deleteUrl={deleteUrl}
+          selectUsers={selectUsers}
+          setSelectUsers={setSelectUsers}
+          setData={setData}
+        />
         <button onClick={handleImportExcel}>Import by Excel</button>
         <button onClick={handleUpdateExcel}>Update by Excel</button>
       </div>
@@ -255,6 +266,10 @@ const handleUpdateExcel = () => {
             onCancel={()=>{
               setIsImportExcel(false)
             }}
+            onDone={()=>{
+              setIsImportExcel(false)
+              handleGetUser()
+            }}
             >
             </DashboardUsersExcelInsertViewer>
 
@@ -269,6 +284,10 @@ const handleUpdateExcel = () => {
             urlPost={url}
             onCancel={()=>{
               setIsUpdateExcel(false)
+            }}
+            onDone={()=>{
+              setIsUpdateExcel(false)
+              handleGetUser()
             }}
             >
             </DashboardUsersExcelUpdateViewer>

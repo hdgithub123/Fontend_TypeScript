@@ -5,7 +5,7 @@ import { messagesEn, messagesVi } from "../../../../utils/validation";
 import { postData, putData } from "../../../../utils/axios";
 
 
-const DashboardUsersExcelUpdateViewer = ({ urlPost, onCancel }) => {
+const DashboardUsersExcelUpdateViewer = ({ urlPost, onCancel,onDone }) => {
     const urlidscodes =ListIdsConfig?.url || "http://localhost:3000/auth/user/ids-codes"
 
     const onCheckUpload = async (dataUpload) => {
@@ -24,10 +24,17 @@ const DashboardUsersExcelUpdateViewer = ({ urlPost, onCancel }) => {
                 return item; // nếu không tìm thấy thì giữ nguyên
             });
 
+            //kiểm tra xem oldCodes có code = admin không nếu có thì dừng lại và thông báo lỗi cho người dùng
+            const hasAdmin = oldCodes.some(code => code === 'admin');
+            if (hasAdmin) {
+                alert('Không được update user có mã là admin');
+                return;
+            }
             //thực hiên update users
             const { data: dataUpdate, errorCode: errorCodeUpdate, status: statusUpdate } = await putData({ url: urlPost, data: newDataUpload });
+             
             if (statusUpdate) {
-                onCancel(true);
+                onDone(true);
             }
         }
     }

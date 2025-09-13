@@ -223,7 +223,7 @@ export default function UserManagerForm({
         } else {
           setAlertinfo({
               isAlertShow: true,
-              alertMessage: result?.errorCode?.failData?.code ? "Không được sửa tên đăng nhập admin" : "Có lỗi xảy ra",
+              alertMessage: result?.errorCode?.failData?.code === "Not allow edit admin" ? "Không được sửa tên đăng nhập admin" : "Có lỗi xảy ra",
               type: "error",
               title: "Lỗi",
               showConfirm: true,
