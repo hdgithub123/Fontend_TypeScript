@@ -47,6 +47,7 @@ import type {
   ValidationResult,
 } from '../../validation';
 
+import LoadingOverlay from '../../LoadingOverlay/LoadingOverlay';
 
 
 import type { ExcelRow, ColumnMap } from '../readExcel'
@@ -114,6 +115,7 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
   ListIdsConfig = {},
 }) => {
   const [data, setData] = useState<ExcelRow[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const columnMap: ColumnMap = columns.reduce((map, col) => {
     map[col.id] = col.header;
@@ -137,6 +139,7 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
 
 
   const handleLoadFile = async (rawData: ExcelRow[]) => {
+    setIsLoading(true);
     let enriched = rawData;
     if (isCheckLocalDuplicates) {
       // ✅ Bước 1 kiểm tra xem có bị trùng dữ liệu trong rawData của các columnCheckExistance không. nếu có trả ra lỗi 
@@ -145,6 +148,7 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
       if (hasLocalDuplicates) {
         enriched = markErrorValues(enriched);
         setData(enriched);
+        setIsLoading(false);
         return;
       }
     }
@@ -152,10 +156,12 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
     // ✅ Bước 2: validate theo schema
     if (ruleSchema) {
       const { results } = validateDataArray(rawData, ruleSchema, translateMessages);
+
       enriched = enrichDataWithErrors(rawData, results);
       const hasErrors = enriched.some(row => row._errors && Object.keys(row._errors).length > 0);
       if (hasErrors) {
         setData(enriched);
+        setIsLoading(false);
         return; // ⛔ Dừng lại nếu có lỗi
       }
     }
@@ -170,9 +176,8 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
     // thêm ERROR: vào trước mỗi ô bị lỗi
     enriched = markErrorValues(enriched);
     // ✅ Cập nhật dữ liệu cuối cùng
-
-    console.log("enriched", enriched)
     setData(enriched);
+    setIsLoading(false);
   };
 
 
@@ -195,6 +200,12 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
 
   return (
     <div className={styles.container}>
+      {isLoading && (
+        <LoadingOverlay
+          message="Đang xử lý dữ liệu, vui lòng chờ..."
+          onDoubleClick={() => setIsLoading(false)}
+        ></LoadingOverlay>
+      )}
       {title && <h2 className={styles.title}>{title}</h2>}
       <div className={styles.controls}>
         <button

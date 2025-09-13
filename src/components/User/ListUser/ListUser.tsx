@@ -48,6 +48,10 @@ import PrintUsers from '../SingleUser/PrintUsers/PrintUsers'
 import DashboardUsersExcelInsertViewer from "../DashboardExcelImport/DashboardUsersExcelInsertViewer/DashboardUsersExcelInsertViewer";
 import DashboardUsersExcelUpdateViewer from "../DashboardExcelImport/DashboardUsersExcelUpdateViewer/DashboardUsersExcelUpdateViewer";
 import DeleteUsers from "./DeleteUsers";
+import NotifyNotSelectedButton from "./Notifibutton";
+import styles from './ListUser.module.scss'
+
+
 
 interface User {
   id: string,
@@ -91,7 +95,7 @@ const ListUser = () => {
   }
 
 
-useEffect(() => {
+  useEffect(() => {
     handleGetUser();
   }, []);
 
@@ -138,54 +142,39 @@ useEffect(() => {
 
   }
 
-  // const handleDeleteUsers = async () => {
-  //   // lọc {id:} từ selectUsers gán vào deleteUsers
-  //   const deleteUsers = selectUsers
-  //     .filter((user: any) => user && user.id)
-  //     .map((user: any) => ({ id: user.id }));
-
-  //   const { status, errorCode } = await deleteData({ url: deleteUrl, data: deleteUsers })
-  //   if (status) {
-  //     // xóa đi selectUsers khỏi data gán lại vào setData
-  //     if (Array.isArray(selectUsers) && selectUsers.length > 0) {
-  //       const deleteIds = selectUsers.map((user: any) => user.id);
-  //       setData(prev =>
-  //         prev.filter((user: any) => !deleteIds.includes(user.id))
-  //       );
-  //       setSelectUsers([]);
-  //     }
-  //   }
-  // }
-
 
   const handleImportExcel = () => {
     setIsImportExcel(true)
   }
 
-const handleUpdateExcel = () => {
-   setIsUpdateExcel(true)
+  const handleUpdateExcel = () => {
+    setIsUpdateExcel(true)
   }
 
 
 
   return (
-    <div>
-      <div>
-        <button onClick={handleGetUser}>get url user</button>
-        <button onClick={handleCreateUser}>create new user</button>
-        <button onClick={handlePrintListDesignUser}>Design Print list user</button>
-        <button onClick={handlePrintListUser}>Print list user</button>
-        <button onClick={handlePrintMoreUsers}>Print more users</button>
+    <div className={styles.container}>
+      <h1 className={styles.header}>Quản lý User</h1>
+      <div className={styles.buttonGroup}>
+        <button onClick={handleGetUser} className={styles.buttonGet} >Refresh</button>
+        <button onClick={handleCreateUser} className={styles.buttonCreate} >Add New</button>
+        <NotifyNotSelectedButton className={styles.buttonDesign} data={selectUsers} onTrigger={handlePrintListDesignUser} > Design Print list</NotifyNotSelectedButton>
+        <NotifyNotSelectedButton className={styles.buttonPrint} data={selectUsers} onTrigger={handlePrintListUser} > Print list</NotifyNotSelectedButton>
+        <NotifyNotSelectedButton className={styles.buttonPrintMore} data={selectUsers} onTrigger={handlePrintMoreUsers} > Print more</NotifyNotSelectedButton>
         <DeleteUsers
           deleteUrl={deleteUrl}
           selectUsers={selectUsers}
           setSelectUsers={setSelectUsers}
           setData={setData}
+          className={styles.buttonDelete}
         />
-        <button onClick={handleImportExcel}>Import by Excel</button>
-        <button onClick={handleUpdateExcel}>Update by Excel</button>
+        <button onClick={handleImportExcel} className={styles.buttonImport}>Add by Excel</button>
+        <button onClick={handleUpdateExcel} className={styles.buttonUpdate}>Update by Excel</button>
       </div>
-      <div style={{ height: '500px' }}>
+
+
+      <div className={styles.tableContainer}>
         <ReactTableBasic
           data={data}
           columns={columnsUser}
@@ -195,6 +184,8 @@ const handleUpdateExcel = () => {
           fieldUnique={'id'}
         >
         </ReactTableBasic>
+      </div>
+      <div className={styles.childContainer}>
         {isShowManagerForm && <UserManagerForm
           user={activeUser}
           onSuccess={handleOnSuccess}
@@ -259,17 +250,17 @@ const handleUpdateExcel = () => {
         {isImportExcel &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
             <DashboardUsersExcelInsertViewer
-            // onCheckUpload={(data)=>{
-            //   console.log("data",data)
-            // }}
-            urlPost={url}
-            onCancel={()=>{
-              setIsImportExcel(false)
-            }}
-            onDone={()=>{
-              setIsImportExcel(false)
-              handleGetUser()
-            }}
+              // onCheckUpload={(data)=>{
+              //   console.log("data",data)
+              // }}
+              urlPost={url}
+              onCancel={() => {
+                setIsImportExcel(false)
+              }}
+              onDone={() => {
+                setIsImportExcel(false)
+                handleGetUser()
+              }}
             >
             </DashboardUsersExcelInsertViewer>
 
@@ -278,25 +269,22 @@ const handleUpdateExcel = () => {
         {isUpdateExcel &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
             <DashboardUsersExcelUpdateViewer
-            // onCheckUpload={(data)=>{
-            //   console.log("data",data)
-            // }}
-            urlPost={url}
-            onCancel={()=>{
-              setIsUpdateExcel(false)
-            }}
-            onDone={()=>{
-              setIsUpdateExcel(false)
-              handleGetUser()
-            }}
+              // onCheckUpload={(data)=>{
+              //   console.log("data",data)
+              // }}
+              urlPost={url}
+              onCancel={() => {
+                setIsUpdateExcel(false)
+              }}
+              onDone={() => {
+                setIsUpdateExcel(false)
+                handleGetUser()
+              }}
             >
             </DashboardUsersExcelUpdateViewer>
 
           </div>, document.body)
         }
-
-
-
 
       </div>
     </div>

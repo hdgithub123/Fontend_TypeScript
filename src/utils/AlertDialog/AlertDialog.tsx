@@ -16,6 +16,19 @@ interface AlertDialogProps {
     showCancel?: boolean;
 }
 
+export interface AlertInfo {
+    isAlertShow: boolean;
+    alertMessage: string;
+    type: AlertType;
+    title: string;
+    onConfirm?: () => void;
+    onCancel?: () => void;
+    onClose?: () => void;
+    showConfirm?: boolean,
+    showCancel?: boolean,
+}
+
+
 const AlertDialog: React.FC<AlertDialogProps> = ({
     type = 'info',
     title,
@@ -37,8 +50,8 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
             </div>
             <div className={styles.alertBody}>{message}</div>
             <div className={styles.alertActions}>
-                {showConfirm && <button onClick={onConfirm}>OK</button>}
-                {showCancel && <button onClick={onCancel}>Cancel</button>}
+                {showConfirm && <button className={styles.confirmBtn} onClick={onConfirm}>OK</button>}
+                {showCancel && <button className={styles.cancelBtn} onClick={onCancel}>Cancel</button>}
             </div>
         </div>
     );
@@ -47,14 +60,3 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
 export default AlertDialog;
 
 
-export interface AlertInfo {
-    isAlertShow: boolean;
-    alertMessage: string;
-    type: AlertType;
-    title: string;
-    onConfirm?: () => void;
-    onCancel?: () => void;
-    onClose?: () => void;
-    showConfirm?: boolean,
-    showCancel?: boolean,
-}

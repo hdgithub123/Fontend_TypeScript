@@ -43,6 +43,8 @@ import convertColumns from '../../MakeReportTable/convertColumns'
 // isActive: { label: "Trạng thái (*)", type: "checkbox" }
 
 import React from 'react';
+import avatarIcon from './avatar.svg'
+
 
 interface ImageCellProps {
   getValue: () => string;
@@ -55,20 +57,20 @@ const ImageCell: React.FC<ImageCellProps> = ({ getValue }) => {
   const imageUrl = getValue();
 
   return (
-    <div style={{ textAlign: 'center' , width: '100px', height: '100px' }}>
+    <div style={{ textAlign: 'center' , width: '100%', height: '40px', alignItems: 'center', display: 'flex', justifyContent: 'center' }}>
         <img
           src={imageUrl}
           alt="preview"
           style={{
-            width: '80px',
-            height: '80px',
+            width: '30px',
+            height: '30px',
             objectFit: 'cover',
-            borderRadius: '4px',
+            borderRadius: '50%',
             border: 'none',
           }}
-        //   onError={(e) => {
-        //     e.currentTarget.src = 'https://via.placeholder.com/40?text=❌';
-        //   }}
+          onError={(e) => {
+            e.currentTarget.src = avatarIcon;
+          }}
         />
     </div>
   );

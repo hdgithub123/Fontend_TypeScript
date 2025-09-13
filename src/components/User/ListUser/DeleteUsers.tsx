@@ -2,13 +2,14 @@
 import { deleteData } from "../../../utils/axios";
 import { AlertDialog, type AlertInfo } from '../../../utils/AlertDialog';
 import { useState } from "react";
-interface DeleteUsersProps {
-    deleteUrl: string;
-    selectUsers: any[];
-    setSelectUsers: (users: any[]) => void;
-    setData: (data: any) => void;
+interface DeleteUsersProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  deleteUrl: string;
+  selectUsers: any[];
+  setSelectUsers: (users: any[]) => void;
+  setData: (data: any) => void;
+  children?: React.ReactNode;
 }
-const DeleteUsers = ({ deleteUrl, selectUsers, setSelectUsers, setData }: DeleteUsersProps) => {
+const DeleteUsers = ({ deleteUrl, selectUsers, setSelectUsers, setData, children, ...buttonProps }: DeleteUsersProps) => {
 
     const [alertinfo, setAlertinfo] = useState<AlertInfo>({
         isAlertShow: false,
@@ -20,6 +21,22 @@ const DeleteUsers = ({ deleteUrl, selectUsers, setSelectUsers, setData }: Delete
     });
 
     const handleDeleteUsers = async () => {
+
+        // nếu selectUsers rỗng thì thông báo lỗi
+        if (!Array.isArray(selectUsers) || selectUsers.length === 0) {
+            setAlertinfo({
+                isAlertShow: true,
+                alertMessage: 'Không có người dùng nào được chọn để xóa.',
+                type: 'error',
+                title: 'Lỗi',
+                showConfirm: false,
+                showCancel: true,
+                onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+                onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+            });
+            return;
+        }
+
         // lọc {id:} từ selectUsers gán vào deleteUsers
         const deleteUsers = selectUsers
             .filter((user: any) => user && user.id)
@@ -77,7 +94,7 @@ const DeleteUsers = ({ deleteUrl, selectUsers, setSelectUsers, setData }: Delete
                 showConfirm={alertinfo.showConfirm ?? true}
                 showCancel={alertinfo.showCancel ?? true}
             />
-            <button onClick={handleDeleteUsers}>Xóa người dùng</button>
+            <button {...buttonProps} onClick={handleDeleteUsers}>{children?children:"Delete"}</button>
         </div>
     );
 }
