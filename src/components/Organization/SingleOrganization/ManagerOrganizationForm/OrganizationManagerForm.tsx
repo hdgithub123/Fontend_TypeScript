@@ -483,7 +483,7 @@ export default function OrganizationManagerForm({
             onClick={() => { setIsPrintView(true) }}
             disabled={isSubmitting}
           >
-            print view
+            Print
           </button>
           )}
         </div>

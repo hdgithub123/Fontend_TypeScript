@@ -98,7 +98,7 @@ const authorizationExample2 = {
   update: false,
   delete: false,
 
-  viewList: true,
+  viewList: false,
   addList: false,
   updateList: false,
   deleteList: false,
@@ -263,7 +263,7 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
               urlDelete="http://localhost:3000/template-contents/organizations/detail"
               urlInsert="http://localhost:3000/template-contents/organizations/detail/insert"
               dynamicTables={{
-                organization: data
+                organization: selectOrganizations
               }}
               // contentStateObject={blockOrganization}
               onCancel={handleOnCancelDesign}

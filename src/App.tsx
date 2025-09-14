@@ -17,7 +17,6 @@ function App() {
         {/* Route không dùng layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Loguot />} />
-        <Route path="/organization" element={<Organization />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
         {/* Route dùng layout chung */}
@@ -25,6 +24,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="user" element={<User />} />
+          <Route path="/organization" element={<Organization />} />
         </Route>
       </Routes>
     </BrowserRouter>

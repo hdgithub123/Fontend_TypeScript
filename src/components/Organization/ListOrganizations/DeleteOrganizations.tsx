@@ -26,7 +26,7 @@ const DeleteOrganizations = ({ deleteUrl, selectOrganizations, setSelectOrganiza
         if (!Array.isArray(selectOrganizations) || selectOrganizations.length === 0) {
             setAlertinfo({
                 isAlertShow: true,
-                alertMessage: 'Không có người dùng nào được chọn để xóa.',
+                alertMessage: 'Không có dữ liệu nào được chọn để xóa.',
                 type: 'error',
                 title: 'Lỗi',
                 showConfirm: false,
@@ -45,7 +45,7 @@ const DeleteOrganizations = ({ deleteUrl, selectOrganizations, setSelectOrganiza
         // tạo thông báo xác nhận xóa
         setAlertinfo({
             isAlertShow: true,
-            alertMessage: 'Bạn có chắc chắn muốn xóa những người dùng đã chọn?',
+            alertMessage: 'Bạn có chắc chắn muốn xóa những dữ liệu đã chọn?',
             type: 'warning',
             title: 'Xác nhận',
             showConfirm: true,
@@ -66,7 +66,7 @@ const DeleteOrganizations = ({ deleteUrl, selectOrganizations, setSelectOrganiza
                 } else {
                     setAlertinfo({
                         isAlertShow: true,
-                        alertMessage: result?.errorCode?.failData?.code === "Not allow delete admin" ? "Không được xóa tên đăng nhập admin" : result?.errorCode?.failData?.isSystem === "Cannot delete system records" ? "Không được xóa thông tin hệ thống" : "Xóa người dùng thất bại",
+                        alertMessage: result?.errorCode?.failData?.isSystem === "Cannot delete system records" ? "Không được xóa thông tin hệ thống" : "Xóa dữ liệu thất bại",
                         type: "error",
                         title: "Lỗi",
                         showConfirm: true,

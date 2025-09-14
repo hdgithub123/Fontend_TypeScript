@@ -65,11 +65,60 @@ interface User {
 
 const zoneId = '8e522402-3611-11f0-b432-0242ac110002'; //-- chi nhanh HCM-- con
 //const zoneId = '8e4f3a13-3611-11f0-b432-0242ac110002'; // -- tong cong ty -- cha
+const authorizationExample = {
+  view: true,
+  add: true,
+  update: true,
+  delete: true,
 
+  viewList: true,
+  addList: true,
+  updateList: true,
+  deleteList: true,
 
+  viewPrintDesign: true,
+  addPrintDesign: false,
+  updatePrintDesign: false,
+  deletePrintDesign: false,
 
+  viewPrintDesignList: true,
+  addPrintDesignList: false,
+  updatePrintDesignList: false,
+  deletePrintDesignList: false,
 
-const ListUser = () => {
+  print: true,
+  printList: true,
+
+  exportExcel: false,
+}
+
+const authorizationExample2 = {
+  view: false,
+  add: false,
+  update: false,
+  delete: false,
+
+  viewList: false,
+  addList: false,
+  updateList: false,
+  deleteList: false,
+
+  viewPrintDesign: false,
+  addPrintDesign: false,
+  updatePrintDesign: false,
+  deletePrintDesign: false,
+
+  viewPrintDesignList: false,
+  addPrintDesignList: false,
+  updatePrintDesignList: false,
+  deletePrintDesignList: false,
+
+  print: false,
+  printList: false,
+  exportExcel: false,
+}
+
+const ListUser = ({ authorization = authorizationExample }) => {
   const url: string = 'http://localhost:3000/auth/user/list'
   const urlRefreshToken: string = 'http://localhost:3000/auth/refresh-token'
   const deleteUrl: string = 'http://localhost:3000/auth/user/list'
@@ -96,7 +145,11 @@ const ListUser = () => {
 
 
   useEffect(() => {
+     if (authorization.viewList) {
     handleGetUser();
+     } else {
+      setData([]);
+     }
   }, []);
 
   const handleOnRowSelect = (value) => {
@@ -105,7 +158,6 @@ const ListUser = () => {
 
   }
   const handleOnRowsSelect = (value) => {
-    console.log(value)
     setSelectUsers(value)
   }
 
@@ -157,24 +209,24 @@ const ListUser = () => {
     <div className={styles.container}>
       <h1 className={styles.header}>Quản lý User</h1>
       <div className={styles.buttonGroup}>
-        <button onClick={handleGetUser} className={styles.buttonGet} >Refresh</button>
-        <button onClick={handleCreateUser} className={styles.buttonCreate} >Add New</button>
-        <NotifyNotSelectedButton className={styles.buttonDesign} data={selectUsers} onTrigger={handlePrintListDesignUser} > Design Print list</NotifyNotSelectedButton>
-        <NotifyNotSelectedButton className={styles.buttonPrint} data={selectUsers} onTrigger={handlePrintListUser} > Print list</NotifyNotSelectedButton>
-        <NotifyNotSelectedButton className={styles.buttonPrintMore} data={selectUsers} onTrigger={handlePrintMoreUsers} > Print more</NotifyNotSelectedButton>
-        <DeleteUsers
+         {authorization.viewList && <button onClick={handleGetUser} className={styles.buttonGet} >Refresh</button>}
+        {authorization.addList && <button onClick={handleCreateUser} className={styles.buttonCreate} >Add New</button>}
+        {authorization.viewPrintDesignList && <NotifyNotSelectedButton className={styles.buttonDesign} data={selectUsers} onTrigger={handlePrintListDesignUser} > Design Print list</NotifyNotSelectedButton>}
+        {authorization.printList && <NotifyNotSelectedButton className={styles.buttonPrint} data={selectUsers} onTrigger={handlePrintListUser} > Print list</NotifyNotSelectedButton>}
+        {authorization.print && <NotifyNotSelectedButton className={styles.buttonPrintMore} data={selectUsers} onTrigger={handlePrintMoreUsers} > Print more</NotifyNotSelectedButton>}
+        {authorization.deleteList && <DeleteUsers
           deleteUrl={deleteUrl}
           selectUsers={selectUsers}
           setSelectUsers={setSelectUsers}
           setData={setData}
           className={styles.buttonDelete}
-        />
-        <button onClick={handleImportExcel} className={styles.buttonImport}>Add by Excel</button>
-        <button onClick={handleUpdateExcel} className={styles.buttonUpdate}>Update by Excel</button>
+        />}
+        {authorization.addList && <button onClick={handleImportExcel} className={styles.buttonImport}>Add by Excel</button>}
+        {authorization.updateList && <button onClick={handleUpdateExcel} className={styles.buttonUpdate}>Update by Excel</button>}
       </div>
 
 
-      <div className={styles.tableContainer}>
+      {authorization.viewList &&<div className={styles.tableContainer}>
         <ReactTableBasic
           data={data}
           columns={columnsUser}
@@ -182,16 +234,18 @@ const ListUser = () => {
           onOriginalRowSelect={handleOnRowSelect}
           onOriginalRowsSelect={handleOnRowsSelect}
           fieldUnique={'id'}
+          exportFile={authorization.exportExcel ? { name: "User.xlsx", sheetName: "Sheet1", title: "Danh sách user", description: null } : null}
         >
         </ReactTableBasic>
-      </div>
+      </div>}
       <div className={styles.childContainer}>
-        {isShowManagerForm && <UserManagerForm
+        {isShowManagerForm && authorization.view && <UserManagerForm
           user={activeUser}
           onSuccess={handleOnSuccess}
+           authorization={authorization}
         ></UserManagerForm>}
 
-        {isPrintListDesign &&
+        {isPrintListDesign && authorization.viewPrintDesignList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '100vh', scale: '0.9', overflowY: 'auto', overflowX: 'auto' }} >
             <DesignPrint
               urlGet="http://localhost:3000/template-contents/users/list"
@@ -199,11 +253,17 @@ const ListUser = () => {
               urlDelete="http://localhost:3000/template-contents/users/detail"
               urlInsert="http://localhost:3000/template-contents/users/detail/insert"
               dynamicTables={{
-                user: data
+                user: selectUsers
               }}
               // contentStateObject={blockUser}
               onCancel={handleOnCancelDesign}
               title="Thiết Kế Mẫu In Danh Sách Người Dùng"
+              authorization={{
+                add: authorization.addPrintDesignList,
+                update: authorization.updatePrintDesignList,
+                delete: authorization.deletePrintDesignList,
+                view: authorization.viewPrintDesignList,
+              }}
             >
             </DesignPrint>
 
@@ -211,7 +271,7 @@ const ListUser = () => {
         }
 
 
-        {isPrintList &&
+        {isPrintList && authorization.printList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
             <PrintPreview
               // dynamicTexts={userData}
@@ -227,7 +287,7 @@ const ListUser = () => {
           </div>, document.body)
         }
 
-        {isPrintMoreUsers &&
+        {isPrintMoreUsers && authorization.print &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
             <PrintUsers
               data={selectUsers}
@@ -247,7 +307,7 @@ const ListUser = () => {
         }
 
 
-        {isImportExcel &&
+        {isImportExcel && authorization.addList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
             <DashboardUsersExcelInsertViewer
               // onCheckUpload={(data)=>{
@@ -266,7 +326,7 @@ const ListUser = () => {
 
           </div>, document.body)
         }
-        {isUpdateExcel &&
+        {isUpdateExcel && authorization.updateList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
             <DashboardUsersExcelUpdateViewer
               // onCheckUpload={(data)=>{

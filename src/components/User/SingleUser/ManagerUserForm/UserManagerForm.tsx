@@ -80,9 +80,9 @@ export default function UserManagerForm({
   urlUpdateUser = 'http://localhost:3000/auth/user/detail',
   urlDeleteUser = 'http://localhost:3000/auth/user/detail',
 
-  urlRefreshToken = 'http://localhost:3000/auth/refresh-token',
   user = null, // Changed parameter name
-  onSuccess = () => { }
+  onSuccess = () => { },
+  authorization = {}
 }: UserManagementFormProps) {
   const [userData, setUserData] = useState<User>({
     code: "",
@@ -426,11 +426,11 @@ export default function UserManagerForm({
         showConfirm={alertinfo.showConfirm ?? true}
         showCancel={alertinfo.showCancel ?? true}
       />
-      <h2 className={styles.title}>
+      {authorization.view && <h2 className={styles.title}>
         {isEditing ? `Cập nhật người dùng` : "Thêm người dùng mới"}
-      </h2>
+      </h2>}
 
-      <form className={styles.userForm}>
+      {(authorization.add || authorization.update) && <form className={styles.userForm}>
         {Object.entries(fieldLabels).map(([field, { label, type, placeholder }]) => (
           <div className={styles.formGroup} key={field}>
             <label htmlFor={field}>{label}:</label>
@@ -459,7 +459,7 @@ export default function UserManagerForm({
 
 
         <div className={styles.buttonGroup}>
-          {!isEditing && (
+          {!isEditing && authorization.add && (
             <button
               type="submit"
               className={styles.submitBtn}
@@ -470,7 +470,7 @@ export default function UserManagerForm({
             </button>
           )}
 
-          {isEditing && (
+          {isEditing && authorization.update && (
             <button
               type="submit"
               className={styles.submitBtn}
@@ -481,7 +481,7 @@ export default function UserManagerForm({
             </button>
           )}
 
-          {isEditing && (
+          {isEditing && authorization.delete && (
             <button
               type="button"
               className={styles.deleteBtn}
@@ -501,7 +501,7 @@ export default function UserManagerForm({
             Hủy
           </button>
 
-          {isEditing && (<button
+          {isEditing && authorization.viewPrintDesign && (<button
             type="button"
             className={styles.cancelBtn}
             onClick={() => { setIsPrintDesign(true) }}
@@ -510,19 +510,20 @@ export default function UserManagerForm({
             Design print
           </button>
           )}
-          {isEditing && (<button
+          {isEditing && authorization.print && (<button
             type="button"
             className={styles.cancelBtn}
             onClick={() => { setIsPrintView(true) }}
             disabled={isSubmitting}
           >
-            print view
+            Print
           </button>
           )}
         </div>
       </form>
+      }
 
-      {isPrintDesign &&
+      {isPrintDesign && authorization.viewPrintDesign &&
         ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '100vh', scale: '0.9', overflowY: 'auto', overflowX: 'auto' }} >
           <DesignPrint
             urlGet="http://localhost:3000/template-contents/user/list"
@@ -533,13 +534,19 @@ export default function UserManagerForm({
             // contentStateObject={blockUser}
             onCancel={handleOnCancel}
             title="Thiết kế mẫu in thông tin người dùng"
+            authorization={{
+              add: authorization.addPrintDesign,
+              update: authorization.updatePrintDesign,
+              delete: authorization.deletePrintDesign,
+              view: authorization.viewPrintDesign,
+            }}
           >
           </DesignPrint>
 
         </div>, document.body)
       }
 
-      {isPrintView &&
+      {isPrintView && authorization.print &&
         ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
           <PrintPreview
             dynamicTexts={userData}
