@@ -7,6 +7,7 @@ import Loguot from './pages/Loguot/Loguot';
 import NotFound from './pages/NotFound/NotFound';
 import Register from './pages/Register/Register';
 import User from './pages/User/User';
+import Organization from './pages/Organization/Organization';
 
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
         {/* Route không dùng layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Loguot />} />
+        <Route path="/organization" element={<Organization />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<NotFound />} />
         {/* Route dùng layout chung */}

@@ -38,7 +38,7 @@ import {
 import { getData } from "../../../../utils/axios";
 
 import columnsContent from './columContent';
-import styles from "./PrintUsers.module.scss";
+import styles from "./PrintOrganizations.module.scss";
 
 type DynamicTables = {
     [tableKey: string]: {
@@ -90,7 +90,7 @@ interface PrintPreviewProps {
 }
 
 
-const PrintUsers: React.FC<PrintPreviewProps> = ({
+const PrintOrganizations: React.FC<PrintPreviewProps> = ({
     data = [],
     dynamicTables = {},
     dynamicTexts = {},
@@ -98,7 +98,7 @@ const PrintUsers: React.FC<PrintPreviewProps> = ({
     fonts,
     colors,
     onCancel = () => { },
-    urlGet = "http://localhost:3000/template-contents/user/list",
+    urlGet = "http://localhost:3000/template-contents/organizations/list",
 }) => {
 
     const [viewContent, setViewContent] = useState<{ [key: string]: string }>({});
@@ -130,7 +130,6 @@ const PrintUsers: React.FC<PrintPreviewProps> = ({
         if (data) {
             const contentsObject: any[] = [];
             data.forEach((item) => {
-                // Giả sử bạn có contentStateObject cho mỗi user, nếu không thì truyền null hoặc object mặc định
                 const dramaticObj = makeDramaticContentStatesObject({
                     contentStateObject: row.content, // hoặc truyền contentStateObject tương ứng nếu có
                     dynamicTables: dynamicTables,
@@ -244,4 +243,4 @@ const PrintUsers: React.FC<PrintPreviewProps> = ({
 
 }
 
-export default PrintUsers
+export default PrintOrganizations

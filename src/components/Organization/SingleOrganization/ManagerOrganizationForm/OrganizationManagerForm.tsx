@@ -1,25 +1,22 @@
 import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
-import styles from "./UserManagerForm.module.scss";
+import styles from "./OrganizationManagerForm.module.scss";
 import { validateDataArray, messagesVi } from "../../../../utils/validation";
 import type { RuleSchema } from "../../../../utils/validation";
 import { postData, deleteData, putData, getAuthHeaders } from "../../../../utils/axios/index";
 import { AlertDialog, type AlertInfo } from '../../../../utils/AlertDialog';
 import { v4 as uuidv4 } from 'uuid';
-import checkUserAvailability from "../checkUserAvailability";
+import checkOrganizationAvailability from "../checkOrganizationAvailability";
 import { HRichTextEditor, HRichTextEditorPrintPreview, HRichTextEditorPreview } from 'hrich-text-editor'
 import ReactDOM from 'react-dom';
 import DesignPrint from "../../../Print/DesignPrint/DesignPrint";
 import PrintPreview from '../../../Print/PrintPreview/PrintPreview';
+import { add } from "mathjs";
 
-interface User {
+interface Organization {
   id?: string;
   code?: string;
-  password?: string;
   name?: string;
   address?: string;
-  email?: string;
-  phone?: string;
-  image?: string;
   isActive: boolean | string | number; // Allow boolean, string, or number
   isSystem?: boolean;
   createdBy?: string;
@@ -31,29 +28,26 @@ interface User {
 
 
 
-interface UserManagementFormProps {
-  urlCheckUser?: string;
-  urlInsertUser?: string;
-  urlUpdateUser?: string;
-  urlDeleteUser?: string;
+interface OrganizationManagementFormProps {
+  urlCheckOrganization?: string;
+  urlInsertOrganization?: string;
+  urlUpdateOrganization?: string;
+  urlDeleteOrganization?: string;
   urlRefreshToken?: string;
   zoneId?: string;
-  user?: User | null; // Changed from initialUser to user
-  onSuccess?: (params: { action: 'insert' | 'update' | 'delete' | 'cancel', user?: User }) => void;
+  organization?: Organization | null; // Changed from initialOrganization to organization
+  onSuccess?: (params: { action: 'insert' | 'update' | 'delete' | 'cancel', organization?: Organization }) => void;
+  authorization: object;
 }
 
 
 
 
-const userSchema: RuleSchema = {
+const organizationSchema: RuleSchema = {
   id: { type: "string", format: "uuid", required: false },
   code: { type: "string", required: true, minLength: 2, maxLength: 100 },
-  password: { type: "string", required: false, maxLength: 255 },
   name: { type: "string", required: true, minLength: 2, maxLength: 255 },
   address: { type: "string", required: false, maxLength: 255 },
-  email: { type: "string", format: "email", required: true, maxLength: 100 },
-  phone: { type: "string", required: false, format: "phone", maxLength: 20 },
-  image: { type: "string", required: false, maxLength: 255 },
   isActive: { type: "boolean", required: false },
   // isSystem: { type: "boolean", required: false },
   // createdBy: { type: "string", required: false, max: 100 },
@@ -63,111 +57,88 @@ const userSchema: RuleSchema = {
 };
 
 const fieldLabels: Record<string, { label: string; type: string; placeholder?: string }> = {
-  code: { label: "Tên đăng nhập (*)", type: "text", placeholder: "Nhập tên đăng nhập" },
-  password: { label: "Mật khẩu (*)", type: "password", placeholder: "Nhập mật khẩu" },
-  name: { label: "Họ và tên (*)", type: "text", placeholder: "Nhập họ và tên" },
+  code: { label: "Mã Tổ chức (*)", type: "text", placeholder: "Nhập mã tổ chức" },
+  name: { label: "Tên Tổ chức (*)", type: "text", placeholder: "Nhập tên tổ chức" },
   address: { label: "Địa chỉ", type: "text", placeholder: "Nhập địa chỉ" },
-  email: { label: "Email (*)", type: "email", placeholder: "Nhập email" },
-  phone: { label: "Điện thoại", type: "text", placeholder: "Nhập số điện thoại" },
-  image: { label: "Avata", type: "text", placeholder: "Nhập Avata link" },
   isActive: { label: "Trạng thái (*)", type: "checkbox" }
 };
 
 
-export default function UserManagerForm({
-  urlCheckUser = 'http://localhost:3000/auth/user/check-user',
-  urlInsertUser = 'http://localhost:3000/auth/user/detail/insert',
-  urlUpdateUser = 'http://localhost:3000/auth/user/detail',
-  urlDeleteUser = 'http://localhost:3000/auth/user/detail',
+export default function OrganizationManagerForm({
+  urlCheckOrganization = 'http://localhost:3000/auth/organization/check-organization',
+  urlInsertOrganization = 'http://localhost:3000/auth/organization/detail/insert',
+  urlUpdateOrganization = 'http://localhost:3000/auth/organization/detail',
+  urlDeleteOrganization = 'http://localhost:3000/auth/organization/detail',
 
-  urlRefreshToken = 'http://localhost:3000/auth/refresh-token',
-  user = null, // Changed parameter name
-  onSuccess = () => { }
-}: UserManagementFormProps) {
-  const [userData, setUserData] = useState<User>({
+  organization = null, // Changed parameter name
+  onSuccess = () => { },
+  authorization = {}
+}: OrganizationManagementFormProps) {
+  const [organizationData, setOrganizationData] = useState<Organization>({
     code: "",
-    password: "",
     name: "",
     address: "",
-    email: "",
-    phone: "",
-    image: "",
     isActive: true
   });
 
-  const [userDefaultData, setUserDefaultData] = useState<User>({
+  const [organizationDefaultData, setOrganizationDefaultData] = useState<Organization>({
     code: "",
-    password: "",
     name: "",
     address: "",
-    email: "",
-    phone: "",
-    image: "",
     isActive: true
   });
 
-  const [errors, setErrors] = useState<Partial<Record<keyof User, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof Organization, string>>>({});
   const [isEditing, setIsEditing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Initialize form with user data
+  // Initialize form with organization data
   useEffect(() => {
-    if (user) {
-      setUserData({
-        id: user.id,
-        code: user.code,
-        password: "", // Don't pre-fill password
-        name: user.name,
-        address: user.address,
-        email: user.email,
-        phone: user.phone,
-        image: user.image,
-        // isActive: user.isActive === 1 ? true : false
-        isActive: user.isActive,
+    if (organization) {
+      setOrganizationData({
+        id: organization.id,
+        code: organization.code,
+        name: organization.name,
+        address: organization.address,
+        isActive: organization.isActive,
       });
       setIsEditing(true);
       setErrors({})
-      setUserDefaultData({
-        id: user.id,
-        code: user.code,
-        password: "", // Don't pre-fill password
-        name: user.name,
-        address: user.address,
-        email: user.email,
-        phone: user.phone,
-        image: user.image,
-        // isActive: user.isActive === 1 ? true : false
-        isActive: user.isActive,
+      setOrganizationDefaultData({
+        id: organization.id,
+        code: organization.code,
+        name: organization.name,
+        address: organization.address,
+        isActive: organization.isActive,
       });
     } else {
       resetForm();
     }
-  }, [user]);
+
+  }, [organization]);
 
   useEffect(() => {
-    // if (isEditing) return;
     const timer = setTimeout(async () => {
-      if (userData.code || userData.email) {
-        const checkUser = { code: userData.code, email: userData.email, id: userData.id }
-        const result = await checkUserAvailability({ urlCheckUser, user: checkUser });
-        const newErrors: Partial<User> = {};
-        if (result.code) newErrors.code = "Tên đăng nhập đã tồn tại";
-        if (result.email) newErrors.email = "Email đã tồn tại";
+      if (organizationData.code) {
+        const checkOrganization = { code: organizationData.code, id: organizationData.id }
+        const result = await checkOrganizationAvailability({ urlCheckOrganization, organization: checkOrganization });
+        const newErrors: Partial<Organization> = {};
+        if (result.code) newErrors.code = "Mã tổ chức đã tồn tại";
         setErrors(prev => ({ ...prev, ...newErrors }));
       }
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [userData.code, userData.email, userData.id, isEditing]);
+  }, [organizationData.code, organizationData.id, isEditing]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
 
-    setUserData(prev => ({ ...prev, [name]: val }));
+    setOrganizationData(prev => ({ ...prev, [name]: val }));
 
     const singleFieldData = { [name]: val };
-    const result = validateDataArray([singleFieldData], userSchema, messagesVi);
+    const result = validateDataArray([singleFieldData], organizationSchema, messagesVi);
 
     setErrors(prev => ({
       ...prev,
@@ -176,13 +147,15 @@ export default function UserManagerForm({
   };
 
   const validateForm = () => {
-    const result = validateDataArray([userData], userSchema, messagesVi);
+    const result = validateDataArray([organizationData], organizationSchema, messagesVi);
     if (!result.status) {
       setErrors(result.results[0]?.errors || {});
       return false;
     }
     return true;
   };
+
+
 
   const handleInsert = async (e: FormEvent) => {
     e.preventDefault();
@@ -194,11 +167,10 @@ export default function UserManagerForm({
         return;
       }
 
-      const checkUser = { code: userData.code, email: userData.email, id: userData.id };
-      const checkResult = await checkUserAvailability({ urlCheckUser, user: checkUser });
-      const checkErrors: Partial<User> = {};
-      if (checkResult.code) checkErrors.code = "Tên đăng nhập đã tồn tại";
-      if (checkResult.email) checkErrors.email = "Email đã tồn tại";
+      const checkOrganization = { code: organizationData.code, id: organizationData.id };
+      const checkResult = await checkOrganizationAvailability({ urlCheckOrganization, organization: checkOrganization });
+      const checkErrors: Partial<Organization> = {};
+      if (checkResult.code) checkErrors.code = "Tên tổ chức đã tồn tại";
 
       if (Object.keys(checkErrors).length > 0) {
         setErrors(prev => ({ ...prev, ...checkErrors }));
@@ -208,22 +180,22 @@ export default function UserManagerForm({
 
       setAlertinfo({
         isAlertShow: true,
-        alertMessage: "Bạn có chắc chắn muốn tạo người dùng mới?",
+        alertMessage: "Bạn có chắc chắn muốn tạo tổ chức mới?",
         type: "warning",
         title: "Xác nhận",
         onConfirm: async () => {
           try {
             const newId = uuidv4();
-            const userToCreate: User = { ...userData, id: newId };
+            const organizationToCreate: Organization = { ...organizationData, id: newId };
             const result = await postData({
-              url: urlInsertUser,
-              data: userToCreate,
+              url: urlInsertOrganization,
+              data: organizationToCreate,
             });
             if (result?.status) {
-              setUserData(userToCreate);
-              setUserDefaultData(userToCreate);
+              setOrganizationData(organizationToCreate);
+              setOrganizationDefaultData(organizationToCreate);
               setIsEditing(true);
-              onSuccess?.({ action: "insert", user: result.data });
+              onSuccess?.({ action: "insert", organization: result.data });
             }
           } finally {
             setIsSubmitting(false);
@@ -234,7 +206,7 @@ export default function UserManagerForm({
       });
     } catch (err) {
       console.error("Insert failed:", err);
-      setErrors({ code: "Có lỗi xảy ra", email: "Có lỗi xảy ra" });
+      setErrors({ code: "Có lỗi xảy ra" });
       setIsSubmitting(false);
     }
   };
@@ -249,11 +221,10 @@ export default function UserManagerForm({
         return;
       }
 
-      const checkUser = { code: userData.code, email: userData.email, id: userData.id };
-      const checkResult = await checkUserAvailability({ urlCheckUser, user: checkUser });
-      const checkErrors: Partial<User> = {};
-      if (checkResult.code) checkErrors.code = "Tên đăng nhập đã tồn tại";
-      if (checkResult.email) checkErrors.email = "Email đã tồn tại";
+      const checkOrganization = { code: organizationData.code, id: organizationData.id };
+      const checkResult = await checkOrganizationAvailability({ urlCheckOrganization, organization: checkOrganization });
+      const checkErrors: Partial<Organization> = {};
+      if (checkResult.code) checkErrors.code = "Tên tổ chức đã tồn tại";
 
       if (Object.keys(checkErrors).length > 0) {
         setErrors(prev => ({ ...prev, ...checkErrors }));
@@ -268,30 +239,30 @@ export default function UserManagerForm({
         title: "Xác nhận",
         onConfirm: async () => {
           try {
-            const payload: Partial<User> = {
-              ...userData,
-              isActive: userData.isActive === 1 || userData.isActive === true,
+            const payload: Partial<Organization> = {
+              ...organizationData,
+              isActive: organizationData.isActive === 1 || organizationData.isActive === true,
             };
-            if (payload.password === "") delete payload.password;
+
 
             const updatedFields = Object.keys(payload).reduce((acc, key) => {
               if (
                 key === "id" ||
-                userDefaultData[key as keyof User] !== payload[key as keyof User]
+                organizationDefaultData[key as keyof Organization] !== payload[key as keyof Organization]
               ) {
-                acc[key as keyof User] = payload[key as keyof User];
+                acc[key as keyof Organization] = payload[key as keyof Organization];
               }
               return acc;
-            }, {} as Partial<User>);
+            }, {} as Partial<Organization>);
 
             const result = await putData({
-              url: `${urlUpdateUser}/${userData.id}`,
+              url: `${urlUpdateOrganization}/${organizationData.id}`,
               data: updatedFields,
             });
 
             if (result?.status) {
-              setUserDefaultData(prev => ({ ...prev, ...payload }));
-              onSuccess?.({ action: "update", user: userData });
+              setOrganizationDefaultData(prev => ({ ...prev, ...payload }));
+              onSuccess?.({ action: "update", organization: organizationData });
             } else {
               setAlertinfo({
                 isAlertShow: true,
@@ -316,35 +287,33 @@ export default function UserManagerForm({
       });
     } catch (err) {
       console.error("Update failed:", err);
-      setErrors({ code: "Có lỗi xảy ra", email: "Có lỗi xảy ra" });
+      setErrors({ code: "Có lỗi xảy ra" });
       setIsSubmitting(false);
     }
   };
 
 
 
-
-
   const handleDelete = () => {
-    if (!userData.id) return;
+    if (!organizationData.id) return;
 
     setAlertinfo({
       isAlertShow: true,
-      alertMessage: "Bạn có chắc chắn muốn xóa người dùng này?",
+      alertMessage: "Bạn có chắc chắn muốn xóa tổ chức này?",
       type: "warning", // "error" thường dùng cho lỗi, "warning" hợp hơn cho xác nhận
       title: "Xác nhận xóa",
       onConfirm: async () => {
         const result = await deleteData({
-          url: `${urlDeleteUser}/${userData.id}`,
+          url: `${urlDeleteOrganization}/${organizationData.id}`,
         });
 
         if (result?.status) {
-          onSuccess?.({ action: "delete", user: userData });
+          onSuccess?.({ action: "delete", organization: organizationData });
           resetForm();
         } else {
           setAlertinfo({
             isAlertShow: true,
-            alertMessage: result?.errorCode?.failData?.code === "Not allow delete admin" ? "Không được xóa tên đăng nhập admin" : result?.errorCode?.failData?.isSystem === "Cannot delete system records" ? "Không được xóa thông tin hệ thống" : "Xóa người dùng thất bại",
+            alertMessage: result?.errorCode?.failData?.isSystem === "Cannot delete system records" ? "Không được xóa thông tin hệ thống" : "Xóa tổ chức thất bại",
             type: "error",
             title: "Lỗi",
             showConfirm: true,
@@ -368,16 +337,14 @@ export default function UserManagerForm({
 
   const cancelForm = () => {
     resetForm();
-    onSuccess?.({ action: "cancel", user: userData });
+    onSuccess?.({ action: "cancel", organization: organizationData });
   }
 
   const resetForm = () => {
-    setUserData({
+    setOrganizationData({
       code: "",
-      password: "",
       name: "",
-      email: "",
-      phone: "",
+      address: "",
       isActive: true
     });
     setErrors({});
@@ -386,7 +353,7 @@ export default function UserManagerForm({
 
   const hasErrors = Object.values(errors).some(Boolean);
   const isFormValid = !hasErrors &&
-    (isEditing ? true : (!!userData.code && !!userData.password));
+    (isEditing ? true : !!organizationData.code);
 
 
   const [alertinfo, setAlertinfo] = useState<AlertInfo>({
@@ -414,7 +381,7 @@ export default function UserManagerForm({
 
 
   return (
-    <div className={styles.userManagementContainer}>
+    <div className={styles.container}>
       <AlertDialog
         type={alertinfo.type || "error"}
         title={alertinfo.title || "Lỗi"}
@@ -426,11 +393,11 @@ export default function UserManagerForm({
         showConfirm={alertinfo.showConfirm ?? true}
         showCancel={alertinfo.showCancel ?? true}
       />
-      <h2 className={styles.title}>
-        {isEditing ? `Cập nhật người dùng` : "Thêm người dùng mới"}
-      </h2>
+      {authorization.view && <h2 className={styles.title}>
+        {isEditing ? `Cập nhật tổ chức` : "Thêm tổ chức mới"}
+      </h2>}
 
-      <form className={styles.userForm}>
+      {(authorization.add || authorization.update) && <form className={styles.form}>
         {Object.entries(fieldLabels).map(([field, { label, type, placeholder }]) => (
           <div className={styles.formGroup} key={field}>
             <label htmlFor={field}>{label}:</label>
@@ -439,7 +406,7 @@ export default function UserManagerForm({
                 type="checkbox"
                 id={field}
                 name={field}
-                checked={Boolean(userData.isActive)}
+                checked={Boolean(organizationData.isActive)}
                 onChange={handleChange}
               />
             ) : (
@@ -447,19 +414,19 @@ export default function UserManagerForm({
                 type={type}
                 id={field}
                 name={field}
-                value={userData[field as keyof User] || ""}
+                value={organizationData[field as keyof Organization] || ""}
                 onChange={handleChange}
                 placeholder={placeholder}
-                className={errors[field as keyof User] ? styles.errorInput : ""}
+                className={errors[field as keyof Organization] ? styles.errorInput : ""}
               />
             )}
-            {errors[field as keyof User] && <span className={styles.error}>{errors[field as keyof User]}</span>}
+            {errors[field as keyof Organization] && <span className={styles.error}>{errors[field as keyof Organization]}</span>}
           </div>
         ))}
 
 
         <div className={styles.buttonGroup}>
-          {!isEditing && (
+          {!isEditing && authorization.add && (
             <button
               type="submit"
               className={styles.submitBtn}
@@ -470,7 +437,7 @@ export default function UserManagerForm({
             </button>
           )}
 
-          {isEditing && (
+          {isEditing && authorization.update && (
             <button
               type="submit"
               className={styles.submitBtn}
@@ -481,7 +448,7 @@ export default function UserManagerForm({
             </button>
           )}
 
-          {isEditing && (
+          {isEditing && authorization.delete && (
             <button
               type="button"
               className={styles.deleteBtn}
@@ -501,7 +468,7 @@ export default function UserManagerForm({
             Hủy
           </button>
 
-          {isEditing && (<button
+          {isEditing && authorization.viewPrintDesign && (<button
             type="button"
             className={styles.cancelBtn}
             onClick={() => { setIsPrintDesign(true) }}
@@ -510,7 +477,7 @@ export default function UserManagerForm({
             Design print
           </button>
           )}
-          {isEditing && (<button
+          {isEditing && authorization.print && (<button
             type="button"
             className={styles.cancelBtn}
             onClick={() => { setIsPrintView(true) }}
@@ -521,30 +488,37 @@ export default function UserManagerForm({
           )}
         </div>
       </form>
+      }
 
-      {isPrintDesign &&
+      {isPrintDesign && authorization.viewPrintDesign &&
         ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '100vh', scale: '0.9', overflowY: 'auto', overflowX: 'auto' }} >
           <DesignPrint
-            urlGet="http://localhost:3000/template-contents/user/list"
-            urlUpdate="http://localhost:3000/template-contents/user/detail"
-            urlDelete="http://localhost:3000/template-contents/user/detail"
-            urlInsert="http://localhost:3000/template-contents/user/detail/insert"
-            dynamicTexts={userData || {}}
-            // contentStateObject={blockUser}
+            urlGet="http://localhost:3000/template-contents/organization/list"
+            urlUpdate="http://localhost:3000/template-contents/organization/detail"
+            urlDelete="http://localhost:3000/template-contents/organization/detail"
+            urlInsert="http://localhost:3000/template-contents/organization/detail/insert"
+            dynamicTexts={organizationData || {}}
+            // contentStateObject={blockOrganization}
             onCancel={handleOnCancel}
-            title="Thiết kế mẫu in thông tin người dùng"
+            title="Thiết kế mẫu in thông tin tổ chức"
+            authorization={{
+              add: authorization.addPrintDesign,
+              update: authorization.updatePrintDesign,
+              delete: authorization.deletePrintDesign,
+              view: authorization.viewPrintDesign,
+            }}
           >
           </DesignPrint>
 
         </div>, document.body)
       }
 
-      {isPrintView &&
+      {isPrintView && authorization.print &&
         ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
           <PrintPreview
-            dynamicTexts={userData}
-            // contentStateObject={blockUser}
-            urlGet="http://localhost:3000/template-contents/user/list"
+            dynamicTexts={organizationData}
+            // contentStateObject={blockOrganization}
+            urlGet="http://localhost:3000/template-contents/organization/list"
             onCancel={handleOnPrintCancel}
           >
           </PrintPreview>

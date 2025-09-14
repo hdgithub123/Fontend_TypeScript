@@ -90,7 +90,7 @@ const ListUser = () => {
     if (result.data) {
       setData(result.data);
     } else {
-
+      setData([]);
     }
   }
 

@@ -99,7 +99,15 @@ type RawDraftContentState = {
 };
 
 
+interface authorization {
+    add?: boolean;
+    update?: boolean;
+    delete?: boolean;
+    view?: boolean;
+}
+
 interface DesignPrintProps {
+    authorization?: authorization;
     contentStateObject: RawDraftContentState;
     dynamicTables?: DynamicTables;
     dynamicTexts?: DynamicTexts;
@@ -116,6 +124,7 @@ interface DesignPrintProps {
 }
 
 const DesignPrint: React.FC<DesignPrintProps> = ({
+    authorization = {},
     dynamicTables,
     dynamicTexts,
     dynamicFunctions,
@@ -361,105 +370,110 @@ const DesignPrint: React.FC<DesignPrintProps> = ({
                 showCancel={alertinfo.showCancel ?? true}
             />
 
-            <div className={styles.header}>
+            {authorization?.view && <div className={styles.header}>
                 <h1>{title}</h1>
-            </div>
-            <div className={styles.allGroup}>
-                <div className={styles.buttonGroup}>
-                    <button
-                        className={`${styles.button} ${styles.createButton}`}
-                        onClick={handlePost}
-                        disabled={!addContent?.code || !addContent?.name}
-                    >
-                        Tạo mới
-                    </button>
-                    <button
-                        className={`${styles.button} ${styles.saveButton}`}
-                        onClick={handlePut}
-                        disabled={!addContent?.id}
-                    >
-                        Lưu
-                    </button>
-                    <button
-                        className={`${styles.button} ${styles.deleteButton}`}
-                        onClick={handleDelete}
-                        disabled={!addContent?.id}
-                    >
-                        Xóa
-                    </button>
-                    <button
-                        className={`${styles.button} ${styles.cancelButton}`}
-                        onClick={handleCancel}
-                    >
-                        Thoát
-                    </button>
-                </div>
-                <div className={styles.inputcontrols} style={{ zIndex: '100', }}>
-                    <div className={styles.inputGroup}>
-                        <label className={styles.inputLabel}>Mã</label>
-                        <SearchDropDown
-                            data={listContent}
-                            columns={columnsContent}
-                            onRowSelect={handleonRowSelect}
-                            onChangeGlobalFilter={handleGlobalFilterChange}
-                            columnDisplay={'code'}
-                            columnsShow={['code', 'name', 'description']}
-                            globalFilterValue={addContent?.code || ""}
-                            className={styles.inputField}
-                            placeholder="Mã..."
-                            autocomplete="new-password"
-                        />
-                        {errors['code'] && <span className={styles.error}>{errors['code']}</span>}
+            </div>}
+            {authorization?.view &&
+                <div className={styles.allGroup}>
+                    <div className={styles.buttonGroup}>
+                       {authorization?.add && <button
+                            className={`${styles.button} ${styles.createButton}`}
+                            onClick={handlePost}
+                            disabled={!addContent?.code || !addContent?.name}
+                        >
+                            Tạo mới
+                        </button>}
+                        {authorization?.update &&
+                        <button
+                            className={`${styles.button} ${styles.saveButton}`}
+                            onClick={handlePut}
+                            disabled={!addContent?.id}
+                        >
+                            Lưu
+                        </button>}
+                        {authorization?.delete && <button
+                            className={`${styles.button} ${styles.deleteButton}`}
+                            onClick={handleDelete}
+                            disabled={!addContent?.id}
+                        >
+                            Xóa
+                        </button>
+                        }
+
+                        <button
+                            className={`${styles.button} ${styles.cancelButton}`}
+                            onClick={handleCancel}
+                        >
+                            Thoát
+                        </button>
+                    </div>
+                    <div className={styles.inputcontrols} style={{ zIndex: '100', }}>
+                        <div className={styles.inputGroup}>
+                            <label className={styles.inputLabel}>Mã</label>
+                            <SearchDropDown
+                                data={listContent}
+                                columns={columnsContent}
+                                onRowSelect={handleonRowSelect}
+                                onChangeGlobalFilter={handleGlobalFilterChange}
+                                columnDisplay={'code'}
+                                columnsShow={['code', 'name', 'description']}
+                                globalFilterValue={addContent?.code || ""}
+                                className={styles.inputField}
+                                placeholder="Mã..."
+                                autocomplete="new-password"
+                            />
+                            {errors['code'] && <span className={styles.error}>{errors['code']}</span>}
+                        </div>
+
+                        <div className={styles.inputGroup}>
+                            <label className={styles.inputLabel}>Tên mẫu</label>
+                            <input
+                                type="text"
+                                className={styles.inputField}
+                                value={addContent?.name || ""}
+                                onChange={(e) => {
+                                    setAddContent(prev => ({ ...prev, name: e.target.value }));
+                                }}
+                                placeholder="Nhập tên mẫu..."
+                            />
+                            {errors['name'] && <span className={styles.error}>{errors['name']}</span>}
+                        </div>
+
+                        <div className={styles.inputGroup}>
+                            <label className={styles.inputLabel}>Mô tả</label>
+                            <input
+                                type="text"
+                                className={styles.inputField}
+                                value={addContent?.description || ""}
+                                onChange={(e) => {
+                                    setAddContent(prev => ({ ...prev, description: e.target.value }));
+                                }}
+                                placeholder="Nhập mô tả..."
+                            />
+                            {errors['description'] && <span className={styles.error}>{errors['description']}</span>}
+                        </div>
                     </div>
 
-                    <div className={styles.inputGroup}>
-                        <label className={styles.inputLabel}>Tên mẫu</label>
-                        <input
-                            type="text"
-                            className={styles.inputField}
-                            value={addContent?.name || ""}
-                            onChange={(e) => {
-                                setAddContent(prev => ({ ...prev, name: e.target.value }));
-                            }}
-                            placeholder="Nhập tên mẫu..."
-                        />
-                        {errors['name'] && <span className={styles.error}>{errors['name']}</span>}
+                    <div className={`${styles.loadingStatus} ${isLoadedContent ? styles.loaded : styles.loading}`}>
+                        {isLoadedContent}
                     </div>
 
-                    <div className={styles.inputGroup}>
-                        <label className={styles.inputLabel}>Mô tả</label>
-                        <input
-                            type="text"
-                            className={styles.inputField}
-                            value={addContent?.description || ""}
-                            onChange={(e) => {
-                                setAddContent(prev => ({ ...prev, description: e.target.value }));
-                            }}
-                            placeholder="Nhập mô tả..."
+                    <div className={styles.editorContainer}>
+                        {errors['content'] && <span className={styles.error}>{errors['content']}</span>}
+                        <HRichTextEditor
+                            contentStateObject={addContent?.content || null}
+                            isContentStateObjectLoaded={handleIsContentStateObjectLoaded}
+                            dynamicTables={dynamicTables || {}}
+                            dynamicTexts={dynamicTexts || {}}
+                            onEditorChange={handleEditorChange}
+                            dynamicFunctions={dynamicFunctions || []}
+                            fonts={fonts ?? []}
+                            colors={colors ?? []}
                         />
-                        {errors['description'] && <span className={styles.error}>{errors['description']}</span>}
                     </div>
-                </div>
 
-                <div className={`${styles.loadingStatus} ${isLoadedContent ? styles.loaded : styles.loading}`}>
-                    {isLoadedContent}
                 </div>
-
-                <div className={styles.editorContainer}>
-                    {errors['content'] && <span className={styles.error}>{errors['content']}</span>}
-                    <HRichTextEditor
-                        contentStateObject={addContent?.content || null}
-                        isContentStateObjectLoaded={handleIsContentStateObjectLoaded}
-                        dynamicTables={dynamicTables || {}}
-                        dynamicTexts={dynamicTexts || {}}
-                        onEditorChange={handleEditorChange}
-                        dynamicFunctions={dynamicFunctions || []}
-                        fonts={fonts ?? []}
-                        colors={colors ?? []}
-                    />
-                </div>
-
-            </div>
+            }
 
         </div>
     );

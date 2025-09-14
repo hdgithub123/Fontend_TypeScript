@@ -1,0 +1,196 @@
+// DesignPrint.module.scss
+.container {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    //    max-height: 100vh; 
+    overflow: auto;
+    height: 100vh;
+    z-index: 3;
+
+    .header {
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eaeaea;
+        display: flex;
+        justify-content: center;
+
+        h1 {
+            margin: 0 0 15px 0;
+            color: #2c3e50;
+            font-size: 24px;
+            font-weight: 600;
+        }
+    }
+
+    .allGroup {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        z-index: 4;
+
+        .buttonGroup {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 10px;
+            justify-content: flex-end;
+
+            .button {
+                padding: 10px 16px;
+                border: none;
+                border-radius: 4px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 80px;
+
+                &:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                }
+
+                &:focus {
+                    outline: none;
+                    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.4);
+                }
+            }
+
+            .createButton {
+                background-color: #2ecc71;
+                color: white;
+
+                &:hover:not(:disabled) {
+                    opacity: 0.8;
+                }
+            }
+
+            .saveButton {
+                background-color: #3498db;
+                color: white;
+
+                &:hover:not(:disabled) {
+                    opacity: 0.8;
+                }
+            }
+
+            .deleteButton {
+                background-color: #e74c3c;
+                color: white;
+
+                &:hover:not(:disabled) {
+                    // background-color: #c0392b;
+                    opacity: 0.8;
+                }
+            }
+
+
+            .cancelButton {
+                background: linear-gradient(to bottom, #95a5a6, #7f8c8d);
+                background: #2980b9;
+                color: white;
+                box-shadow: 0 2px 5px rgba(149, 165, 166, 0.3);
+
+                &:hover:not(:disabled) {
+                    opacity: 0.8;
+                }
+            }
+        }
+
+        .inputcontrols {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: flex-start;
+            position: relative;
+            z-index: 10;
+
+            .inputGroup {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                min-width: 200px;
+                z-index: 10;
+
+                .inputLabel {
+                    font-size: 12px;
+                    color: #666;
+                    margin-bottom: 4px;
+                    font-weight: 500;
+                }
+
+                .inputField {
+                    padding: 10px 12px;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    font-size: 14px;
+                    transition: border-color 0.2s;
+
+                    &:focus {
+                        outline: none;
+                        border-color: #3498db;
+                        box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+                    }
+
+                    &::placeholder {
+                        color: #aaa;
+                    }
+                }
+            }
+        }
+
+
+
+        .editorContainer {
+            width: 100%;
+            background: gray;
+            flex: 1;
+            height: 100%;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: visible;
+            z-index: 2;
+        }
+
+    }
+
+}
+
+
+.error {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+
+
+
+
+// // Responsive design
+// @media (max-width: 768px) {
+//   .inputcontrols {
+//     flex-direction: column;
+//   }
+
+//   .searchContainer,
+//   .inputGroup {
+//     width: 100%;
+//   }
+
+//   .buttonGroup {
+//     width: 100%;
+//     justify-content: flex-end;
+//   }
+// }

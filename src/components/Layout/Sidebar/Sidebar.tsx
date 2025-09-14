@@ -3,7 +3,8 @@ const link: Record<string, string> = {
   home: "/",
   user: "/user",
   register: "/register",
-  logout: "/logout"
+  logout: "/logout",
+  organization: "/organization",
 };
 
 
