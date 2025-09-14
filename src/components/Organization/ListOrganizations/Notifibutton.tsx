@@ -8,7 +8,7 @@ interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     children?: React.ReactNode;
 }
 
-const NotifyNotSelectedButton: React.FC<Props> = ({ message = "Vui lòng chọn ít nhất một người dùng trong danh sách.", data, onTrigger, children, ...buttonProps }) => {
+const NotifyNotSelectedButton: React.FC<Props> = ({ message = "Vui lòng chọn ít nhất một dữ liệu trong danh sách.", data, onTrigger, children, ...buttonProps }) => {
     const [alertInfo, setAlertInfo] = useState<AlertInfo>({
         isAlertShow: false,
         alertMessage: '',
