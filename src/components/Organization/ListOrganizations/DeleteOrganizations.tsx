@@ -94,7 +94,7 @@ const DeleteOrganizations = ({ deleteUrl, selectOrganizations, setSelectOrganiza
                 showConfirm={alertinfo.showConfirm ?? true}
                 showCancel={alertinfo.showCancel ?? true}
             />
-            <button {...buttonProps} onClick={handleDeleteOrganizations}>{children?children:"Delete"}</button>
+            <button disabled={selectOrganizations.length === 0} onClick={handleDeleteOrganizations} {...buttonProps} >{children?children:"Delete"}</button>
         </div>
     );
 }

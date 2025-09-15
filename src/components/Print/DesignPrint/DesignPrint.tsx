@@ -137,6 +137,7 @@ const DesignPrint: React.FC<DesignPrintProps> = ({
     urlInsert,
     urlDelete,
 }) => {
+    console.log("dynamicTexts", dynamicTexts);
     const [listContent, setListContent] = useState<Array<{ [key: string]: any }>>([]);
     const [addContent, setAddContent] = useState<contentState | null>({
         id: '',

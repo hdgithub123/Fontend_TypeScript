@@ -24,6 +24,7 @@
 // Base button styles
 .buttonGet,
 .buttonCreate,
+.buttonDuplicate,
 .buttonDesign,
 .buttonPrint,
 .buttonPrintMore,
@@ -47,7 +48,7 @@
   }
   &:disabled{
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.3;
   }
 }
 
@@ -67,6 +68,15 @@
   
   &:hover {
     background-color: #218838;
+  }
+}
+
+.buttonDuplicate {
+  background-color: #17a2b8;
+  color: white;
+
+  &:hover {
+    background-color: #138496;
   }
 }
 

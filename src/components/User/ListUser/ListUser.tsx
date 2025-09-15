@@ -37,7 +37,6 @@ import {
   patchData
 } from '../../../utils/axios'
 
-import UserManagerForm from '../SingleUser/ManagerUserForm/UserManagerForm';
 import columnsUser from './columUser'
 import DesignPrint from '../../Print/DesignPrint/DesignPrint';
 import PrintPreview from '../../Print/PrintPreview/PrintPreview';
@@ -50,16 +49,19 @@ import DashboardUsersExcelUpdateViewer from "../DashboardExcelImport/DashboardUs
 import DeleteUsers from "./DeleteUsers";
 import NotifyNotSelectedButton from "./Notifibutton";
 import styles from './ListUser.module.scss'
-
+import AddForm from "../SingleUser/AddForm/AddForm";
+import EditForm from "../SingleUser/EditForm/EditForm";
 
 
 interface User {
   id: string,
-  username: string;
+  code: string;
   password: string;
-  fullName: string;
+  name: string;
   email: string;
   phone: string;
+  image?: string;
+  active?: boolean;
 }
 
 
@@ -77,28 +79,28 @@ const authorizationExample = {
   deleteList: true,
 
   viewPrintDesign: true,
-  addPrintDesign: false,
-  updatePrintDesign: false,
-  deletePrintDesign: false,
+  addPrintDesign: true,
+  updatePrintDesign: true,
+  deletePrintDesign: true,
 
   viewPrintDesignList: true,
-  addPrintDesignList: false,
-  updatePrintDesignList: false,
-  deletePrintDesignList: false,
+  addPrintDesignList: true,
+  updatePrintDesignList: true,
+  deletePrintDesignList: true,
 
   print: true,
   printList: true,
 
-  exportExcel: false,
+  exportExcel: true,
 }
 
 const authorizationExample2 = {
-  view: false,
+  view: true,
   add: false,
   update: false,
   delete: false,
 
-  viewList: false,
+  viewList: true,
   addList: false,
   updateList: false,
   deleteList: false,
@@ -118,13 +120,18 @@ const authorizationExample2 = {
   exportExcel: false,
 }
 
-const ListUser = ({ authorization = authorizationExample }) => {
+const ListUser = ({ authorization = authorizationExample2 }) => {
   const url: string = 'http://localhost:3000/auth/user/list'
-  const urlRefreshToken: string = 'http://localhost:3000/auth/refresh-token'
   const deleteUrl: string = 'http://localhost:3000/auth/user/list'
+  const urlCheckUser = 'http://localhost:3000/auth/user/check-user'
+  const urlInsertUser = 'http://localhost:3000/auth/user/detail/insert'
+  const urlUpdateUser = 'http://localhost:3000/auth/user/detail'
+  const urlDeleteUser = 'http://localhost:3000/auth/user/detail'
+
   const [data, setData] = useState<Array<{ [key: string]: any }>>([{}]);
   const [activeUser, setActiveUser] = useState<User | null>(null);
-  const [isShowManagerForm, setIsShowManagerForm] = useState(false);
+  const [isShowAddForm, setIsShowAddForm] = useState(false);
+  const [isShowEditForm, setIsShowEditForm] = useState(false);
   const [isPrintListDesign, setIsPrintListDesign] = useState(false);
   const [isPrintList, setIsPrintList] = useState(false);
   const [isImportExcel, setIsImportExcel] = useState(false);
@@ -135,7 +142,7 @@ const ListUser = ({ authorization = authorizationExample }) => {
 
 
   const handleGetUser = async () => {
-    const result = await getData({ url: url, headers: getAuthHeaders(), urlRefreshToken, isCookie: false });
+    const result = await getData({ url: url });
     if (result.data) {
       setData(result.data);
     } else {
@@ -145,16 +152,16 @@ const ListUser = ({ authorization = authorizationExample }) => {
 
 
   useEffect(() => {
-     if (authorization.viewList) {
-    handleGetUser();
-     } else {
+    if (authorization.viewList) {
+      handleGetUser();
+    } else {
       setData([]);
-     }
+    }
   }, []);
 
   const handleOnRowSelect = (value) => {
     setActiveUser(value);
-    setIsShowManagerForm(true);
+    setIsShowEditForm(true);
 
   }
   const handleOnRowsSelect = (value) => {
@@ -162,16 +169,33 @@ const ListUser = ({ authorization = authorizationExample }) => {
   }
 
   const handleOnSuccess = (data) => {
+ 
     if (data.action === 'insert' || data.action === 'update' || data.action === 'delete') {
       handleGetUser();
     }
-    setIsShowManagerForm(false);
+    setActiveUser(null);
+    setIsShowAddForm(false);
+    setIsShowEditForm(false);
   }
 
   const handleCreateUser = () => {
     setActiveUser(null);
-    setIsShowManagerForm(true);
+    setIsShowAddForm(true);
   }
+
+  const handleDuplicateUser = () => {
+    if (selectUsers.length === 1) {
+      const { id, ...rest } = selectUsers[0]; // bỏ id
+      const duplicateUser = {
+        ...rest,
+        code: 'copy-' + rest.code,
+        email: 'copy-' + rest.email
+      };
+      setActiveUser(duplicateUser);
+      setIsShowAddForm(true);
+      setIsShowEditForm(false); // đảm bảo không bật cả 2 form
+    }
+  };
 
   const handlePrintListDesignUser = () => {
     setIsPrintListDesign(true)
@@ -209,8 +233,9 @@ const ListUser = ({ authorization = authorizationExample }) => {
     <div className={styles.container}>
       <h1 className={styles.header}>Quản lý User</h1>
       <div className={styles.buttonGroup}>
-         {authorization.viewList && <button onClick={handleGetUser} className={styles.buttonGet} >Refresh</button>}
-        {authorization.addList && <button onClick={handleCreateUser} className={styles.buttonCreate} >Add New</button>}
+        {authorization.viewList && <button onClick={handleGetUser} className={styles.buttonGet} >Refresh</button>}
+        {authorization.add && <button onClick={handleCreateUser} className={styles.buttonCreate} >Add New</button>}
+        {authorization.add && <button disabled={selectUsers.length !== 1} onClick={handleDuplicateUser} className={styles.buttonCreate} >Duplicate</button>}
         {authorization.viewPrintDesignList && <NotifyNotSelectedButton className={styles.buttonDesign} data={selectUsers} onTrigger={handlePrintListDesignUser} > Design Print list</NotifyNotSelectedButton>}
         {authorization.printList && <NotifyNotSelectedButton className={styles.buttonPrint} data={selectUsers} onTrigger={handlePrintListUser} > Print list</NotifyNotSelectedButton>}
         {authorization.print && <NotifyNotSelectedButton className={styles.buttonPrintMore} data={selectUsers} onTrigger={handlePrintMoreUsers} > Print more</NotifyNotSelectedButton>}
@@ -226,7 +251,9 @@ const ListUser = ({ authorization = authorizationExample }) => {
       </div>
 
 
-      {authorization.viewList &&<div className={styles.tableContainer}>
+
+
+      {authorization.viewList && <div className={styles.tableContainer}>
         <ReactTableBasic
           data={data}
           columns={columnsUser}
@@ -239,11 +266,21 @@ const ListUser = ({ authorization = authorizationExample }) => {
         </ReactTableBasic>
       </div>}
       <div className={styles.childContainer}>
-        {isShowManagerForm && authorization.view && <UserManagerForm
+        {isShowAddForm && authorization.view && <AddForm
+          urlCheckUser={urlCheckUser}
+          urlInsertUser={urlInsertUser}
           user={activeUser}
           onSuccess={handleOnSuccess}
-           authorization={authorization}
-        ></UserManagerForm>}
+          authorization={authorization }
+        />}
+        {isShowEditForm && authorization.view && <EditForm
+          urlUpdateUser={urlUpdateUser}
+          urlDeleteUser={urlDeleteUser}
+          user={activeUser}
+          onSuccess={handleOnSuccess}
+          authorization={authorization}
+        />}
+
 
         {isPrintListDesign && authorization.viewPrintDesignList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '100vh', scale: '0.9', overflowY: 'auto', overflowX: 'auto' }} >

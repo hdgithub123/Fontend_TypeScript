@@ -38,7 +38,7 @@ const NotifyNotSelectedButton: React.FC<Props> = ({ message = "Vui lòng chọn 
 
     return (
         <>
-            <button onClick={handleClick} {...buttonProps}>
+            <button disabled={data.length === 0} onClick={handleClick} {...buttonProps}>
                 {children ?? 'button'}
             </button>
             <AlertDialog

@@ -24,6 +24,7 @@
 // Base button styles
 .buttonGet,
 .buttonCreate,
+.buttonDuplicate,
 .buttonDesign,
 .buttonPrint,
 .buttonPrintMore,
@@ -36,14 +37,19 @@
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 500;
-  
+
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
-  
+
   &:active {
     transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
   }
 }
 
@@ -51,7 +57,7 @@
 .buttonGet {
   background-color: #17a2b8;
   color: white;
-  
+
   &:hover {
     background-color: #138496;
   }
@@ -60,7 +66,7 @@
 .buttonCreate {
   background-color: #28a745;
   color: white;
-  
+
   &:hover {
     background-color: #218838;
   }
@@ -69,7 +75,7 @@
 .buttonDesign {
   background-color: #6f42c1;
   color: white;
-  
+
   &:hover {
     background-color: #5a359c;
   }
@@ -78,7 +84,7 @@
 .buttonPrint {
   background-color: #fd7e14;
   color: white;
-  
+
   &:hover {
     background-color: #e66a0a;
   }
@@ -87,7 +93,7 @@
 .buttonPrintMore {
   background-color: #ffc107;
   color: #212529;
-  
+
   &:hover {
     background-color: #e0a800;
   }
@@ -96,7 +102,7 @@
 .buttonDelete {
   background-color: #dc3545;
   color: white;
-  
+
   &:hover {
     background-color: #c82333;
   }
@@ -105,7 +111,7 @@
 .buttonImport {
   background-color: #20c997;
   color: white;
-  
+
   &:hover {
     background-color: #19a97c;
   }
@@ -114,7 +120,7 @@
 .buttonUpdate {
   background-color: #6610f2;
   color: white;
-  
+
   &:hover {
     background-color: #520dc2;
   }
@@ -125,7 +131,7 @@
   border-radius: 4px;
   height: 500px;
   // height: làm sao chiến phần còn lại cho đến cuối màn hình
-//   overflow: auto;
+  //   overflow: auto;
 
 }
 

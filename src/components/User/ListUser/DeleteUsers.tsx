@@ -94,7 +94,7 @@ const DeleteUsers = ({ deleteUrl, selectUsers, setSelectUsers, setData, children
                 showConfirm={alertinfo.showConfirm ?? true}
                 showCancel={alertinfo.showCancel ?? true}
             />
-            <button {...buttonProps} onClick={handleDeleteUsers}>{children?children:"Delete"}</button>
+            <button disabled={selectUsers.length === 0} onClick={handleDeleteUsers} {...buttonProps} >{children?children:"Delete"}</button>
         </div>
     );
 }

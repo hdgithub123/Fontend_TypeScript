@@ -120,14 +120,6 @@
       }
     }
 
-    .deleteBtn {
-      background-color: #ff6b6b;
-      color: white;
-
-      &:hover:not(:disabled) {
-        background-color: #fa5252;
-      }
-    }
 
     .cancelBtn {
       background-color: #f1f3f5;

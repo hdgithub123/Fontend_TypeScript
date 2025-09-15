@@ -1,5 +1,5 @@
 import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
-import styles from "./UserManagerForm.module.scss";
+import styles from "./EditForm.module.scss";
 import { validateDataArray, messagesVi } from "../../../../utils/validation";
 import type { RuleSchema } from "../../../../utils/validation";
 import { postData, deleteData, putData, getAuthHeaders } from "../../../../utils/axios/index";
@@ -48,7 +48,7 @@ interface UserManagementFormProps {
 const userSchema: RuleSchema = {
   id: { type: "string", format: "uuid", required: false },
   code: { type: "string", required: true, minLength: 2, maxLength: 100 },
-  password: { type: "string", required: false, maxLength: 255 },
+  password: { type: "string", required: false, minLength: 2, maxLength: 255 },
   name: { type: "string", required: true, minLength: 2, maxLength: 255 },
   address: { type: "string", required: false, maxLength: 255 },
   email: { type: "string", format: "email", required: true, maxLength: 100 },
@@ -76,7 +76,6 @@ const fieldLabels: Record<string, { label: string; type: string; placeholder?: s
 
 export default function UserManagerForm({
   urlCheckUser = 'http://localhost:3000/auth/user/check-user',
-  urlInsertUser = 'http://localhost:3000/auth/user/detail/insert',
   urlUpdateUser = 'http://localhost:3000/auth/user/detail',
   urlDeleteUser = 'http://localhost:3000/auth/user/detail',
 
@@ -84,60 +83,22 @@ export default function UserManagerForm({
   onSuccess = () => { },
   authorization = {}
 }: UserManagementFormProps) {
-  const [userData, setUserData] = useState<User>({
-    code: "",
-    password: "",
-    name: "",
-    address: "",
-    email: "",
-    phone: "",
-    image: "",
-    isActive: true
-  });
+  const [userData, setUserData] = useState<User>({});
 
-  const [userDefaultData, setUserDefaultData] = useState<User>({
-    code: "",
-    password: "",
-    name: "",
-    address: "",
-    email: "",
-    phone: "",
-    image: "",
-    isActive: true
-  });
+  const [userDefaultData, setUserDefaultData] = useState<User>({});
 
   const [errors, setErrors] = useState<Partial<Record<keyof User, string>>>({});
-  const [isEditing, setIsEditing] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   // Initialize form with user data
   useEffect(() => {
     if (user) {
       setUserData({
-        id: user.id,
-        code: user.code,
         password: "", // Don't pre-fill password
-        name: user.name,
-        address: user.address,
-        email: user.email,
-        phone: user.phone,
-        image: user.image,
-        // isActive: user.isActive === 1 ? true : false
-        isActive: user.isActive,
+        ...user,
       });
-      setIsEditing(true);
-      setErrors({})
+
       setUserDefaultData({
-        id: user.id,
-        code: user.code,
         password: "", // Don't pre-fill password
-        name: user.name,
-        address: user.address,
-        email: user.email,
-        phone: user.phone,
-        image: user.image,
-        // isActive: user.isActive === 1 ? true : false
-        isActive: user.isActive,
+        ...user,
       });
     } else {
       resetForm();
@@ -145,7 +106,6 @@ export default function UserManagerForm({
   }, [user]);
 
   useEffect(() => {
-    // if (isEditing) return;
     const timer = setTimeout(async () => {
       if (userData.code || userData.email) {
         const checkUser = { code: userData.code, email: userData.email, id: userData.id }
@@ -158,7 +118,7 @@ export default function UserManagerForm({
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [userData.code, userData.email, userData.id, isEditing]);
+  }, [userData.code, userData.email, userData.id]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -184,68 +144,12 @@ export default function UserManagerForm({
     return true;
   };
 
-  const handleInsert = async (e: FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
 
-    try {
-      if (!validateForm()) {
-        setIsSubmitting(false);
-        return;
-      }
-
-      const checkUser = { code: userData.code, email: userData.email, id: userData.id };
-      const checkResult = await checkUserAvailability({ urlCheckUser, user: checkUser });
-      const checkErrors: Partial<User> = {};
-      if (checkResult.code) checkErrors.code = "Tên đăng nhập đã tồn tại";
-      if (checkResult.email) checkErrors.email = "Email đã tồn tại";
-
-      if (Object.keys(checkErrors).length > 0) {
-        setErrors(prev => ({ ...prev, ...checkErrors }));
-        setIsSubmitting(false);
-        return;
-      }
-
-      setAlertinfo({
-        isAlertShow: true,
-        alertMessage: "Bạn có chắc chắn muốn tạo người dùng mới?",
-        type: "warning",
-        title: "Xác nhận",
-        onConfirm: async () => {
-          try {
-            const newId = uuidv4();
-            const userToCreate: User = { ...userData, id: newId };
-            const result = await postData({
-              url: urlInsertUser,
-              data: userToCreate,
-            });
-            if (result?.status) {
-              setUserData(userToCreate);
-              setUserDefaultData(userToCreate);
-              setIsEditing(true);
-              onSuccess?.({ action: "insert", user: result.data });
-            }
-          } finally {
-            setIsSubmitting(false);
-          }
-        },
-        onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
-        onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
-      });
-    } catch (err) {
-      console.error("Insert failed:", err);
-      setErrors({ code: "Có lỗi xảy ra", email: "Có lỗi xảy ra" });
-      setIsSubmitting(false);
-    }
-  };
 
   const handleUpdate = async (e: FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
     try {
       if (!validateForm()) {
-        setIsSubmitting(false);
         return;
       }
 
@@ -257,7 +161,6 @@ export default function UserManagerForm({
 
       if (Object.keys(checkErrors).length > 0) {
         setErrors(prev => ({ ...prev, ...checkErrors }));
-        setIsSubmitting(false);
         return;
       }
 
@@ -267,48 +170,43 @@ export default function UserManagerForm({
         type: "warning",
         title: "Xác nhận",
         onConfirm: async () => {
-          try {
-            const payload: Partial<User> = {
-              ...userData,
-              isActive: userData.isActive === 1 || userData.isActive === true,
-            };
-            if (payload.password === "") delete payload.password;
+          const payload: Partial<User> = {
+            ...userData,
+            isActive: userData.isActive,
+          };
 
-            const updatedFields = Object.keys(payload).reduce((acc, key) => {
-              if (
-                key === "id" ||
-                userDefaultData[key as keyof User] !== payload[key as keyof User]
-              ) {
-                acc[key as keyof User] = payload[key as keyof User];
-              }
-              return acc;
-            }, {} as Partial<User>);
-
-            const result = await putData({
-              url: `${urlUpdateUser}/${userData.id}`,
-              data: updatedFields,
-            });
-
-            if (result?.status) {
-              setUserDefaultData(prev => ({ ...prev, ...payload }));
-              onSuccess?.({ action: "update", user: userData });
-            } else {
-              setAlertinfo({
-                isAlertShow: true,
-                alertMessage:
-                  result?.errorCode?.failData?.code === "Not allow edit admin"
-                    ? "Không được sửa tên đăng nhập admin"
-                    : "Có lỗi xảy ra",
-                type: "error",
-                title: "Lỗi",
-                showConfirm: true,
-                showCancel: false,
-                onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
-                onConfirm: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
-              });
+          const updatedFields = Object.keys(payload).reduce((acc, key) => {
+            if (
+              key === "id" ||
+              userDefaultData[key as keyof User] !== payload[key as keyof User]
+            ) {
+              acc[key as keyof User] = payload[key as keyof User];
             }
-          } finally {
-            setIsSubmitting(false);
+            return acc;
+          }, {} as Partial<User>);
+
+          const result = await putData({
+            url: `${urlUpdateUser}/${userData.id}`,
+            data: updatedFields,
+          });
+
+          if (result?.status) {
+            setUserDefaultData(prev => ({ ...prev, ...payload }));
+            onSuccess?.({ action: "update", user: userData });
+          } else {
+            setAlertinfo({
+              isAlertShow: true,
+              alertMessage:
+                result?.errorCode?.failData?.code === "Not allow edit admin"
+                  ? "Không được sửa tên đăng nhập admin"
+                  : "Có lỗi xảy ra",
+              type: "error",
+              title: "Lỗi",
+              showConfirm: true,
+              showCancel: false,
+              onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+              onConfirm: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+            });
           }
         },
         onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
@@ -317,12 +215,8 @@ export default function UserManagerForm({
     } catch (err) {
       console.error("Update failed:", err);
       setErrors({ code: "Có lỗi xảy ra", email: "Có lỗi xảy ra" });
-      setIsSubmitting(false);
     }
   };
-
-
-
 
 
   const handleDelete = () => {
@@ -381,12 +275,11 @@ export default function UserManagerForm({
       isActive: true
     });
     setErrors({});
-    setIsEditing(false);
   };
 
   const hasErrors = Object.values(errors).some(Boolean);
   const isFormValid = !hasErrors &&
-    (isEditing ? true : (!!userData.code && !!userData.password));
+    (!!userData.code);
 
 
   const [alertinfo, setAlertinfo] = useState<AlertInfo>({
@@ -404,9 +297,6 @@ export default function UserManagerForm({
   const handleOnPrintCancel = (cancel: boolean) => {
     setIsPrintView(!cancel)
   }
-
-
-
 
   const [isPrintDesign, setIsPrintDesign] = useState(false);
   const [isPrintView, setIsPrintView] = useState(false);
@@ -427,10 +317,10 @@ export default function UserManagerForm({
         showCancel={alertinfo.showCancel ?? true}
       />
       {authorization.view && <h2 className={styles.title}>
-        {isEditing ? `Cập nhật người dùng` : "Thêm người dùng mới"}
+        {authorization.update ? "Cập nhật người dùng" : "Thông tin người dùng"}
       </h2>}
 
-      {(authorization.add || authorization.update) && <form className={styles.userForm}>
+      {(authorization.view) && <form className={styles.userForm}>
         {Object.entries(fieldLabels).map(([field, { label, type, placeholder }]) => (
           <div className={styles.formGroup} key={field}>
             <label htmlFor={field}>{label}:</label>
@@ -439,7 +329,7 @@ export default function UserManagerForm({
                 type="checkbox"
                 id={field}
                 name={field}
-                checked={Boolean(userData.isActive)}
+                checked={Boolean(userData.isActive) || false}
                 onChange={handleChange}
               />
             ) : (
@@ -459,36 +349,24 @@ export default function UserManagerForm({
 
 
         <div className={styles.buttonGroup}>
-          {!isEditing && authorization.add && (
+          {authorization.update && (
             <button
               type="submit"
               className={styles.submitBtn}
-              disabled={!isFormValid || isSubmitting}
-              onClick={handleInsert}
-            >
-              {isSubmitting ? "Đang xử lý..." : "Thêm mới"}
-            </button>
-          )}
-
-          {isEditing && authorization.update && (
-            <button
-              type="submit"
-              className={styles.submitBtn}
-              disabled={!isFormValid || isSubmitting}
+              disabled={!isFormValid}
               onClick={handleUpdate}
             >
-              {isSubmitting ? "Đang xử lý..." : "Cập nhật"}
+              Save
             </button>
           )}
 
-          {isEditing && authorization.delete && (
+          {authorization.delete && (
             <button
               type="button"
               className={styles.deleteBtn}
               onClick={handleDelete}
-              disabled={isSubmitting}
             >
-              Xóa
+              Delete
             </button>
           )}
 
@@ -496,25 +374,22 @@ export default function UserManagerForm({
             type="button"
             className={styles.cancelBtn}
             onClick={cancelForm}
-            disabled={isSubmitting}
           >
-            Hủy
+            Cancel
           </button>
 
-          {isEditing && authorization.viewPrintDesign && (<button
+          {authorization.viewPrintDesign && (<button
             type="button"
             className={styles.cancelBtn}
             onClick={() => { setIsPrintDesign(true) }}
-            disabled={isSubmitting}
           >
             Design print
           </button>
           )}
-          {isEditing && authorization.print && (<button
+          {authorization.print && (<button
             type="button"
             className={styles.cancelBtn}
             onClick={() => { setIsPrintView(true) }}
-            disabled={isSubmitting}
           >
             Print
           </button>

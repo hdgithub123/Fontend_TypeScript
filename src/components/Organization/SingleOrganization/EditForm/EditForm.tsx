@@ -1,5 +1,5 @@
 import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
-import styles from "./OrganizationManagerForm.module.scss";
+import styles from "./EditForm.module.scss";
 import { validateDataArray, messagesVi } from "../../../../utils/validation";
 import type { RuleSchema } from "../../../../utils/validation";
 import { postData, deleteData, putData, getAuthHeaders } from "../../../../utils/axios/index";
@@ -10,7 +10,6 @@ import { HRichTextEditor, HRichTextEditorPrintPreview, HRichTextEditorPreview } 
 import ReactDOM from 'react-dom';
 import DesignPrint from "../../../Print/DesignPrint/DesignPrint";
 import PrintPreview from '../../../Print/PrintPreview/PrintPreview';
-import { add } from "mathjs";
 
 interface Organization {
   id?: string;
@@ -34,7 +33,6 @@ interface OrganizationManagementFormProps {
   urlUpdateOrganization?: string;
   urlDeleteOrganization?: string;
   urlRefreshToken?: string;
-  zoneId?: string;
   organization?: Organization | null; // Changed from initialOrganization to organization
   onSuccess?: (params: { action: 'insert' | 'update' | 'delete' | 'cancel', organization?: Organization }) => void;
   authorization: object;
@@ -66,7 +64,6 @@ const fieldLabels: Record<string, { label: string; type: string; placeholder?: s
 
 export default function OrganizationManagerForm({
   urlCheckOrganization = 'http://localhost:3000/auth/organization/check-organization',
-  urlInsertOrganization = 'http://localhost:3000/auth/organization/detail/insert',
   urlUpdateOrganization = 'http://localhost:3000/auth/organization/detail',
   urlDeleteOrganization = 'http://localhost:3000/auth/organization/detail',
 
@@ -74,51 +71,24 @@ export default function OrganizationManagerForm({
   onSuccess = () => { },
   authorization = {}
 }: OrganizationManagementFormProps) {
-  const [organizationData, setOrganizationData] = useState<Organization>({
-    code: "",
-    name: "",
-    address: "",
-    isActive: 1
-  });
+  const [organizationData, setOrganizationData] = useState<Organization>({});
 
-  const [organizationDefaultData, setOrganizationDefaultData] = useState<Organization>({
-    code: "",
-    name: "",
-    address: "",
-    isActive: 1
-  });
+  const [organizationDefaultData, setOrganizationDefaultData] = useState<Organization>({});
 
   const [errors, setErrors] = useState<Partial<Record<keyof Organization, string>>>({});
-  const [isEditing, setIsEditing] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   // Initialize form with organization data
   useEffect(() => {
     if (organization) {
       setOrganizationData({
-        id: organization.id,
-        code: organization.code,
-        name: organization.name,
-        address: organization.address,
-        isActive: organization.isActive,
+        ...organization,
       });
 
       setOrganizationDefaultData({
-        id: organization.id,
-        code: organization.code,
-        name: organization.name,
-        address: organization.address,
-        isActive: organization.isActive,
+        ...organization,
       });
-      if (organization.id) {
-        setIsEditing(true);
-        setErrors({})
-      }
-
     } else {
       resetForm();
     }
-
   }, [organization]);
 
   useEffect(() => {
@@ -133,7 +103,7 @@ export default function OrganizationManagerForm({
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [organizationData.code, organizationData.id, isEditing]);
+  }, [organizationData.code, organizationData.id]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -161,73 +131,20 @@ export default function OrganizationManagerForm({
 
 
 
-  const handleInsert = async (e: FormEvent) => {
-    e.preventDefault();
-
-    try {
-      if (!validateForm()) {
-        setIsSubmitting(false);
-        return;
-      }
-
-      const checkOrganization = { code: organizationData.code, id: organizationData.id };
-      const checkResult = await checkOrganizationAvailability({ urlCheckOrganization, organization: checkOrganization });
-      const checkErrors: Partial<Organization> = {};
-      if (checkResult.code) checkErrors.code = "Tên tổ chức đã tồn tại";
-
-      if (Object.keys(checkErrors).length > 0) {
-        setErrors(prev => ({ ...prev, ...checkErrors }));
-        setIsSubmitting(false);
-        return;
-      }
-
-      setAlertinfo({
-        isAlertShow: true,
-        alertMessage: "Bạn có chắc chắn muốn tạo tổ chức mới?",
-        type: "warning",
-        title: "Xác nhận",
-        onConfirm: async () => {
-          const newId = uuidv4();
-          const organizationToCreate: Organization = { ...organizationData, id: newId };
-          const result = await postData({
-            url: urlInsertOrganization,
-            data: organizationToCreate,
-          });
-          if (result?.status) {
-            setOrganizationData(organizationToCreate);
-            setOrganizationDefaultData(organizationToCreate);
-            setIsEditing(true);
-            onSuccess?.({ action: "insert", organization: result.data });
-          }
-        },
-        onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
-        onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
-      });
-    } catch (err) {
-      console.error("Insert failed:", err);
-      setErrors({ code: "Có lỗi xảy ra" });
-      // setIsSubmitting(false);
-    }
-  };
-
   const handleUpdate = async (e: FormEvent) => {
     e.preventDefault();
-    // setIsSubmitting(true);
-
     try {
       if (!validateForm()) {
-        setIsSubmitting(false);
         return;
       }
 
       const checkOrganization = { code: organizationData.code, id: organizationData.id };
       const checkResult = await checkOrganizationAvailability({ urlCheckOrganization, organization: checkOrganization });
       const checkErrors: Partial<Organization> = {};
-      if (checkResult.code) checkErrors.code = "Tên tổ chức đã tồn tại";
+      if (checkResult.code) checkErrors.code = "Mã tổ chức đã tồn tại";
 
       if (Object.keys(checkErrors).length > 0) {
         setErrors(prev => ({ ...prev, ...checkErrors }));
-        setIsSubmitting(false);
         return;
       }
 
@@ -239,9 +156,7 @@ export default function OrganizationManagerForm({
         onConfirm: async () => {
           const payload: Partial<Organization> = {
             ...organizationData,
-            isActive: organizationData.isActive,
           };
-
 
           const updatedFields = Object.keys(payload).reduce((acc, key) => {
             if (
@@ -253,6 +168,7 @@ export default function OrganizationManagerForm({
             return acc;
           }, {} as Partial<Organization>);
 
+          
           const result = await putData({
             url: `${urlUpdateOrganization}/${organizationData.id}`,
             data: updatedFields,
@@ -261,6 +177,17 @@ export default function OrganizationManagerForm({
           if (result?.status) {
             setOrganizationDefaultData(prev => ({ ...prev, ...payload }));
             onSuccess?.({ action: "update", organization: organizationData });
+          } else {
+            setAlertinfo({
+              isAlertShow: true,
+              alertMessage: "Bạn có chắc chắn muốn cập nhật tổ chức này?",
+              type: "error",
+              title: "Lỗi",
+              showConfirm: true,
+              showCancel: false,
+              onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+              onConfirm: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+            });
           }
         },
         onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
@@ -269,10 +196,8 @@ export default function OrganizationManagerForm({
     } catch (err) {
       console.error("Update failed:", err);
       setErrors({ code: "Có lỗi xảy ra" });
-      // setIsSubmitting(false);
     }
   };
-
 
 
   const handleDelete = () => {
@@ -281,7 +206,7 @@ export default function OrganizationManagerForm({
     setAlertinfo({
       isAlertShow: true,
       alertMessage: "Bạn có chắc chắn muốn xóa tổ chức này?",
-      type: "warning", // "error" thường dùng cho lỗi, "warning" hợp hơn cho xác nhận
+      type: "warning",
       title: "Xác nhận xóa",
       onConfirm: async () => {
         const result = await deleteData({
@@ -329,12 +254,11 @@ export default function OrganizationManagerForm({
       isActive: true
     });
     setErrors({});
-    setIsEditing(false);
   };
 
   const hasErrors = Object.values(errors).some(Boolean);
   const isFormValid = !hasErrors &&
-    (isEditing ? true : !!organizationData.code);
+    (!!organizationData.code);
 
 
   const [alertinfo, setAlertinfo] = useState<AlertInfo>({
@@ -353,16 +277,13 @@ export default function OrganizationManagerForm({
     setIsPrintView(!cancel)
   }
 
-
-
-
   const [isPrintDesign, setIsPrintDesign] = useState(false);
   const [isPrintView, setIsPrintView] = useState(false);
 
 
 
   return (
-    <div className={styles.container}>
+    <div className={styles.organizationManagementContainer}>
       <AlertDialog
         type={alertinfo.type || "error"}
         title={alertinfo.title || "Lỗi"}
@@ -375,10 +296,10 @@ export default function OrganizationManagerForm({
         showCancel={alertinfo.showCancel ?? true}
       />
       {authorization.view && <h2 className={styles.title}>
-        {isEditing ? `Cập nhật tổ chức` : "Thêm tổ chức mới"}
+        {authorization.update ? "Cập nhật tổ chức" : "Thông tin tổ chức"}
       </h2>}
 
-      {(authorization.add || authorization.update) && <form className={styles.form}>
+      {(authorization.view) && <form className={styles.organizationForm}>
         {Object.entries(fieldLabels).map(([field, { label, type, placeholder }]) => (
           <div className={styles.formGroup} key={field}>
             <label htmlFor={field}>{label}:</label>
@@ -387,7 +308,7 @@ export default function OrganizationManagerForm({
                 type="checkbox"
                 id={field}
                 name={field}
-                checked={Boolean(organizationData.isActive)}
+                checked={Boolean(organizationData.isActive) || false}
                 onChange={handleChange}
               />
             ) : (
@@ -407,34 +328,22 @@ export default function OrganizationManagerForm({
 
 
         <div className={styles.buttonGroup}>
-          {!isEditing && authorization.add && (
+          {authorization.update && (
             <button
               type="submit"
               className={styles.submitBtn}
-              disabled={!isFormValid || isSubmitting}
-              onClick={handleInsert}
-            >
-              Add
-            </button>
-          )}
-
-          {isEditing && authorization.update && (
-            <button
-              type="submit"
-              className={styles.submitBtn}
-              disabled={!isFormValid || isSubmitting}
+              disabled={!isFormValid}
               onClick={handleUpdate}
             >
               Save
             </button>
           )}
 
-          {isEditing && authorization.delete && (
+          {authorization.delete && (
             <button
               type="button"
               className={styles.deleteBtn}
               onClick={handleDelete}
-              disabled={isSubmitting}
             >
               Delete
             </button>
@@ -444,25 +353,22 @@ export default function OrganizationManagerForm({
             type="button"
             className={styles.cancelBtn}
             onClick={cancelForm}
-            disabled={isSubmitting}
           >
             Cancel
           </button>
 
-          {isEditing && authorization.viewPrintDesign && (<button
+          {authorization.viewPrintDesign && (<button
             type="button"
             className={styles.cancelBtn}
             onClick={() => { setIsPrintDesign(true) }}
-            disabled={isSubmitting}
           >
             Design print
           </button>
           )}
-          {isEditing && authorization.print && (<button
+          {authorization.print && (<button
             type="button"
             className={styles.cancelBtn}
             onClick={() => { setIsPrintView(true) }}
-            disabled={isSubmitting}
           >
             Print
           </button>
@@ -481,7 +387,7 @@ export default function OrganizationManagerForm({
             dynamicTexts={organizationData || {}}
             // contentStateObject={blockOrganization}
             onCancel={handleOnCancel}
-            title="Thiết kế mẫu in thông tin tổ chức"
+            title="Thiết kế mẫu in thông tin người dùng"
             authorization={{
               add: authorization.addPrintDesign,
               update: authorization.updatePrintDesign,

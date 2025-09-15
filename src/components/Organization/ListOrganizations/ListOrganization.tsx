@@ -50,16 +50,16 @@ import DashboardOrganizationsExcelUpdateViewer from "../DashboardExcelImport/Das
 import DeleteOrganizations from "./DeleteOrganizations";
 import NotifyNotSelectedButton from "./Notifibutton";
 import styles from './ListOrganization.module.scss'
-
+import AddForm from "../SingleOrganization/AddForm/AddForm";
+import EditForm from "../SingleOrganization/EditForm/EditForm";
 
 
 interface Organization {
-  id: string,
-  username: string;
-  password: string;
-  fullName: string;
-  email: string;
-  phone: string;
+  id?: string,
+  code?: string;
+  name?: string;
+  address?: string;
+  active?: boolean;
 }
 
 
@@ -76,29 +76,29 @@ const authorizationExample = {
   deleteList: true,
 
   viewPrintDesign: true,
-  addPrintDesign: false,
-  updatePrintDesign: false,
-  deletePrintDesign: false,
+  addPrintDesign: true,
+  updatePrintDesign: true,
+  deletePrintDesign: true,
 
   viewPrintDesignList: true,
-  addPrintDesignList: false,
-  updatePrintDesignList: false,
-  deletePrintDesignList: false,
+  addPrintDesignList: true,
+  updatePrintDesignList: true,
+  deletePrintDesignList: true,
 
   print: true,
   printList: true,
 
-  exportExcel: false,
+  exportExcel: true,
 }
 
 
 const authorizationExample2 = {
-  view: false,
+  view: true,
   add: false,
   update: false,
   delete: false,
 
-  viewList: false,
+  viewList: true,
   addList: false,
   updateList: false,
   deleteList: false,
@@ -123,9 +123,15 @@ const authorizationExample2 = {
 const ListOrganization = ({ authorization = authorizationExample }) => {
   const url: string = 'http://localhost:3000/auth/organization/list'
   const deleteUrl: string = 'http://localhost:3000/auth/organization/list'
+  const urlCheckOrganization = 'http://localhost:3000/auth/organization/check-organization'
+  const urlInsertOrganization = 'http://localhost:3000/auth/organization/detail/insert'
+  const urlUpdateOrganization = 'http://localhost:3000/auth/organization/detail'
+  const urlDeleteOrganization = 'http://localhost:3000/auth/organization/detail'
+
   const [data, setData] = useState<Array<{ [key: string]: any }>>([{}]);
   const [activeOrganization, setActiveOrganization] = useState<Organization | null>(null);
-  const [isShowManagerForm, setIsShowManagerForm] = useState(false);
+  const [isShowAddForm, setIsShowAddForm] = useState(false);
+  const [isShowEditForm, setIsShowEditForm] = useState(false);
   const [isPrintListDesign, setIsPrintListDesign] = useState(false);
   const [isPrintList, setIsPrintList] = useState(false);
   const [isImportExcel, setIsImportExcel] = useState(false);
@@ -159,11 +165,10 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
 
   const handleOnRowSelect = (value) => {
     setActiveOrganization(value);
-    setIsShowManagerForm(true);
+    setIsShowEditForm(true);
 
   }
   const handleOnRowsSelect = (value) => {
-    console.log(value)
     setSelectOrganizations(value)
   }
 
@@ -171,12 +176,28 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
     if (data.action === 'insert' || data.action === 'update' || data.action === 'delete') {
       handleGetOrganization();
     }
-    setIsShowManagerForm(false);
+    setActiveOrganization(null);
+    setIsShowAddForm(false);
+    setIsShowEditForm(false);
   }
 
   const handleCreateOrganization = () => {
     setActiveOrganization(null);
-    setIsShowManagerForm(true);
+    setIsShowAddForm(true);
+  }
+
+  const handleDuplicateOrganization = () => {
+    if (selectOrganizations.length === 1) {
+      const { id, ...rest } = selectOrganizations[0]; // bỏ id
+      const duplicateOrganization = {
+        ...rest,
+        code: 'copy-' + rest.code,
+      };
+      setActiveOrganization(duplicateOrganization);
+      setIsShowAddForm(true);
+      setIsShowEditForm(false); // đảm bảo không bật cả 2 form
+    }
+
   }
 
   const handlePrintListDesignOrganization = () => {
@@ -214,24 +235,24 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
     <div className={styles.container}>
       <h1 className={styles.header}>Quản lý Tổ chức</h1>
       <div className={styles.buttonGroup}>
-        {authorization.viewList && <button disabled={!authorization.viewList} onClick={handleGetOrganization} className={styles.buttonGet} >Refresh</button>}
-        {authorization.add && <button disabled={!authorization.add} onClick={handleCreateOrganization} className={styles.buttonCreate} >Add New</button>}
+        {authorization.viewList && <button onClick={handleGetOrganization} className={styles.buttonGet} >Refresh</button>}
+        {authorization.add && <button onClick={handleCreateOrganization} className={styles.buttonCreate} >Add New</button>}
+        {authorization.add && <button disabled={selectOrganizations.length !== 1} onClick={handleDuplicateOrganization} className={styles.buttonDuplicate} >Duplicate</button>}
 
-        {authorization.viewPrintDesignList && <NotifyNotSelectedButton disabled={!authorization.viewPrintDesignList} className={styles.buttonDesign} data={selectOrganizations} onTrigger={handlePrintListDesignOrganization} >
+        {authorization.viewPrintDesignList && <NotifyNotSelectedButton className={styles.buttonDesign} data={selectOrganizations} onTrigger={handlePrintListDesignOrganization} >
           Design Print list
         </NotifyNotSelectedButton>}
-        {authorization.printList && <NotifyNotSelectedButton disabled={!authorization.printList} className={styles.buttonPrint} data={selectOrganizations} onTrigger={handlePrintListOrganization} > Print list</NotifyNotSelectedButton>}
-        {authorization.print && <NotifyNotSelectedButton disabled={!authorization.print} className={styles.buttonPrintMore} data={selectOrganizations} onTrigger={handlePrintMoreOrganizations} > Print more</NotifyNotSelectedButton>}
+        {authorization.printList && <NotifyNotSelectedButton className={styles.buttonPrint} data={selectOrganizations} onTrigger={handlePrintListOrganization} > Print list</NotifyNotSelectedButton>}
+        {authorization.print && <NotifyNotSelectedButton className={styles.buttonPrintMore} data={selectOrganizations} onTrigger={handlePrintMoreOrganizations} > Print more</NotifyNotSelectedButton>}
         {authorization.deleteList && <DeleteOrganizations
           deleteUrl={deleteUrl}
           selectOrganizations={selectOrganizations}
           setSelectOrganizations={setSelectOrganizations}
           setData={setData}
           className={styles.buttonDelete}
-          disabled={!authorization.deleteList}
         />}
-        {authorization.addList && <button disabled={!authorization.addList} onClick={handleImportExcel} className={styles.buttonImport}>Add by Excel</button>}
-        {authorization.updateList && <button disabled={!authorization.updateList} onClick={handleUpdateExcel} className={styles.buttonUpdate}>Update by Excel</button>}
+        {authorization.addList && <button onClick={handleImportExcel} className={styles.buttonImport}>Add by Excel</button>}
+        {authorization.updateList && <button onClick={handleUpdateExcel} className={styles.buttonUpdate}>Update by Excel</button>}
       </div>
 
 
@@ -249,11 +270,21 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
         </ReactTableBasic>
       </div>}
       <div className={styles.childContainer}>
-        {isShowManagerForm && authorization.view && <OrganizationManagerForm
+
+        {isShowAddForm && authorization.view && <AddForm
+          urlCheckOrganization={urlCheckOrganization}
+          urlInsertOrganization={urlInsertOrganization}
           organization={activeOrganization}
           onSuccess={handleOnSuccess}
           authorization={authorization}
-        ></OrganizationManagerForm>}
+        />}
+        {isShowEditForm && authorization.view && <EditForm
+          urlUpdateOrganization={urlUpdateOrganization}
+          urlDeleteOrganization={urlDeleteOrganization}
+          organization={activeOrganization}
+          onSuccess={handleOnSuccess}
+          authorization={authorization}
+        />}
 
         {isPrintListDesign && authorization.viewPrintDesignList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '100vh', scale: '0.9', overflowY: 'auto', overflowX: 'auto' }} >
