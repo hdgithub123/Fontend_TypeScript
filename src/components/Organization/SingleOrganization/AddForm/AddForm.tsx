@@ -217,7 +217,7 @@ export default function AddForm({
         showCancel={alertinfo.showCancel ?? true}
       />
       {authorization.view && <h2 className={styles.title}>
-        Thêm người dùng mới
+        Thêm tổ chức mới
       </h2>}
 
       {(authorization.add) && <form className={styles.organizationForm}>

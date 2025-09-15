@@ -120,9 +120,9 @@ const authorizationExample2 = {
   exportExcel: false,
 }
 
-const ListUser = ({ authorization = authorizationExample2 }) => {
-  const url: string = 'http://localhost:3000/auth/user/list'
-  const deleteUrl: string = 'http://localhost:3000/auth/user/list'
+const ListUser = ({ authorization = authorizationExample }) => {
+  const urlGetList: string = 'http://localhost:3000/auth/user/list'
+  const urlDeleteList: string = 'http://localhost:3000/auth/user/list'
   const urlCheckUser = 'http://localhost:3000/auth/user/check-user'
   const urlInsertUser = 'http://localhost:3000/auth/user/detail/insert'
   const urlUpdateUser = 'http://localhost:3000/auth/user/detail'
@@ -142,7 +142,7 @@ const ListUser = ({ authorization = authorizationExample2 }) => {
 
 
   const handleGetUser = async () => {
-    const result = await getData({ url: url });
+    const result = await getData({ url: urlGetList });
     if (result.data) {
       setData(result.data);
     } else {
@@ -240,7 +240,7 @@ const ListUser = ({ authorization = authorizationExample2 }) => {
         {authorization.printList && <NotifyNotSelectedButton className={styles.buttonPrint} data={selectUsers} onTrigger={handlePrintListUser} > Print list</NotifyNotSelectedButton>}
         {authorization.print && <NotifyNotSelectedButton className={styles.buttonPrintMore} data={selectUsers} onTrigger={handlePrintMoreUsers} > Print more</NotifyNotSelectedButton>}
         {authorization.deleteList && <DeleteUsers
-          deleteUrl={deleteUrl}
+          deleteUrl={urlDeleteList}
           selectUsers={selectUsers}
           setSelectUsers={setSelectUsers}
           setData={setData}

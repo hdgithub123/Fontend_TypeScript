@@ -121,8 +121,8 @@ const authorizationExample2 = {
 
 
 const ListOrganization = ({ authorization = authorizationExample }) => {
-  const url: string = 'http://localhost:3000/auth/organization/list'
-  const deleteUrl: string = 'http://localhost:3000/auth/organization/list'
+  const urlGetList: string = 'http://localhost:3000/auth/organization/list'
+  const urlDeleteList: string = 'http://localhost:3000/auth/organization/list'
   const urlCheckOrganization = 'http://localhost:3000/auth/organization/check-organization'
   const urlInsertOrganization = 'http://localhost:3000/auth/organization/detail/insert'
   const urlUpdateOrganization = 'http://localhost:3000/auth/organization/detail'
@@ -143,7 +143,7 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
 
   const handleGetOrganization = async () => {
     if (authorization.viewList) {
-      const result = await getData({ url: url });
+      const result = await getData({ url: urlGetList });
       if (result.data) {
         setData(result.data);
       }
@@ -245,7 +245,7 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
         {authorization.printList && <NotifyNotSelectedButton className={styles.buttonPrint} data={selectOrganizations} onTrigger={handlePrintListOrganization} > Print list</NotifyNotSelectedButton>}
         {authorization.print && <NotifyNotSelectedButton className={styles.buttonPrintMore} data={selectOrganizations} onTrigger={handlePrintMoreOrganizations} > Print more</NotifyNotSelectedButton>}
         {authorization.deleteList && <DeleteOrganizations
-          deleteUrl={deleteUrl}
+          deleteUrl={urlDeleteList}
           selectOrganizations={selectOrganizations}
           setSelectOrganizations={setSelectOrganizations}
           setData={setData}

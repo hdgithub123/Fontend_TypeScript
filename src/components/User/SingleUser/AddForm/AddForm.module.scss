@@ -4,16 +4,17 @@
   position: fixed;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%) scale(1);
+  transform: translate(-50%, -50%);
   max-width: 500px;
   width: 100%;
-  // margin: 2rem auto;
   padding: 2rem;
-  background-color: #ffffff;
+  background: #fff;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  // font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   font-family: inherit;
+
+  max-height: calc(100vh - 40px);
+  overflow-y: auto; // cuộn khi vượt quá
 
   .title {
     color: #2c3e50;

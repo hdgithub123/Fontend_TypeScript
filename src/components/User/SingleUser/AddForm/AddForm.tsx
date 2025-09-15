@@ -107,11 +107,6 @@ export default function AddForm({
   useEffect(() => {
     const timer = setTimeout(async () => {
 
-      // const result = validateDataArray([userData], userSchema, messagesVi);
-      // if (!result.status) {
-      //   setErrors(result.results[0]?.errors || {});
-      // }
-
       if (userData.code || userData.email) {
         const checkUser = { code: userData.code, email: userData.email, id: userData.id }
         const result = await checkUserAvailability({ urlCheckUser, user: checkUser });
