@@ -34,7 +34,7 @@ import {
 const columns = [
     {
         accessorKey: 'code',
-        header: 'Mã Tổ Chức',
+        header: 'Mã Quyền',
         id: 'code',
         filterType: 'text',
         footer: info => `Count: ${CountFooter(info.table)}`,
@@ -42,30 +42,21 @@ const columns = [
     },
     {
         accessorKey: 'name',
-        header: 'Tên Tổ Chức',
+        header: 'Tên Quyền',
         id: 'name',
         filterType: 'text',
         cell: TextCell,
     },
     {
-        accessorKey: 'address',
-        header: 'Địa chỉ',
-        id: 'address',
+        accessorKey: 'description',
+        header: 'Mô Tả',
+        id: 'description',
         filterType: 'text',
         cell: TextCell,
         groupCell: TextGroupCell,
 
     },
     {
-        accessorKey: 'isActive',
-        header: 'Kích Hoạt',
-        id: 'isActive',
-        filterType: 'multiSelect',
-        cell: CheckboxCell,
-
-        enableGlobalFilter: false
-    },
-        {
         accessorKey: 'isSystem',
         header: 'Hệ Thống',
         id: 'isSystem',
@@ -74,26 +65,9 @@ const columns = [
 
         enableGlobalFilter: false
     },
-    {
-        accessorKey: 'createdAt',
-        header: 'Ngày tạo',
-        id: 'createdAt',
-        filterType: 'dateTime',
-        cell: DateTimeCell,
-        enableGlobalFilter: false
-    },
-    {
-        accessorKey: 'createdBy',
-        header: 'Người tạo',
-        id: 'createdBy',
-        filterType: 'text',
-        cell: TextCell,
-        enableGlobalFilter: false
-    },
+
+
 
 ]
 
 export default columns
-
-
-

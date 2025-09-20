@@ -169,15 +169,14 @@ export default function AddFormDefault({
     onSuccess?.({ action: "cancel", subject: subjectData });
   }
 
-  const resetForm = () => {
-    setSubjectData({
-      code: "",
-      name: "",
-      address: "",
-      isActive: true
-    });
-    setErrors({});
-  };
+const resetForm = () => {
+  const emptyData: Subject = {};
+  Object.keys(fieldLabels).forEach(field => {
+    emptyData[field] = fieldLabels[field].type === "checkbox" ? false : "";
+  });
+  setSubjectData(emptyData);
+  setErrors({});
+};
 
 
   const [alertinfo, setAlertinfo] = useState<AlertInfo>({

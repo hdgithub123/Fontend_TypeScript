@@ -38,7 +38,6 @@ import {
 } from '../../../utils/axios'
 
 
-import columns from './colums'
 import DesignPrint from '../../Print/DesignPrint/DesignPrint';
 import PrintPreview from '../../Print/PrintPreview/PrintPreview';
 import MakeReportTable from '../../MakeReportTable/MakeReportTable'
@@ -63,25 +62,25 @@ interface Subject {
 }
 
 interface authorization {
-  view: boolean;
-  add: boolean;
-  update: boolean;
-  delete: boolean;
+  view?: boolean;
+  add?: boolean;
+  update?: boolean;
+  delete?: boolean;
 
   viewList: boolean;
-  addList: boolean;
-  updateList: boolean;
-  deleteList: boolean;
+  addList?: boolean;
+  updateList?: boolean;
+  deleteList?: boolean;
 
-  viewPrintDesign: boolean;
-  addPrintDesign: boolean;
-  updatePrintDesign: boolean;
-  deletePrintDesign: boolean;
+  viewPrintDesign?: boolean;
+  addPrintDesign?: boolean;
+  updatePrintDesign?: boolean;
+  deletePrintDesign?: boolean;
 
-  viewPrintDesignList: boolean;
-  addPrintDesignList: boolean;
-  updatePrintDesignList: boolean;
-  deletePrintDesignList: boolean;
+  viewPrintDesignList?: boolean;
+  addPrintDesignList?: boolean;
+  updatePrintDesignList?: boolean;
+  deletePrintDesignList?: boolean;
 
   print: boolean;
   printList: boolean;
@@ -90,24 +89,24 @@ interface authorization {
 };
 
 interface fullUrlList {
-  urlGetList: string;
-  urlDeleteList: string;
-  urlPostList: string;
-  urlPutList: string;
-  urlCheck: string;
-  urlUpdate: string;
-  urlDelete: string;
-  urlInsert: string;
+  urlGetList?: string;
+  urlDeleteList?: string;
+  urlPostList?: string;
+  urlPutList?: string;
+  urlCheck?: string;
+  urlUpdate?: string;
+  urlDelete?: string;
+  urlInsert?: string;
 
-  urlGetPrintContent: string;
-  urlUpdatePrintDesign: string;
-  urlDeletePrintDesign: string;
-  urlInsertPrintDesign: string;
+  urlGetPrintContent?: string;
+  urlUpdatePrintDesign?: string;
+  urlDeletePrintDesign?: string;
+  urlInsertPrintDesign?: string;
 
-  urlGetPrintContents: string;
-  urlUpdatePrintDesigns: string;
-  urlDeletePrintDesigns: string;
-  urlInsertPrintDesigns: string;
+  urlGetPrintContents?: string;
+  urlUpdatePrintDesigns?: string;
+  urlDeletePrintDesigns?: string;
+  urlInsertPrintDesigns?: string;
 }
 
 
@@ -196,40 +195,19 @@ const authorizationFalse = {
   exportExcel: false,
 }
 
-
-const fullUrlList = {
-  urlGetList: 'http://localhost:3000/auth/organization/list',
-  urlDeleteList: 'http://localhost:3000/auth/organization/list',
-  urlPostList: 'http://localhost:3000/auth/organization/list',
-  urlPutList: 'http://localhost:3000/auth/organization/list',
-  urlCheck: 'http://localhost:3000/auth/organization/check-organization',
-  urlUpdate: "http://localhost:3000/auth/organization/detail",
-  urlDelete: "http://localhost:3000/auth/organization/detail",
-  urlInsert: 'http://localhost:3000/auth/organization/detail/insert',
-
-  urlGetPrintContent: "http://localhost:3000/template-contents/organization/list",
-  urlUpdatePrintDesign: "http://localhost:3000/template-contents/organization/detail",
-  urlDeletePrintDesign: "http://localhost:3000/template-contents/organization/detail",
-  urlInsertPrintDesign: "http://localhost:3000/template-contents/organization/detail/insert",
-
-  urlGetPrintContents: "http://localhost:3000/template-contents/organizations/list",
-  urlUpdatePrintDesigns: "http://localhost:3000/template-contents/organizations/detail",
-  urlDeletePrintDesigns: "http://localhost:3000/template-contents/organizations/detail",
-  urlInsertPrintDesigns: "http://localhost:3000/template-contents/organizations/detail/insert",
-
-}
-
-const exportFileInfo = { name: "Data.xlsx", sheetName: "Sheet1", title: "Danh sách", description: null }
+const exportFileDefault = { name: "Data.xlsx", sheetName: "Sheet1", title: "Danh sách", description: null }
 
 
 export interface ListSubjectProps {
+
   authorization?: authorization;
+  columns?: ColumnConfig[];
   urlList?: fullUrlList;
   exportFile?: exportFileInfo;
-  insertExcelConfig?: configExcelInsertSetting;
-  updateExcelConfig?: configExcelUpdateSetting;
-  AddFormComponent?: React.ComponentType<any>;
-  EditFormComponent?: React.ComponentType<any>;
+  insertExcelConfig?: configExcelInsertSetting | null;
+  updateExcelConfig?: configExcelUpdateSetting | null;
+  AddFormComponent?: React.ComponentType<any> | null;
+  EditFormComponent?: React.ComponentType<any> | null;
   titleDesignList?: string;
   header?: string;
   dynamicTables?: any;
@@ -243,12 +221,13 @@ export interface ListSubjectProps {
 
 const ListSubject = ({
   authorization = authorizationFalse,
-  urlList = fullUrlList,
-  exportFile = exportFileInfo || null,
-  insertExcelConfig = insertExcelSetting,
-  updateExcelConfig = updateExcelSetting,
-  AddFormComponent = () => { return null; },
-  EditFormComponent = () => { return null; },
+  urlList = {},
+  columns = [],
+  exportFile = exportFileDefault || null,
+  insertExcelConfig = insertExcelSetting || null,
+  updateExcelConfig = updateExcelSetting || null,
+  AddFormComponent = null,
+  EditFormComponent = null,
   titleDesignList = "Thiết Kế Mẫu In Danh Sách",
   header = "Quản lý",
 
@@ -373,23 +352,23 @@ const ListSubject = ({
       <h1 className={styles.header}>{header}</h1>
       <div className={styles.buttonGroup}>
         {authorization.viewList && <button onClick={handleGetList} className={styles.buttonGet} >Refresh</button>}
-        {authorization.add && <button onClick={handleCreate} className={styles.buttonCreate} >Add New</button>}
-        {authorization.add && <button disabled={selectSubjects.length !== 1} onClick={handleDuplicateSubject} className={styles.buttonDuplicate} >Duplicate</button>}
+        {authorization.add && urlInsert && <button onClick={handleCreate} className={styles.buttonCreate} >Add New</button>}
+        {authorization.add && urlInsert &&<button disabled={selectSubjects.length !== 1} onClick={handleDuplicateSubject} className={styles.buttonDuplicate} >Duplicate</button>}
 
         {authorization.viewPrintDesignList && <NotifyNotSelectedButton className={styles.buttonDesign} data={selectSubjects} onTrigger={handlePrintListDesignSubject} >
           Design Print list
         </NotifyNotSelectedButton>}
         {authorization.printList && <NotifyNotSelectedButton className={styles.buttonPrint} data={selectSubjects} onTrigger={handlePrintListSubject} > Print list</NotifyNotSelectedButton>}
         {authorization.print && <NotifyNotSelectedButton className={styles.buttonPrintMore} data={selectSubjects} onTrigger={handlePrintMoreSubjects} > Print more</NotifyNotSelectedButton>}
-        {authorization.deleteList && <DeleteSubjects
+        {authorization.deleteList && urlDeleteList && <DeleteSubjects
           deleteUrl={urlDeleteList}
           selectSubjects={selectSubjects}
           setSelectSubjects={setSelectSubjects}
           setData={setData}
           className={styles.buttonDelete}
         />}
-        {authorization.addList && <button onClick={handleImportExcel} className={styles.buttonImport}>Add by Excel</button>}
-        {authorization.updateList && <button onClick={handleUpdateExcel} className={styles.buttonUpdate}>Update by Excel</button>}
+        {authorization.addList && insertExcelConfig && <button onClick={handleImportExcel} className={styles.buttonImport}>Add by Excel</button>}
+        {authorization.updateList && updateExcelConfig && <button onClick={handleUpdateExcel} className={styles.buttonUpdate}>Update by Excel</button>}
       </div>
 
 
@@ -407,14 +386,14 @@ const ListSubject = ({
       </div>}
       <div className={styles.childContainer}>
 
-        {isShowAddForm && authorization.view && <AddFormComponent
+        {isShowAddForm && authorization.view && AddFormComponent && <AddFormComponent
           urlCheck={urlCheck}
           urlInsert={urlInsert}
           activeData={activeData}
           onSuccess={handleOnSuccess}
           authorization={authorization}
         />}
-        {isShowEditForm && authorization.view && <EditFormComponent
+        {isShowEditForm && authorization.view && EditFormComponent && <EditFormComponent
 
           urlCheck={urlCheck}
           urlUpdate={urlUpdate}
@@ -500,7 +479,7 @@ const ListSubject = ({
         }
 
 
-        {isImportExcel && authorization.addList &&
+        {isImportExcel && authorization.addList && insertExcelConfig &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
             <DashboardSubjectsExcelInsertViewer
               config={insertExcelConfig}
@@ -517,7 +496,7 @@ const ListSubject = ({
 
           </div>, document.body)
         }
-        {isUpdateExcel && authorization.updateList &&
+        {isUpdateExcel && authorization.updateList && updateExcelConfig &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
             <DashboardSubjectsExcelUpdateViewer
               config={updateExcelConfig}

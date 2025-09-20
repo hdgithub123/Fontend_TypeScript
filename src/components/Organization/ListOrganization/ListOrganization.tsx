@@ -2,7 +2,7 @@ import {ListSubject} from "../../GeneralSubjectComponent"
 import type { ListSubjectProps } from '../../GeneralSubjectComponent'
 import insertExcelSetting from './settingImport'
 import updateExcelSetting from './settingUpdate'
-
+import columns from "./colums"
 
 import {
   AddFormOrganization,
@@ -44,6 +44,7 @@ const authorizationExample = {
 const ListOrganization = ({authorization = authorizationExample}) => {
   return (
     <ListSubject
+      columns={columns}
       authorization={authorization}
       urlList={fullUrlList}
       exportFile={exportFileInfo || null}

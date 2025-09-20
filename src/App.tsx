@@ -8,7 +8,7 @@ import NotFound from './pages/NotFound/NotFound';
 import Register from './pages/Register/Register';
 import User from './pages/User/User';
 import Organization from './pages/Organization/Organization';
-
+import Right from './pages/Right/Right';
 
 function App() {
   return (
@@ -25,6 +25,7 @@ function App() {
           <Route path="about" element={<About />} />
           <Route path="user" element={<User />} />
           <Route path="/organization" element={<Organization />} />
+          <Route path="/right" element={<Right />} />
         </Route>
       </Routes>
     </BrowserRouter>

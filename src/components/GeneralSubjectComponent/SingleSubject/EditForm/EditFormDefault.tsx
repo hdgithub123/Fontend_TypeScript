@@ -76,12 +76,14 @@ export default function EditFormDefault({
   // Initialize form with subject data
   useEffect(() => {
     if (activeData) {
+      const { _typeofRow, ...subjectWithoutTypeofRow } = activeData;
+
       setSubjectData({
-        ...activeData,
+        ...subjectWithoutTypeofRow,
       });
 
       setSubjectDefaultData({
-        ...activeData,
+        ...subjectWithoutTypeofRow,
       });
     } else {
       resetForm();
@@ -90,14 +92,16 @@ export default function EditFormDefault({
 
   useEffect(() => {
     const timer = setTimeout(async () => {
-      const newErrors = await checkFieldsAvailability({
-        data: subjectData,
-        urlCheck,
-        fieldExists: checkFieldExists,
-        fieldNoExists: checkFieldNoExists,
-        idField: "id"
-      });
-      setErrors(prev => ({ ...prev, ...newErrors }));
+      if (urlCheck || urlCheck !== "") {
+        const newErrors = await checkFieldsAvailability({
+          data: subjectData,
+          urlCheck,
+          fieldExists: checkFieldExists,
+          fieldNoExists: checkFieldNoExists,
+          idField: "id"
+        });
+        setErrors(prev => ({ ...prev, ...newErrors }));
+      }
     }, 300);
 
     return () => clearTimeout(timer);
@@ -247,12 +251,11 @@ export default function EditFormDefault({
   }
 
   const resetForm = () => {
-    setSubjectData({
-      code: "",
-      name: "",
-      address: "",
-      isActive: true
+    const emptyData: Subject = {};
+    Object.keys(fieldLabels).forEach(field => {
+      emptyData[field] = fieldLabels[field].type === "checkbox" ? false : "";
     });
+    setSubjectData(emptyData);
     setErrors({});
   };
 
@@ -307,7 +310,7 @@ export default function EditFormDefault({
                 type="checkbox"
                 id={field}
                 name={field}
-                checked={Boolean(subjectData.isActive) || false}
+                checked={Boolean(subjectData[field as keyof Subject]) || false}
                 onChange={handleChange}
               />
             ) : (
