@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { DashboardExcelUploadViewer } from "../../../../utils/UploadExcel";
-import { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance } from "./setting";
+// import { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance } from "./setting";
+import organizationConfig  from "./setting";
 import { messagesEn, messagesVi } from "../../../../utils/validation";
 import { postData } from "../../../../utils/axios";
 import LoadingOverlay from "../../../../utils/LoadingOverlay/LoadingOverlay";
 
 
-const DashboardOrganizationsExcelInsertViewer = ({ urlPost, onCancel, onDone }) => {
+const DashboardOrganizationsExcelInsertViewer = ({ urlPost, config = organizationConfig, onCancel, onDone }) => {
 
+    const { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, sheetName, fileName, guideSheet, title } = config;
     const [isLoading, setIsLoading] = useState(false);
 
     const onCheckUpload = async (dataUpload) => {
@@ -27,10 +29,10 @@ const DashboardOrganizationsExcelInsertViewer = ({ urlPost, onCancel, onDone }) 
             {isLoading && <LoadingOverlay message="Đang upload dữ liệu..." onDoubleClick={() => setIsLoading(false)} />}
             <DashboardExcelUploadViewer
                 columns={columns}
-                sheetName='Import Organizations'
-                fileName="organizations_import_template.xlsx"
-                guideSheet='Hướng dẫn'
-                title='Import Organizations'
+                sheetName={sheetName}
+                fileName={fileName}
+                guideSheet={guideSheet}
+                title={title}
                 ruleSchema={ruleSchema}
                 translateMessages={messagesVi}
                 headerRowNumber={1}

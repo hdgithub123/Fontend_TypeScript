@@ -37,7 +37,7 @@ import {
   patchData
 } from '../../../utils/axios'
 
-import OrganizationManagerForm from '../SingleOrganization/ManagerOrganizationForm/OrganizationManagerForm';
+
 import columns from './colums'
 import DesignPrint from '../../Print/DesignPrint/DesignPrint';
 import PrintPreview from '../../Print/PrintPreview/PrintPreview';
@@ -52,6 +52,9 @@ import NotifyNotSelectedButton from "./Notifibutton";
 import styles from './ListOrganization.module.scss'
 import AddForm from "../SingleOrganization/AddForm/AddForm";
 import EditForm from "../SingleOrganization/EditForm/EditForm";
+import insertExcelSetting from "../DashboardExcelImport/DashboardOrganizationsExcelInsertViewer/setting";
+import updateExcelSetting from "../DashboardExcelImport/DashboardOrganizationsExcelUpdateViewer/setting";
+
 
 
 interface Organization {
@@ -119,17 +122,64 @@ const authorizationExample2 = {
 }
 
 
+const fullUrlList = {
+  urlGetList: 'http://localhost:3000/auth/organization/list',
+  urlDeleteList: 'http://localhost:3000/auth/organization/list',
+  urlPostList: 'http://localhost:3000/auth/organization/list',
+  urlPutList: 'http://localhost:3000/auth/organization/list',
+  urlCheck: 'http://localhost:3000/auth/organization/check-organization',
+  urlUpdate: "http://localhost:3000/auth/organization/detail",
+  urlDelete: "http://localhost:3000/auth/organization/detail",
+  urlInsert: 'http://localhost:3000/auth/organization/detail/insert',
 
-const ListOrganization = ({ authorization = authorizationExample }) => {
-  const urlGetList: string = 'http://localhost:3000/auth/organization/list'
-  const urlDeleteList: string = 'http://localhost:3000/auth/organization/list'
-  const urlCheckOrganization = 'http://localhost:3000/auth/organization/check-organization'
-  const urlInsertOrganization = 'http://localhost:3000/auth/organization/detail/insert'
-  const urlUpdateOrganization = 'http://localhost:3000/auth/organization/detail'
-  const urlDeleteOrganization = 'http://localhost:3000/auth/organization/detail'
+  urlGetPrintContent: "http://localhost:3000/template-contents/organization/list",
+  urlUpdatePrintDesign: "http://localhost:3000/template-contents/organization/detail",
+  urlDeletePrintDesign: "http://localhost:3000/template-contents/organization/detail",
+  urlInsertPrintDesign: "http://localhost:3000/template-contents/organization/detail/insert",
+
+  urlGetPrintContents: "http://localhost:3000/template-contents/organizations/list",
+  urlUpdatePrintDesigns: "http://localhost:3000/template-contents/organizations/detail",
+  urlDeletePrintDesigns: "http://localhost:3000/template-contents/organizations/detail",
+  urlInsertPrintDesigns: "http://localhost:3000/template-contents/organizations/detail/insert",
+
+}
+
+const exportFileInfo = { name: "Organization.xlsx", sheetName: "Sheet1", title: "Danh sách tổ chức", description: null }
+
+
+interface ListOrganizationProps {
+  authorization?: typeof authorizationExample;
+  urlList?: typeof fullUrlList;
+  exportFile?: typeof exportFileInfo;
+  insertExcelConfig?: typeof insertExcelSetting;
+  updateExcelConfig?: typeof updateExcelSetting;
+  AddFormComponent?: React.ComponentType<any>;
+  EditFormComponent?: React.ComponentType<any>;
+}
+
+
+
+const ListOrganization = ({
+  authorization = authorizationExample,
+  urlList = fullUrlList,
+  exportFile = exportFileInfo,
+  insertExcelConfig = insertExcelSetting,
+  updateExcelConfig = updateExcelSetting, 
+  AddFormComponent = AddForm,
+  EditFormComponent = EditForm
+
+}: ListOrganizationProps) => {
+
+  const { 
+    urlGetList, urlDeleteList, urlPostList, urlPutList,
+    urlCheck, urlUpdate, urlDelete, urlInsert,
+    urlGetPrintContent, urlUpdatePrintDesign, urlDeletePrintDesign, urlInsertPrintDesign,
+    urlGetPrintContents, urlUpdatePrintDesigns, urlDeletePrintDesigns, urlInsertPrintDesigns
+  } = urlList;
+
 
   const [data, setData] = useState<Array<{ [key: string]: any }>>([{}]);
-  const [activeOrganization, setActiveOrganization] = useState<Organization | null>(null);
+  const [activeData, setActiveData] = useState<Organization | null>(null);
   const [isShowAddForm, setIsShowAddForm] = useState(false);
   const [isShowEditForm, setIsShowEditForm] = useState(false);
   const [isPrintListDesign, setIsPrintListDesign] = useState(false);
@@ -139,9 +189,7 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
   const [isPrintMoreOrganizations, setIsPrintMoreOrganizations] = useState(false);
   const [selectOrganizations, setSelectOrganizations] = useState<any[]>([]);
 
-
-
-  const handleGetOrganization = async () => {
+  const handleGetList = async () => {
     if (authorization.viewList) {
       const result = await getData({ url: urlGetList });
       if (result.data) {
@@ -156,7 +204,7 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
 
   useEffect(() => {
     if (authorization.viewList) {
-      handleGetOrganization();
+      handleGetList();
     } else {
       setData([]);
     }
@@ -164,7 +212,7 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
   }, []);
 
   const handleOnRowSelect = (value) => {
-    setActiveOrganization(value);
+    setActiveData(value);
     setIsShowEditForm(true);
 
   }
@@ -174,15 +222,15 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
 
   const handleOnSuccess = (data) => {
     if (data.action === 'insert' || data.action === 'update' || data.action === 'delete') {
-      handleGetOrganization();
+      handleGetList();
     }
-    setActiveOrganization(null);
+    setActiveData(null);
     setIsShowAddForm(false);
     setIsShowEditForm(false);
   }
 
-  const handleCreateOrganization = () => {
-    setActiveOrganization(null);
+  const handleCreate = () => {
+    setActiveData(null);
     setIsShowAddForm(true);
   }
 
@@ -193,7 +241,7 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
         ...rest,
         code: 'copy-' + rest.code,
       };
-      setActiveOrganization(duplicateOrganization);
+      setActiveData(duplicateOrganization);
       setIsShowAddForm(true);
       setIsShowEditForm(false); // đảm bảo không bật cả 2 form
     }
@@ -235,8 +283,8 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
     <div className={styles.container}>
       <h1 className={styles.header}>Quản lý Tổ chức</h1>
       <div className={styles.buttonGroup}>
-        {authorization.viewList && <button onClick={handleGetOrganization} className={styles.buttonGet} >Refresh</button>}
-        {authorization.add && <button onClick={handleCreateOrganization} className={styles.buttonCreate} >Add New</button>}
+        {authorization.viewList && <button onClick={handleGetList} className={styles.buttonGet} >Refresh</button>}
+        {authorization.add && <button onClick={handleCreate} className={styles.buttonCreate} >Add New</button>}
         {authorization.add && <button disabled={selectOrganizations.length !== 1} onClick={handleDuplicateOrganization} className={styles.buttonDuplicate} >Duplicate</button>}
 
         {authorization.viewPrintDesignList && <NotifyNotSelectedButton className={styles.buttonDesign} data={selectOrganizations} onTrigger={handlePrintListDesignOrganization} >
@@ -264,24 +312,31 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
           onOriginalRowSelect={handleOnRowSelect}
           onOriginalRowsSelect={handleOnRowsSelect}
           fieldUnique={'id'}
-          exportFile={authorization.exportExcel ? { name: "Organization.xlsx", sheetName: "Sheet1", title: "Danh sách tổ chức", description: null } : null}
-        //exportFile={authorization.exportExcel ? undefined : null}
+          exportFile={authorization.exportExcel ? exportFile ? exportFile : undefined : null}
         >
         </ReactTableBasic>
       </div>}
       <div className={styles.childContainer}>
 
-        {isShowAddForm && authorization.view && <AddForm
-          urlCheckOrganization={urlCheckOrganization}
-          urlInsertOrganization={urlInsertOrganization}
-          organization={activeOrganization}
+        {isShowAddForm && authorization.view && <AddFormComponent
+          urlCheck={urlCheck}
+          urlInsert={urlInsert}
+          activeData={activeData}
           onSuccess={handleOnSuccess}
           authorization={authorization}
         />}
-        {isShowEditForm && authorization.view && <EditForm
-          urlUpdateOrganization={urlUpdateOrganization}
-          urlDeleteOrganization={urlDeleteOrganization}
-          organization={activeOrganization}
+        {isShowEditForm && authorization.view && <EditFormComponent
+
+          urlCheck={urlCheck}
+          urlUpdate={urlUpdate}
+          urlDelete={urlDelete}
+
+          urlGetPrintContent={urlGetPrintContent}
+          urlUpdatePrintDesign={urlUpdatePrintDesign}
+          urlDeletePrintDesign={urlDeletePrintDesign}
+          urlInsertPrintDesign={urlInsertPrintDesign}
+
+          activeData={activeData}
           onSuccess={handleOnSuccess}
           authorization={authorization}
         />}
@@ -289,10 +344,10 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
         {isPrintListDesign && authorization.viewPrintDesignList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '100vh', scale: '0.9', overflowY: 'auto', overflowX: 'auto' }} >
             <DesignPrint
-              urlGet="http://localhost:3000/template-contents/organizations/list"
-              urlUpdate="http://localhost:3000/template-contents/organizations/detail"
-              urlDelete="http://localhost:3000/template-contents/organizations/detail"
-              urlInsert="http://localhost:3000/template-contents/organizations/detail/insert"
+              urlGet={urlGetPrintContents}
+              urlUpdate={urlUpdatePrintDesigns}
+              urlDelete={urlDeletePrintDesigns}
+              urlInsert={urlInsertPrintDesigns}
               dynamicTables={{
                 organization: selectOrganizations
               }}
@@ -320,7 +375,7 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
                 organization: selectOrganizations
               }}
               // contentStateObject={blockOrganization}
-              urlGet="http://localhost:3000/template-contents/organizations/list"
+              urlGet={urlGetPrintContents}
               onCancel={handleOnCancelPrint}
             >
             </PrintPreview>
@@ -337,7 +392,7 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
               //   user: data
               // }}
               // contentStateObject={blockOrganization}
-              urlGet="http://localhost:3000/template-contents/organization/list"
+              urlGet={urlGetPrintContents}
               onCancel={() => {
                 setIsPrintMoreOrganizations(false)
               }}
@@ -354,13 +409,14 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
               // onCheckUpload={(data)=>{
               //   console.log("data",data)
               // }}
-              urlPost={url}
+              config={insertExcelConfig}
+              urlPost={urlPostList}
               onCancel={() => {
                 setIsImportExcel(false)
               }}
               onDone={() => {
                 setIsImportExcel(false)
-                handleGetOrganization()
+                handleGetList()
               }}
             >
             </DashboardOrganizationsExcelInsertViewer>
@@ -373,13 +429,14 @@ const ListOrganization = ({ authorization = authorizationExample }) => {
               // onCheckUpload={(data)=>{
               //   console.log("data",data)
               // }}
-              urlPost={url}
+              config={updateExcelConfig}
+              urlPut={urlPutList}
               onCancel={() => {
                 setIsUpdateExcel(false)
               }}
               onDone={() => {
                 setIsUpdateExcel(false)
-                handleGetOrganization()
+                handleGetList()
               }}
             >
             </DashboardOrganizationsExcelUpdateViewer>

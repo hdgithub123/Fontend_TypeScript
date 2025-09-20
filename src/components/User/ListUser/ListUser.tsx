@@ -52,6 +52,8 @@ import styles from './ListUser.module.scss'
 import AddForm from "../SingleUser/AddForm/AddForm";
 import EditForm from "../SingleUser/EditForm/EditForm";
 
+import inputExcellConfig from '../DashboardExcelImport/DashboardUsersExcelInsertViewer/setting'
+import updateExcellConfig from '../DashboardExcelImport/DashboardUsersExcelUpdateViewer/setting'
 
 interface User {
   id: string,
@@ -65,8 +67,7 @@ interface User {
 }
 
 
-const zoneId = '8e522402-3611-11f0-b432-0242ac110002'; //-- chi nhanh HCM-- con
-//const zoneId = '8e4f3a13-3611-11f0-b432-0242ac110002'; // -- tong cong ty -- cha
+
 const authorizationExample = {
   view: true,
   add: true,
@@ -123,10 +124,23 @@ const authorizationExample2 = {
 const ListUser = ({ authorization = authorizationExample }) => {
   const urlGetList: string = 'http://localhost:3000/auth/user/list'
   const urlDeleteList: string = 'http://localhost:3000/auth/user/list'
+  const urlPostList: string = 'http://localhost:3000/auth/user/list'
+  const urlPutList: string = 'http://localhost:3000/auth/user/list'
+
   const urlCheckUser = 'http://localhost:3000/auth/user/check-user'
   const urlInsertUser = 'http://localhost:3000/auth/user/detail/insert'
   const urlUpdateUser = 'http://localhost:3000/auth/user/detail'
   const urlDeleteUser = 'http://localhost:3000/auth/user/detail'
+
+  const urlGetPrintContent = 'http://localhost:3000/template-contents/users/list'
+  const urlGetPrintDesign = "http://localhost:3000/template-contents/users/list"
+  
+  const urlUpdatePrintDesign = "http://localhost:3000/template-contents/users/detail"
+  const urlDeletePrintDesign = "http://localhost:3000/template-contents/users/detail"
+  const urlInsertPrintDesign = "http://localhost:3000/template-contents/users/detail/insert"
+
+  const configInsertExcell = inputExcellConfig
+  const configUpdateExcell = updateExcellConfig
 
   const [data, setData] = useState<Array<{ [key: string]: any }>>([{}]);
   const [activeUser, setActiveUser] = useState<User | null>(null);
@@ -169,7 +183,7 @@ const ListUser = ({ authorization = authorizationExample }) => {
   }
 
   const handleOnSuccess = (data) => {
- 
+
     if (data.action === 'insert' || data.action === 'update' || data.action === 'delete') {
       handleGetUser();
     }
@@ -271,7 +285,7 @@ const ListUser = ({ authorization = authorizationExample }) => {
           urlInsertUser={urlInsertUser}
           user={activeUser}
           onSuccess={handleOnSuccess}
-          authorization={authorization }
+          authorization={authorization}
         />}
         {isShowEditForm && authorization.view && <EditForm
           urlUpdateUser={urlUpdateUser}
@@ -285,10 +299,10 @@ const ListUser = ({ authorization = authorizationExample }) => {
         {isPrintListDesign && authorization.viewPrintDesignList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '100vh', scale: '0.9', overflowY: 'auto', overflowX: 'auto' }} >
             <DesignPrint
-              urlGet="http://localhost:3000/template-contents/users/list"
-              urlUpdate="http://localhost:3000/template-contents/users/detail"
-              urlDelete="http://localhost:3000/template-contents/users/detail"
-              urlInsert="http://localhost:3000/template-contents/users/detail/insert"
+              urlGet={urlGetPrintDesign}
+              urlUpdate={urlUpdatePrintDesign}
+              urlDelete={urlDeletePrintDesign}
+              urlInsert={urlInsertPrintDesign}
               dynamicTables={{
                 user: selectUsers
               }}
@@ -316,7 +330,7 @@ const ListUser = ({ authorization = authorizationExample }) => {
                 user: selectUsers
               }}
               // contentStateObject={blockUser}
-              urlGet="http://localhost:3000/template-contents/users/list"
+              urlGet={urlGetPrintContent}
               onCancel={handleOnCancelPrint}
             >
             </PrintPreview>
@@ -333,7 +347,8 @@ const ListUser = ({ authorization = authorizationExample }) => {
               //   user: data
               // }}
               // contentStateObject={blockUser}
-              urlGet="http://localhost:3000/template-contents/user/list"
+              // urlGet="http://localhost:3000/template-contents/user/list"
+              urlGet={urlGetPrintContent}
               onCancel={() => {
                 setIsPrintMoreUsers(false)
               }}
@@ -347,10 +362,8 @@ const ListUser = ({ authorization = authorizationExample }) => {
         {isImportExcel && authorization.addList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
             <DashboardUsersExcelInsertViewer
-              // onCheckUpload={(data)=>{
-              //   console.log("data",data)
-              // }}
-              urlPost={url}
+              config={configInsertExcell}
+              urlPost={urlPostList}
               onCancel={() => {
                 setIsImportExcel(false)
               }}
@@ -366,10 +379,8 @@ const ListUser = ({ authorization = authorizationExample }) => {
         {isUpdateExcel && authorization.updateList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
             <DashboardUsersExcelUpdateViewer
-              // onCheckUpload={(data)=>{
-              //   console.log("data",data)
-              // }}
-              urlPost={url}
+              config={configUpdateExcell}
+              urlPut={urlPutList}
               onCancel={() => {
                 setIsUpdateExcel(false)
               }}

@@ -169,3 +169,5 @@ const columnCheckNotExistance = [
 const ListIdsConfig = { url: 'http://localhost:3000/auth/user/ids-codes', fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
 
 export { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig };
+const setting = { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig };
+export default setting;

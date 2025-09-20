@@ -16,7 +16,7 @@ interface Organization {
   code?: string;
   name?: string;
   address?: string;
-  isActive: boolean | string | number; // Allow boolean, string, or number
+  isActive?: boolean | string | number; // Allow boolean, string, or number
   isSystem?: boolean;
   createdBy?: string;
   updatedBy?: string;
@@ -28,12 +28,18 @@ interface Organization {
 
 
 interface OrganizationManagementFormProps {
-  urlCheckOrganization?: string;
-  urlInsertOrganization?: string;
-  urlUpdateOrganization?: string;
-  urlDeleteOrganization?: string;
+  urlCheck?: string;
+  urlUpdate?: string;
+  urlDelete?: string;
+  // urlInsert?: string;
+  // urlGetList?: string;
+  urlGetPrintContent?: string;
+  urlUpdatePrintDesign?: string;
+  urlDeletePrintDesign?: string;
+  urlInsertPrintDesign?: string;
+
   urlRefreshToken?: string;
-  organization?: Organization | null; // Changed from initialOrganization to organization
+  activeData?: Organization | null; // Changed from initialOrganization to organization
   onSuccess?: (params: { action: 'insert' | 'update' | 'delete' | 'cancel', organization?: Organization }) => void;
   authorization: object;
 }
@@ -62,12 +68,17 @@ const fieldLabels: Record<string, { label: string; type: string; placeholder?: s
 };
 
 
-export default function OrganizationManagerForm({
-  urlCheckOrganization = 'http://localhost:3000/auth/organization/check-organization',
-  urlUpdateOrganization = 'http://localhost:3000/auth/organization/detail',
-  urlDeleteOrganization = 'http://localhost:3000/auth/organization/detail',
+export default function EditForm({
+  urlCheck = 'http://localhost:3000/auth/organization/check-organization',
+  urlUpdate = "http://localhost:3000/auth/organization/detail",
+  urlDelete = "http://localhost:3000/auth/organization/detail",
 
-  organization = null, // Changed parameter name
+  urlGetPrintContent = "http://localhost:3000/template-contents/organization/list",
+  urlUpdatePrintDesign = "http://localhost:3000/template-contents/organization/detail",
+  urlDeletePrintDesign = "http://localhost:3000/template-contents/organization/detail",
+  urlInsertPrintDesign = "http://localhost:3000/template-contents/organization/detail/insert",
+
+  activeData = null, // Changed parameter name
   onSuccess = () => { },
   authorization = {}
 }: OrganizationManagementFormProps) {
@@ -78,24 +89,24 @@ export default function OrganizationManagerForm({
   const [errors, setErrors] = useState<Partial<Record<keyof Organization, string>>>({});
   // Initialize form with organization data
   useEffect(() => {
-    if (organization) {
+    if (activeData) {
       setOrganizationData({
-        ...organization,
+        ...activeData,
       });
 
       setOrganizationDefaultData({
-        ...organization,
+        ...activeData,
       });
     } else {
       resetForm();
     }
-  }, [organization]);
+  }, [activeData]);
 
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (organizationData.code) {
         const checkOrganization = { code: organizationData.code, id: organizationData.id }
-        const result = await checkOrganizationAvailability({ urlCheckOrganization, organization: checkOrganization });
+        const result = await checkOrganizationAvailability({ urlCheck, organization: checkOrganization });
         const newErrors: Partial<Organization> = {};
         if (result.code) newErrors.code = "Mã tổ chức đã tồn tại";
         setErrors(prev => ({ ...prev, ...newErrors }));
@@ -139,7 +150,7 @@ export default function OrganizationManagerForm({
       }
 
       const checkOrganization = { code: organizationData.code, id: organizationData.id };
-      const checkResult = await checkOrganizationAvailability({ urlCheckOrganization, organization: checkOrganization });
+      const checkResult = await checkOrganizationAvailability({ urlCheck, organization: checkOrganization });
       const checkErrors: Partial<Organization> = {};
       if (checkResult.code) checkErrors.code = "Mã tổ chức đã tồn tại";
 
@@ -168,9 +179,9 @@ export default function OrganizationManagerForm({
             return acc;
           }, {} as Partial<Organization>);
 
-          
+
           const result = await putData({
-            url: `${urlUpdateOrganization}/${organizationData.id}`,
+            url: `${urlUpdate}/${organizationData.id}`,
             data: updatedFields,
           });
 
@@ -210,7 +221,7 @@ export default function OrganizationManagerForm({
       title: "Xác nhận xóa",
       onConfirm: async () => {
         const result = await deleteData({
-          url: `${urlDeleteOrganization}/${organizationData.id}`,
+          url: `${urlDelete}/${organizationData.id}`,
         });
 
         if (result?.status) {
@@ -380,10 +391,10 @@ export default function OrganizationManagerForm({
       {isPrintDesign && authorization.viewPrintDesign &&
         ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '100vh', scale: '0.9', overflowY: 'auto', overflowX: 'auto' }} >
           <DesignPrint
-            urlGet="http://localhost:3000/template-contents/organization/list"
-            urlUpdate="http://localhost:3000/template-contents/organization/detail"
-            urlDelete="http://localhost:3000/template-contents/organization/detail"
-            urlInsert="http://localhost:3000/template-contents/organization/detail/insert"
+            urlGet={urlGetPrintContent}
+            urlUpdate={urlUpdatePrintDesign}
+            urlDelete={urlDeletePrintDesign}
+            urlInsert={urlInsertPrintDesign}
             dynamicTexts={organizationData || {}}
             // contentStateObject={blockOrganization}
             onCancel={handleOnCancel}
@@ -405,7 +416,7 @@ export default function OrganizationManagerForm({
           <PrintPreview
             dynamicTexts={organizationData}
             // contentStateObject={blockOrganization}
-            urlGet="http://localhost:3000/template-contents/organization/list"
+            urlGet={urlGetPrintContent}
             onCancel={handleOnPrintCancel}
           >
           </PrintPreview>

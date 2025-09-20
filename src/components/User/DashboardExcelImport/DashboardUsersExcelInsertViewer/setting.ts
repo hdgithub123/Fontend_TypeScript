@@ -150,3 +150,6 @@ const columnCheckNotExistance = [
 ]
 
 export { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance };
+
+const setting = { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance };
+export default setting;

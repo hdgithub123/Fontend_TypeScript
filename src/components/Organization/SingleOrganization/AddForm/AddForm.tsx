@@ -16,7 +16,7 @@ interface Organization {
   code?: string;
   name?: string;
   address?: string;
-  isActive: boolean | string | number; // Allow boolean, string, or number
+  isActive?: boolean | string | number; // Allow boolean, string, or number
   isSystem?: boolean;
   createdBy?: string;
   updatedBy?: string;
@@ -28,12 +28,11 @@ interface Organization {
 
 
 interface OrganizationManagementFormProps {
-  urlCheckOrganization?: string;
-  urlInsertOrganization?: string;
-  urlUpdateOrganization?: string;
-  urlDeleteOrganization?: string;
-  urlRefreshToken?: string;
-  organization?: Organization | null; // Changed from initialOrganization to organization
+  urlCheck?: string;
+  urlInsert?: string;
+  // urlUpdateOrganization?: string;
+  // urlDeleteOrganization?: string;
+  activeData?: Organization | null; // Changed from initialOrganization to organization
   onSuccess?: (params: { action: 'insert' | 'update' | 'delete' | 'cancel', organization?: Organization }) => void;
   authorization?: object
 }
@@ -63,13 +62,14 @@ const fieldLabels: Record<string, { label: string; type: string; placeholder?: s
 
 
 export default function AddForm({
-  urlCheckOrganization = 'http://localhost:3000/auth/organization/check-organization',
-  urlInsertOrganization = 'http://localhost:3000/auth/organization/detail/insert',
+  urlCheck,
+  urlInsert,
 
-  organization = null, // Changed parameter name
+  activeData = null, // Changed parameter name
   onSuccess = () => { },
   authorization = {}
 }: OrganizationManagementFormProps) {
+
   const [organizationData, setOrganizationData] = useState<Organization>({});
 
   const [errors, setErrors] = useState<Partial<Record<keyof Organization, string>>>({});
@@ -77,9 +77,9 @@ export default function AddForm({
 
   // Initialize form with organization data
   useEffect(() => {
-    if (organization) {
+    if (activeData) {
       // loại bỏ _typeofRow khỏi organization
-      const { _typeofRow, ...organizationWithoutTypeofRow } = organization;
+      const { _typeofRow, ...organizationWithoutTypeofRow } = activeData;
       setOrganizationData({
         ...organizationWithoutTypeofRow,
       });
@@ -87,14 +87,14 @@ export default function AddForm({
     } else {
       resetForm();
     }
-  }, [organization]);
+  }, [activeData]);
 
 
   useEffect(() => {
     const timer = setTimeout(async () => {
       if (organizationData.code) {
         const checkOrganization = { code: organizationData.code, id: organizationData.id }
-        const result = await checkOrganizationAvailability({ urlCheckOrganization, organization: checkOrganization });
+        const result = await checkOrganizationAvailability({ urlCheck, organization: checkOrganization });
         const newErrors: Partial<Organization> = {};
         if (result.code) newErrors.code = "Mã tổ chức đã tồn tại";
         setErrors(prev => ({ ...prev, ...newErrors }));
@@ -136,7 +136,7 @@ export default function AddForm({
       }
 
       const checkOrganization = { code: organizationData.code, id: organizationData.id };
-      const checkResult = await checkOrganizationAvailability({ urlCheckOrganization, organization: checkOrganization });
+      const checkResult = await checkOrganizationAvailability({ urlCheck, organization: checkOrganization });
       const checkErrors: Partial<Organization> = {};
       if (checkResult.code) checkErrors.code = "Tên tổ chức đã tồn tại";
 
@@ -154,9 +154,11 @@ export default function AddForm({
           const newId = uuidv4();
           const organizationToCreate: Organization = { ...organizationData, id: newId };
           const result = await postData({
-            url: urlInsertOrganization,
+            url: urlInsert,
             data: organizationToCreate,
           });
+          console.log("Insert result:", result);
+
           if (result?.status) {
             setOrganizationData(organizationToCreate);
             onSuccess?.({ action: "insert", organization: result.data });

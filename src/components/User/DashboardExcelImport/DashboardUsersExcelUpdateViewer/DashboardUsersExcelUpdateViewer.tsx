@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { DashboardExcelUploadViewer } from "../../../../utils/UploadExcel";
-import { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig } from "./setting";
+//import { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig } from "./setting";
+import userSetting from "./setting";
 import { messagesEn, messagesVi } from "../../../../utils/validation";
 import { postData, putData } from "../../../../utils/axios";
 import LoadingOverlay from "../../../../utils/LoadingOverlay/LoadingOverlay";
 
-const DashboardUsersExcelUpdateViewer = ({ urlPost, onCancel, onDone }) => {
-    const urlidscodes = ListIdsConfig?.url || "http://localhost:3000/auth/user/ids-codes"
+
+
+const DashboardUsersExcelUpdateViewer = ({ urlPut, config = userSetting, onCancel, onDone }) => {
+    const urlidscodes = config.ListIdsConfig?.url || "http://localhost:3000/auth/user/ids-codes"
     const [isLoading, setIsLoading] = useState(false);
     const onCheckUpload = async (dataUpload) => {
         setIsLoading(true);
@@ -31,7 +34,7 @@ const DashboardUsersExcelUpdateViewer = ({ urlPost, onCancel, onDone }) => {
                 return;
             }
             //thực hiên update users
-            const { data: dataUpdate, errorCode: errorCodeUpdate, status: statusUpdate } = await putData({ url: urlPost, data: newDataUpload });
+            const { data: dataUpdate, errorCode: errorCodeUpdate, status: statusUpdate } = await putData({ url: urlPut, data: newDataUpload });
 
             if (statusUpdate) {
                 setIsLoading(false);
@@ -47,20 +50,20 @@ const DashboardUsersExcelUpdateViewer = ({ urlPost, onCancel, onDone }) => {
         <>
             {isLoading && <LoadingOverlay message="Đang upload dữ liệu..." onDoubleClick={() => setIsLoading(false)} />}
             <DashboardExcelUploadViewer
-                columns={columns}
+                columns={config.columns}
                 sheetName='Import Users'
                 fileName="users_update_template.xlsx"
                 guideSheet='Hướng dẫn'
                 title='update Users'
-                ruleSchema={ruleSchema}
+                ruleSchema={config.ruleSchema}
                 translateMessages={messagesVi}
                 headerRowNumber={1}
                 isCheckLocalDuplicates={true}
-                columnCheckExistance={columnCheckExistance}
-                columnCheckNotExistance={columnCheckNotExistance}
+                columnCheckExistance={config.columnCheckExistance}
+                columnCheckNotExistance={config.columnCheckNotExistance}
                 onCheckUpload={onCheckUpload}
                 onCancel={onCancel}
-                ListIdsConfig={ListIdsConfig}
+                ListIdsConfig={config.ListIdsConfig}
             ></DashboardExcelUploadViewer>
         </>
 

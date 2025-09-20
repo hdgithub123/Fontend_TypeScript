@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { DashboardExcelUploadViewer } from "../../../../utils/UploadExcel";
-import { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig } from "./setting";
+//import { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig } from "./setting";
+import organizationConfig from "./setting";
 import { messagesEn, messagesVi } from "../../../../utils/validation";
 import { postData, putData } from "../../../../utils/axios";
 import LoadingOverlay from "../../../../utils/LoadingOverlay/LoadingOverlay";
 
-const DashboardOrganizationsExcelUpdateViewer = ({ urlPost, onCancel, onDone }) => {
+const DashboardOrganizationsExcelUpdateViewer = ({ urlPut, config = organizationConfig, onCancel, onDone }) => {
+    const { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig, sheetName, fileName, guideSheet, title } = config;
     const urlidscodes = ListIdsConfig?.url || "http://localhost:3000/auth/organization/ids-codes"
     const [isLoading, setIsLoading] = useState(false);
     const onCheckUpload = async (dataUpload) => {
@@ -31,7 +33,7 @@ const DashboardOrganizationsExcelUpdateViewer = ({ urlPost, onCancel, onDone }) 
                 return;
             }
             //thực hiên update users
-            const { data: dataUpdate, errorCode: errorCodeUpdate, status: statusUpdate } = await putData({ url: urlPost, data: newDataUpload });
+            const { data: dataUpdate, errorCode: errorCodeUpdate, status: statusUpdate } = await putData({ url: urlPut, data: newDataUpload });
 
             if (statusUpdate) {
                 setIsLoading(false);
@@ -48,10 +50,10 @@ const DashboardOrganizationsExcelUpdateViewer = ({ urlPost, onCancel, onDone }) 
             {isLoading && <LoadingOverlay message="Đang upload dữ liệu..." onDoubleClick={() => setIsLoading(false)} />}
             <DashboardExcelUploadViewer
                 columns={columns}
-                sheetName='Import Organizations'
-                fileName="organizations_update_template.xlsx"
-                guideSheet='Hướng dẫn'
-                title='update Organizations'
+                sheetName={sheetName}
+                fileName={fileName}
+                guideSheet={guideSheet}
+                title={title}
                 ruleSchema={ruleSchema}
                 translateMessages={messagesVi}
                 headerRowNumber={1}

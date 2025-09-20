@@ -97,4 +97,13 @@ const columnCheckNotExistance = [
 
 ]
 
+
+const sheetName = 'Import Organizations'
+const fileName = "organizations_import_template.xlsx"
+const guideSheet = 'Hướng dẫn'
+const title = 'Import Organizations'
+
 export { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance };
+
+const setting = { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance , sheetName, fileName, guideSheet, title };
+export default setting;

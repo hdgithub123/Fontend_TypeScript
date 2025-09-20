@@ -116,4 +116,12 @@ const columnCheckNotExistance = [
 
 const ListIdsConfig = { url: 'http://localhost:3000/auth/organization/ids-codes', fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
 
+const sheetName = 'Import Organizations'
+const fileName = "organizations_update_template.xlsx"
+const guideSheet = 'Hướng dẫn'
+const title = 'update Organizations'
+
+
 export { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig };
+const setting = { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig, sheetName, fileName, guideSheet, title };
+export default setting;

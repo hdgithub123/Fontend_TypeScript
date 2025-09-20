@@ -114,7 +114,7 @@ interface DesignPrintProps {
     dynamicFunctions?: Array<(...args: any[]) => any>;
     fonts?: string[];
     colors?: string[];
-    onCancel: () => void;
+    onCancel: (e) => void;
     title?: string;
     urlGet: string;
     urlUpdate: string;

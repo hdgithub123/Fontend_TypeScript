@@ -22,10 +22,10 @@ interface OrganizationCheckResult {
 
 
 const checkOrganizationAvailability = async (
-  { urlCheckOrganization = 'http://localhost:3000/auth/organization/check-organization',
+  { urlCheck = 'http://localhost:3000/auth/organization/check-organization',
     organization = {}
   }: {
-    urlCheckOrganization?: string,
+    urlCheck?: string,
     organization: organization,
   }): Promise<OrganizationCheckResult> => {
 
@@ -45,7 +45,7 @@ const checkOrganizationAvailability = async (
     }
 
     const res = await postData({
-      url: urlCheckOrganization,
+      url: urlCheck,
       data: myOrganizationCheck,
     });
 

@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { DashboardExcelUploadViewer } from "../../../../utils/UploadExcel";
-import { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance } from "./setting";
+// import { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance } from "./setting";
+import userSetting from "./setting";
 import { messagesEn, messagesVi } from "../../../../utils/validation";
 import { postData } from "../../../../utils/axios";
 import LoadingOverlay from "../../../../utils/LoadingOverlay/LoadingOverlay";
 
 
-const DashboardUsersExcelInsertViewer = ({ urlPost, onCancel, onDone }) => {
+const DashboardUsersExcelInsertViewer = ({ urlPost, config = userSetting, onCancel, onDone }) => {
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -26,17 +27,17 @@ const DashboardUsersExcelInsertViewer = ({ urlPost, onCancel, onDone }) => {
         <>
             {isLoading && <LoadingOverlay message="Đang upload dữ liệu..." onDoubleClick={() => setIsLoading(false)} />}
             <DashboardExcelUploadViewer
-                columns={columns}
+                columns={config.columns}
                 sheetName='Import Users'
                 fileName="users_import_template.xlsx"
                 guideSheet='Hướng dẫn'
                 title='Import Users'
-                ruleSchema={ruleSchema}
+                ruleSchema={config.ruleSchema}
                 translateMessages={messagesVi}
                 headerRowNumber={1}
                 isCheckLocalDuplicates={true}
-                columnCheckExistance={columnCheckExistance}
-                columnCheckNotExistance={columnCheckNotExistance}
+                columnCheckExistance={config.columnCheckExistance}
+                columnCheckNotExistance={config.columnCheckNotExistance}
                 onCheckUpload={onCheckUpload}
                 onCancel={onCancel}
             ></DashboardExcelUploadViewer>
