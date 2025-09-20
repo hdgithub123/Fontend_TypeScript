@@ -1,4 +1,4 @@
-import type { RuleSchema } from "../../../../utils/validation";
+import type { RuleSchema } from "../../../utils/validation";
 import {
     ReactTableBasic,
     ReactTableBasicArrowkey,
@@ -34,11 +34,18 @@ import {
 
 const columns = [
     {
+        accessorKey: 'oldCode',
+        header: 'Mã tổ chức cũ',
+        id: 'oldCode',
+        filterType: 'text',
+        cell: TextCell,
+
+    },
+    {
         accessorKey: 'code',
-        header: 'Mã tổ chức',
+        header: 'Mã tổ chức mới',
         id: 'code',
         filterType: 'text',
-        footer: info => `Count: ${CountFooter(info.table)}`,
         cell: TextCell,
 
     },
@@ -62,20 +69,22 @@ const columns = [
     },
     {
         accessorKey: 'isActive',
+        // accessorFn: row => row.isActive === true ? "TRUE" : row.isActive === false ? "FALSE" : "",
         header: 'Kích Hoạt',
         id: 'isActive',
+        // filterType: 'range',
         filterType: 'multiSelect',
         cell: CheckboxCell,
-        enableGlobalFilter: true
+        enableGlobalFilter: false
     },
-
 ]
 
 
 const ruleSchema: RuleSchema = {
-    //id: { type: "string", format: "uuid", required: false },
-    code: { type: "string", required: true, minLength: 2, maxLength: 100 },
-    name: { type: "string", required: true, minLength: 2, maxLength: 255 },
+    // id: { type: "string", format: "uuid", required: false },
+    oldCode: { type: "string", required: true, minLength: 2, maxLength: 100 },
+    code: { type: "string", required: false, minLength: 2, maxLength: 100 },
+    name: { type: "string", required: false, minLength: 2, maxLength: 255 },
     address: { type: "string", required: false, maxLength: 255 },
     isActive: { type: "boolean", required: false },
     // createdAt: { type: "string", format: "datetime", required: false },
@@ -89,21 +98,30 @@ const columnCheckExistance = [
             code: 'code',
         },
         urlCheck: 'http://localhost:3000/auth/organization/check-organizations',
+        excludeField: 'id',
     },
 ]
 
 const columnCheckNotExistance = [
+    {
+        columnNames: {
+            oldCode: 'code',
+        },
+        urlCheck: 'http://localhost:3000/auth/organization/check-organizations',
 
+    },
 
 ]
 
 
+const ListIdsConfig = { url: 'http://localhost:3000/auth/organization/ids-codes', fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
+
 const sheetName = 'Import Organizations'
-const fileName = "organizations_import_template.xlsx"
+const fileName = "organizations_update_template.xlsx"
 const guideSheet = 'Hướng dẫn'
-const title = 'Import Organizations'
+const title = 'Sửa đổi tổ chức'
 
-export { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance };
 
-const setting = { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance , sheetName, fileName, guideSheet, title };
+export { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig };
+const setting = { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig, sheetName, fileName, guideSheet, title };
 export default setting;

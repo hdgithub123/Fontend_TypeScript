@@ -44,64 +44,139 @@ import PrintPreview from '../../Print/PrintPreview/PrintPreview';
 import MakeReportTable from '../../MakeReportTable/MakeReportTable'
 import ReactDOM from 'react-dom';
 // import DesignPrint from "../../Print/DesignPrint/DesignPrint";
-import PrintOrganizations from '../SingleOrganization/PrintOrganizations/PrintOrganizations'
-import DashboardOrganizationsExcelInsertViewer from "../DashboardExcelImport/DashboardOrganizationsExcelInsertViewer/DashboardOrganizationsExcelInsertViewer";
-import DashboardOrganizationsExcelUpdateViewer from "../DashboardExcelImport/DashboardOrganizationsExcelUpdateViewer/DashboardOrganizationsExcelUpdateViewer";
-import DeleteOrganizations from "./DeleteOrganizations";
+import PrintSubjects from '../PrintSubjects/PrintSubjects'
+import DashboardSubjectsExcelInsertViewer from "../DashboardExcelImport/DashboardSubjectsExcelInsertViewer/DashboardSubjectsExcelInsertViewer";
+import DashboardSubjectsExcelUpdateViewer from "../DashboardExcelImport/DashboardSubjectsExcelUpdateViewer/DashboardSubjectsExcelUpdateViewer";
+import DeleteSubjects from "./DeleteSubjects";
 import NotifyNotSelectedButton from "./Notifibutton";
-import styles from './ListOrganization.module.scss'
-import AddForm from "../SingleOrganization/AddForm/AddForm";
-import EditForm from "../SingleOrganization/EditForm/EditForm";
-import insertExcelSetting from "../DashboardExcelImport/DashboardOrganizationsExcelInsertViewer/setting";
-import updateExcelSetting from "../DashboardExcelImport/DashboardOrganizationsExcelUpdateViewer/setting";
+import styles from './ListSubject.module.scss'
+//import AddForm from "../SingleSubject/AddFormDefault/AddFormDefault";
+//import EditForm from "../SingleSubject/EditForm/EditFormDefault";
+import insertExcelSetting from "../DashboardExcelImport/DashboardSubjectsExcelInsertViewer/setting";
+import updateExcelSetting from "../DashboardExcelImport/DashboardSubjectsExcelUpdateViewer/setting";
+import type { RuleSchema } from "../../../utils/validation";
 
 
 
-interface Organization {
-  id?: string,
-  code?: string;
-  name?: string;
-  address?: string;
-  active?: boolean;
+interface Subject {
+  [key: string]: any;
+}
+
+interface authorization {
+  view: boolean;
+  add: boolean;
+  update: boolean;
+  delete: boolean;
+
+  viewList: boolean;
+  addList: boolean;
+  updateList: boolean;
+  deleteList: boolean;
+
+  viewPrintDesign: boolean;
+  addPrintDesign: boolean;
+  updatePrintDesign: boolean;
+  deletePrintDesign: boolean;
+
+  viewPrintDesignList: boolean;
+  addPrintDesignList: boolean;
+  updatePrintDesignList: boolean;
+  deletePrintDesignList: boolean;
+
+  print: boolean;
+  printList: boolean;
+
+  exportExcel: boolean;
+};
+
+interface fullUrlList {
+  urlGetList: string;
+  urlDeleteList: string;
+  urlPostList: string;
+  urlPutList: string;
+  urlCheck: string;
+  urlUpdate: string;
+  urlDelete: string;
+  urlInsert: string;
+
+  urlGetPrintContent: string;
+  urlUpdatePrintDesign: string;
+  urlDeletePrintDesign: string;
+  urlInsertPrintDesign: string;
+
+  urlGetPrintContents: string;
+  urlUpdatePrintDesigns: string;
+  urlDeletePrintDesigns: string;
+  urlInsertPrintDesigns: string;
 }
 
 
 
-const authorizationExample = {
-  view: true,
-  add: true,
-  update: true,
-  delete: true,
+interface exportFileInfo {
+  name: string;
+  sheetName: string;
+  title: string;
+  description: string | null;
 
-  viewList: true,
-  addList: true,
-  updateList: true,
-  deleteList: true,
-
-  viewPrintDesign: true,
-  addPrintDesign: true,
-  updatePrintDesign: true,
-  deletePrintDesign: true,
-
-  viewPrintDesignList: true,
-  addPrintDesignList: true,
-  updatePrintDesignList: true,
-  deletePrintDesignList: true,
-
-  print: true,
-  printList: true,
-
-  exportExcel: true,
 }
 
 
-const authorizationExample2 = {
-  view: true,
+interface ColumnConfig {
+  id: string;
+  header: string;
+  cell?: any;
+  [key: string]: any; // Cho phép thêm các thuộc tính bất kỳ
+};
+
+interface ColumnValidationConfig {
+  columnNames: Record<string, string>; // { excelField: dbField }
+  urlCheck: string;
+  excludeField?: string; // tên field trong db để loại trừ khi so sánh
+};
+
+
+interface configExcelInsertSetting {
+  columns: ColumnConfig[];
+  ruleSchema: RuleSchema;
+  columnCheckExistance: ColumnValidationConfig[];
+  columnCheckNotExistance: ColumnValidationConfig[];
+  sheetName: string;
+  fileName: string;
+  guideSheet: string;
+  title: string;
+};
+
+
+
+interface ListIdsConfig {
+  url: string,
+  fieldGet: string,
+  fieldGive: string,
+  fieldSet: string,
+}
+
+
+interface configExcelUpdateSetting {
+  columns: ColumnConfig[];
+  ruleSchema: RuleSchema;
+  columnCheckExistance: ColumnValidationConfig[];
+  columnCheckNotExistance: ColumnValidationConfig[];
+  ListIdsConfig: ListIdsConfig;
+  sheetName: string;
+  fileName: string;
+  guideSheet: string;
+  title: string;
+};
+
+
+
+const authorizationFalse = {
+  view: false,
   add: false,
   update: false,
   delete: false,
 
-  viewList: true,
+  viewList: false,
   addList: false,
   updateList: false,
   deleteList: false,
@@ -144,33 +219,47 @@ const fullUrlList = {
 
 }
 
-const exportFileInfo = { name: "Organization.xlsx", sheetName: "Sheet1", title: "Danh sách tổ chức", description: null }
+const exportFileInfo = { name: "Data.xlsx", sheetName: "Sheet1", title: "Danh sách", description: null }
 
 
-interface ListOrganizationProps {
-  authorization?: typeof authorizationExample;
-  urlList?: typeof fullUrlList;
-  exportFile?: typeof exportFileInfo;
-  insertExcelConfig?: typeof insertExcelSetting;
-  updateExcelConfig?: typeof updateExcelSetting;
+export interface ListSubjectProps {
+  authorization?: authorization;
+  urlList?: fullUrlList;
+  exportFile?: exportFileInfo;
+  insertExcelConfig?: configExcelInsertSetting;
+  updateExcelConfig?: configExcelUpdateSetting;
   AddFormComponent?: React.ComponentType<any>;
   EditFormComponent?: React.ComponentType<any>;
+  titleDesignList?: string;
+  header?: string;
+  dynamicTables?: any;
+  dynamicTexts?: any;
+  dynamicFunctions?: any;
+  fonts?: any,
+  colors?: any,
 }
 
 
 
-const ListOrganization = ({
-  authorization = authorizationExample,
+const ListSubject = ({
+  authorization = authorizationFalse,
   urlList = fullUrlList,
-  exportFile = exportFileInfo,
+  exportFile = exportFileInfo || null,
   insertExcelConfig = insertExcelSetting,
-  updateExcelConfig = updateExcelSetting, 
-  AddFormComponent = AddForm,
-  EditFormComponent = EditForm
+  updateExcelConfig = updateExcelSetting,
+  AddFormComponent = () => { return null; },
+  EditFormComponent = () => { return null; },
+  titleDesignList = "Thiết Kế Mẫu In Danh Sách",
+  header = "Quản lý",
 
-}: ListOrganizationProps) => {
+  dynamicTables = {},
+  dynamicTexts = {},
+  dynamicFunctions = {},
+  fonts = {},
+  colors = {},
+}: ListSubjectProps) => {
 
-  const { 
+  const {
     urlGetList, urlDeleteList, urlPostList, urlPutList,
     urlCheck, urlUpdate, urlDelete, urlInsert,
     urlGetPrintContent, urlUpdatePrintDesign, urlDeletePrintDesign, urlInsertPrintDesign,
@@ -179,15 +268,15 @@ const ListOrganization = ({
 
 
   const [data, setData] = useState<Array<{ [key: string]: any }>>([{}]);
-  const [activeData, setActiveData] = useState<Organization | null>(null);
+  const [activeData, setActiveData] = useState<Subject | null>(null);
   const [isShowAddForm, setIsShowAddForm] = useState(false);
   const [isShowEditForm, setIsShowEditForm] = useState(false);
   const [isPrintListDesign, setIsPrintListDesign] = useState(false);
   const [isPrintList, setIsPrintList] = useState(false);
   const [isImportExcel, setIsImportExcel] = useState(false);
   const [isUpdateExcel, setIsUpdateExcel] = useState(false);
-  const [isPrintMoreOrganizations, setIsPrintMoreOrganizations] = useState(false);
-  const [selectOrganizations, setSelectOrganizations] = useState<any[]>([]);
+  const [isPrintMoreSubjects, setIsPrintMoreSubjects] = useState(false);
+  const [selectSubjects, setSelectSubjects] = useState<any[]>([]);
 
   const handleGetList = async () => {
     if (authorization.viewList) {
@@ -217,7 +306,7 @@ const ListOrganization = ({
 
   }
   const handleOnRowsSelect = (value) => {
-    setSelectOrganizations(value)
+    setSelectSubjects(value)
   }
 
   const handleOnSuccess = (data) => {
@@ -234,21 +323,21 @@ const ListOrganization = ({
     setIsShowAddForm(true);
   }
 
-  const handleDuplicateOrganization = () => {
-    if (selectOrganizations.length === 1) {
-      const { id, ...rest } = selectOrganizations[0]; // bỏ id
-      const duplicateOrganization = {
+  const handleDuplicateSubject = () => {
+    if (selectSubjects.length === 1) {
+      const { id, ...rest } = selectSubjects[0]; // bỏ id
+      const duplicateSubject = {
         ...rest,
         code: 'copy-' + rest.code,
       };
-      setActiveData(duplicateOrganization);
+      setActiveData(duplicateSubject);
       setIsShowAddForm(true);
       setIsShowEditForm(false); // đảm bảo không bật cả 2 form
     }
 
   }
 
-  const handlePrintListDesignOrganization = () => {
+  const handlePrintListDesignSubject = () => {
     setIsPrintListDesign(true)
   }
 
@@ -256,7 +345,7 @@ const ListOrganization = ({
     setIsPrintListDesign(!cancel)
   }
 
-  const handlePrintListOrganization = () => {
+  const handlePrintListSubject = () => {
     setIsPrintList(true)
   }
 
@@ -264,8 +353,8 @@ const ListOrganization = ({
     setIsPrintList(!cancel)
   }
 
-  const handlePrintMoreOrganizations = () => {
-    setIsPrintMoreOrganizations(true)
+  const handlePrintMoreSubjects = () => {
+    setIsPrintMoreSubjects(true)
 
   }
 
@@ -281,21 +370,21 @@ const ListOrganization = ({
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.header}>Quản lý Tổ chức</h1>
+      <h1 className={styles.header}>{header}</h1>
       <div className={styles.buttonGroup}>
         {authorization.viewList && <button onClick={handleGetList} className={styles.buttonGet} >Refresh</button>}
         {authorization.add && <button onClick={handleCreate} className={styles.buttonCreate} >Add New</button>}
-        {authorization.add && <button disabled={selectOrganizations.length !== 1} onClick={handleDuplicateOrganization} className={styles.buttonDuplicate} >Duplicate</button>}
+        {authorization.add && <button disabled={selectSubjects.length !== 1} onClick={handleDuplicateSubject} className={styles.buttonDuplicate} >Duplicate</button>}
 
-        {authorization.viewPrintDesignList && <NotifyNotSelectedButton className={styles.buttonDesign} data={selectOrganizations} onTrigger={handlePrintListDesignOrganization} >
+        {authorization.viewPrintDesignList && <NotifyNotSelectedButton className={styles.buttonDesign} data={selectSubjects} onTrigger={handlePrintListDesignSubject} >
           Design Print list
         </NotifyNotSelectedButton>}
-        {authorization.printList && <NotifyNotSelectedButton className={styles.buttonPrint} data={selectOrganizations} onTrigger={handlePrintListOrganization} > Print list</NotifyNotSelectedButton>}
-        {authorization.print && <NotifyNotSelectedButton className={styles.buttonPrintMore} data={selectOrganizations} onTrigger={handlePrintMoreOrganizations} > Print more</NotifyNotSelectedButton>}
-        {authorization.deleteList && <DeleteOrganizations
+        {authorization.printList && <NotifyNotSelectedButton className={styles.buttonPrint} data={selectSubjects} onTrigger={handlePrintListSubject} > Print list</NotifyNotSelectedButton>}
+        {authorization.print && <NotifyNotSelectedButton className={styles.buttonPrintMore} data={selectSubjects} onTrigger={handlePrintMoreSubjects} > Print more</NotifyNotSelectedButton>}
+        {authorization.deleteList && <DeleteSubjects
           deleteUrl={urlDeleteList}
-          selectOrganizations={selectOrganizations}
-          setSelectOrganizations={setSelectOrganizations}
+          selectSubjects={selectSubjects}
+          setSelectSubjects={setSelectSubjects}
           setData={setData}
           className={styles.buttonDelete}
         />}
@@ -349,11 +438,16 @@ const ListOrganization = ({
               urlDelete={urlDeletePrintDesigns}
               urlInsert={urlInsertPrintDesigns}
               dynamicTables={{
-                organization: selectOrganizations
+                ...dynamicTables,
+                organization: selectSubjects,
               }}
-              // contentStateObject={blockOrganization}
+              dynamicTexts={dynamicTexts}
+              dynamicFunctions={dynamicFunctions}
+              fonts={fonts ? fonts.length > 0 ? fonts : [] : []}
+              colors={colors ? colors.length > 0 ? colors : [] : []}
+
               onCancel={handleOnCancelDesign}
-              title="Thiết Kế Mẫu In Danh Sách Tổ Chức"
+              title={titleDesignList}
               authorization={{
                 add: authorization.addPrintDesignList,
                 update: authorization.updatePrintDesignList,
@@ -370,11 +464,14 @@ const ListOrganization = ({
         {isPrintList && authorization.printList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
             <PrintPreview
-              // dynamicTexts={userData}
               dynamicTables={{
-                organization: selectOrganizations
+                ...dynamicTables,
+                organization: selectSubjects,
               }}
-              // contentStateObject={blockOrganization}
+              dynamicTexts={dynamicTexts}
+              dynamicFunctions={dynamicFunctions}
+              fonts={fonts ? fonts.length > 0 ? fonts : [] : []}
+              colors={colors ? colors.length > 0 ? colors : [] : []}
               urlGet={urlGetPrintContents}
               onCancel={handleOnCancelPrint}
             >
@@ -383,21 +480,21 @@ const ListOrganization = ({
           </div>, document.body)
         }
 
-        {isPrintMoreOrganizations && authorization.print &&
+        {isPrintMoreSubjects && authorization.print &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
-            <PrintOrganizations
-              data={selectOrganizations}
-              // dynamicTexts={userData}
-              // dynamicTables={{
-              //   user: data
-              // }}
-              // contentStateObject={blockOrganization}
-              urlGet={urlGetPrintContents}
+            <PrintSubjects
+              data={selectSubjects}
+              dynamicTables={dynamicTables}
+              dynamicTexts={dynamicTexts || {}}
+              dynamicFunctions={dynamicFunctions}
+              fonts={fonts ? fonts.length > 0 ? fonts : [] : []}
+              colors={colors ? colors.length > 0 ? colors : [] : []}
+              urlGet={urlGetPrintContent}
               onCancel={() => {
-                setIsPrintMoreOrganizations(false)
+                setIsPrintMoreSubjects(false)
               }}
             >
-            </PrintOrganizations>
+            </PrintSubjects>
 
           </div>, document.body)
         }
@@ -405,10 +502,7 @@ const ListOrganization = ({
 
         {isImportExcel && authorization.addList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
-            <DashboardOrganizationsExcelInsertViewer
-              // onCheckUpload={(data)=>{
-              //   console.log("data",data)
-              // }}
+            <DashboardSubjectsExcelInsertViewer
               config={insertExcelConfig}
               urlPost={urlPostList}
               onCancel={() => {
@@ -419,16 +513,13 @@ const ListOrganization = ({
                 handleGetList()
               }}
             >
-            </DashboardOrganizationsExcelInsertViewer>
+            </DashboardSubjectsExcelInsertViewer>
 
           </div>, document.body)
         }
         {isUpdateExcel && authorization.updateList &&
           ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '80vh', scale: "0.8" }} >
-            <DashboardOrganizationsExcelUpdateViewer
-              // onCheckUpload={(data)=>{
-              //   console.log("data",data)
-              // }}
+            <DashboardSubjectsExcelUpdateViewer
               config={updateExcelConfig}
               urlPut={urlPutList}
               onCancel={() => {
@@ -439,7 +530,7 @@ const ListOrganization = ({
                 handleGetList()
               }}
             >
-            </DashboardOrganizationsExcelUpdateViewer>
+            </DashboardSubjectsExcelUpdateViewer>
 
           </div>, document.body)
         }
@@ -449,4 +540,4 @@ const ListOrganization = ({
   );
 };
 
-export default ListOrganization;
+export default ListSubject;

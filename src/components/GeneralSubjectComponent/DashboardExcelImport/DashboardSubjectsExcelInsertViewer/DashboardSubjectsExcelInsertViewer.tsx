@@ -1,18 +1,49 @@
 import React, { useState } from "react";
 import { DashboardExcelUploadViewer } from "../../../../utils/UploadExcel";
-// import { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance } from "./setting";
-import organizationConfig  from "./setting";
 import { messagesEn, messagesVi } from "../../../../utils/validation";
 import { postData } from "../../../../utils/axios";
 import LoadingOverlay from "../../../../utils/LoadingOverlay/LoadingOverlay";
+import type { RuleSchema } from "../../../../utils/validation";
+
+interface ColumnConfig {
+  id: string;
+  header: string;
+  cell?: any;
+  [key: string]: any; // Cho phép thêm các thuộc tính bất kỳ
+};
+
+interface ColumnValidationConfig {
+  columnNames: Record<string, string>; // { excelField: dbField }
+  urlCheck: string;
+  excludeField?: string; // tên field trong db để loại trừ khi so sánh
+};
 
 
-const DashboardOrganizationsExcelInsertViewer = ({ urlPost, config = organizationConfig, onCancel, onDone }) => {
+interface DashboardSubjectsExcelInsertSetting {
+  columns: ColumnConfig[];
+  ruleSchema: RuleSchema;
+  columnCheckExistance: ColumnValidationConfig[];
+  columnCheckNotExistance: ColumnValidationConfig[];
+  sheetName: string;
+  fileName: string;
+  guideSheet: string;
+  title: string;
+};
+
+interface DashboardSubjectsExcelInsertViewerProps {
+    urlPost: string,
+    config: DashboardSubjectsExcelInsertSetting,
+    onCancel: (e:any) => void,
+    onDone: (e:any) =>void,
+}
+
+
+const DashboardSubjectsExcelInsertViewer = ({ urlPost, config, onCancel, onDone }: DashboardSubjectsExcelInsertViewerProps) => {
 
     const { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, sheetName, fileName, guideSheet, title } = config;
     const [isLoading, setIsLoading] = useState(false);
 
-    const onCheckUpload = async (dataUpload) => {
+    const onCheckUpload = async (dataUpload: any[]) => {
         setIsLoading(true); 
         const { data, errorCode, status } = await postData({ url: urlPost, data: dataUpload });
         if (status) {
@@ -47,4 +78,4 @@ const DashboardOrganizationsExcelInsertViewer = ({ urlPost, config = organizatio
     )
 }
 
-export default DashboardOrganizationsExcelInsertViewer;
+export default DashboardSubjectsExcelInsertViewer;

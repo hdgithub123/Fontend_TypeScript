@@ -1,4 +1,4 @@
-import ListOrganization from "../../components/Organization/ListOrganizations/ListOrganization";
+import ListOrganization from "../../components/Organization/ListOrganization/ListOrganization";
 
 function Organization() {
   return (

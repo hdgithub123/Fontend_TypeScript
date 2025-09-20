@@ -2,14 +2,14 @@
 import { deleteData } from "../../../utils/axios";
 import { AlertDialog, type AlertInfo } from '../../../utils/AlertDialog';
 import { useState } from "react";
-interface DeleteOrganizationsProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface DeleteSubjectsProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   deleteUrl: string;
-  selectOrganizations: any[];
-  setSelectOrganizations: (users: any[]) => void;
+  selectSubjects: any[];
+  setSelectSubjects: (users: any[]) => void;
   setData: (data: any) => void;
   children?: React.ReactNode;
 }
-const DeleteOrganizations = ({ deleteUrl, selectOrganizations, setSelectOrganizations, setData, children, ...buttonProps }: DeleteOrganizationsProps) => {
+const DeleteSubjects = ({ deleteUrl, selectSubjects, setSelectSubjects, setData, children, ...buttonProps }: DeleteSubjectsProps) => {
 
     const [alertinfo, setAlertinfo] = useState<AlertInfo>({
         isAlertShow: false,
@@ -22,8 +22,8 @@ const DeleteOrganizations = ({ deleteUrl, selectOrganizations, setSelectOrganiza
 
     const handleDeleteOrganizations = async () => {
 
-        // nếu selectOrganizations rỗng thì thông báo lỗi
-        if (!Array.isArray(selectOrganizations) || selectOrganizations.length === 0) {
+        // nếu selectSubjects rỗng thì thông báo lỗi
+        if (!Array.isArray(selectSubjects) || selectSubjects.length === 0) {
             setAlertinfo({
                 isAlertShow: true,
                 alertMessage: 'Không có dữ liệu nào được chọn để xóa.',
@@ -37,8 +37,8 @@ const DeleteOrganizations = ({ deleteUrl, selectOrganizations, setSelectOrganiza
             return;
         }
 
-        // lọc {id:} từ selectOrganizations gán vào deleteOrganizations
-        const deleteOrganizations = selectOrganizations
+        // lọc {id:} từ selectSubjects gán vào deleteOrganizations
+        const deleteOrganizations = selectSubjects
             .filter((user: any) => user && user.id)
             .map((user: any) => ({ id: user.id }));
 
@@ -54,13 +54,13 @@ const DeleteOrganizations = ({ deleteUrl, selectOrganizations, setSelectOrganiza
             onConfirm: async () => {
                 const result = await deleteData({ url: deleteUrl, data: deleteOrganizations });
                 if (result?.status) {
-                    // xóa đi selectOrganizations khỏi data gán lại vào setData
-                    if (Array.isArray(selectOrganizations) && selectOrganizations.length > 0) {
-                        const deleteIds = selectOrganizations.map((user: any) => user.id);
+                    // xóa đi selectSubjects khỏi data gán lại vào setData
+                    if (Array.isArray(selectSubjects) && selectSubjects.length > 0) {
+                        const deleteIds = selectSubjects.map((user: any) => user.id);
                         setData(prev =>
                             prev.filter((user: any) => !deleteIds.includes(user.id))
                         );
-                        setSelectOrganizations([]);
+                        setSelectSubjects([]);
                     }
                     setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
                 } else {
@@ -94,9 +94,9 @@ const DeleteOrganizations = ({ deleteUrl, selectOrganizations, setSelectOrganiza
                 showConfirm={alertinfo.showConfirm ?? true}
                 showCancel={alertinfo.showCancel ?? true}
             />
-            <button disabled={selectOrganizations.length === 0} onClick={handleDeleteOrganizations} {...buttonProps} >{children?children:"Delete"}</button>
+            <button disabled={selectSubjects.length === 0} onClick={handleDeleteOrganizations} {...buttonProps} >{children?children:"Delete"}</button>
         </div>
     );
 }
 
-export default DeleteOrganizations;
+export default DeleteSubjects;

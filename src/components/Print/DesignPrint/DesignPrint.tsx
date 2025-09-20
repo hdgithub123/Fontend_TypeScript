@@ -108,7 +108,7 @@ interface authorization {
 
 interface DesignPrintProps {
     authorization?: authorization;
-    contentStateObject: RawDraftContentState;
+    contentStateObject?: RawDraftContentState;
     dynamicTables?: DynamicTables;
     dynamicTexts?: DynamicTexts;
     dynamicFunctions?: Array<(...args: any[]) => any>;
@@ -137,7 +137,6 @@ const DesignPrint: React.FC<DesignPrintProps> = ({
     urlInsert,
     urlDelete,
 }) => {
-    console.log("dynamicTexts", dynamicTexts);
     const [listContent, setListContent] = useState<Array<{ [key: string]: any }>>([]);
     const [addContent, setAddContent] = useState<contentState | null>({
         id: '',
@@ -468,8 +467,8 @@ const DesignPrint: React.FC<DesignPrintProps> = ({
                             dynamicTexts={dynamicTexts || {}}
                             onEditorChange={handleEditorChange}
                             dynamicFunctions={dynamicFunctions || []}
-                            fonts={fonts ?? []}
-                            colors={colors ?? []}
+                            fonts={fonts ? fonts.length > 0 ? fonts : [] : []}
+                            colors={colors ? colors.length > 0 ? colors : [] : []}
                         />
                     </div>
 

@@ -5,7 +5,7 @@ import {
     HRichTextEditor,
     HRichTextEditorPrintPreview,
     HRichTextEditorPreview,
-        makeDramaticContentStatesObject,
+    makeDramaticContentStatesObject,
     mergeContentStatesObject,
 } from 'hrich-text-editor';
 
@@ -35,10 +35,10 @@ import {
     NumberVnCell,
 } from 'react-table'
 
-import { getData } from "../../../../utils/axios";
+import { getData } from "../../../utils/axios";
 
 import columnsContent from './columContent';
-import styles from "./PrintOrganizations.module.scss";
+import styles from "./PrintSubjects.module.scss";
 
 type DynamicTables = {
     [tableKey: string]: {
@@ -79,6 +79,7 @@ type RawDraftContentState = {
 
 
 interface PrintPreviewProps {
+    data: Array<Record<string, any>>;
     contentStateObject?: RawDraftContentState;
     dynamicTables?: DynamicTables;
     dynamicTexts?: DynamicTexts;
@@ -90,7 +91,7 @@ interface PrintPreviewProps {
 }
 
 
-const PrintOrganizations: React.FC<PrintPreviewProps> = ({
+const PrintSubjects: React.FC<PrintPreviewProps> = ({
     data = [],
     dynamicTables = {},
     dynamicTexts = {},
@@ -98,7 +99,7 @@ const PrintOrganizations: React.FC<PrintPreviewProps> = ({
     fonts,
     colors,
     onCancel = () => { },
-    urlGet = "http://localhost:3000/template-contents/organizations/list",
+    urlGet = "",
 }) => {
 
     const [viewContent, setViewContent] = useState<{ [key: string]: string }>({});
@@ -119,6 +120,7 @@ const PrintOrganizations: React.FC<PrintPreviewProps> = ({
     }, [urlGet]);
 
     const handleonRowSelect = (row) => {
+        console.log("Selected row:", row);
         setViewContent({
             id: row.id,
             code: row.code,
@@ -133,13 +135,13 @@ const PrintOrganizations: React.FC<PrintPreviewProps> = ({
                 const dramaticObj = makeDramaticContentStatesObject({
                     contentStateObject: row.content, // hoặc truyền contentStateObject tương ứng nếu có
                     dynamicTables: dynamicTables,
-                    dynamicTexts: {...item}
+                    dynamicTexts: { ...item }
                 });
 
                 contentsObject.push(dramaticObj);
             });
 
-            const newCombineContent = mergeContentStatesObject({contentStates:contentsObject})
+            const newCombineContent = mergeContentStatesObject({ contentStates: contentsObject })
             setCombineContent(newCombineContent)
         }
     }
@@ -228,8 +230,8 @@ const PrintOrganizations: React.FC<PrintPreviewProps> = ({
                             dynamicTables={dynamicTables || {}}
                             dynamicTexts={dynamicTexts || {}}
                             dynamicFunctions={dynamicFunctions || []}
-                            fonts={fonts ?? []}
-                            colors={colors ?? []}
+                            fonts={fonts || []}
+                            colors={colors ? colors.length > 0 ? colors : [] : []}
                             isPrint={isPrint}
                             isPrinted={handleIsPrinted}
                         />
@@ -243,4 +245,4 @@ const PrintOrganizations: React.FC<PrintPreviewProps> = ({
 
 }
 
-export default PrintOrganizations
+export default PrintSubjects

@@ -176,8 +176,8 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                             globalFilterValue={viewContent?.code || ""}
                             className={styles.inputField}
                             placeholder="Mã..."
-                            // autoComplete="new-password"
-                           // style={{ padding: '10px 12px', width: '100%', height: '100%', zIndex: '1001', border: '#ddd 1px solid' }}
+                        // autoComplete="new-password"
+                        // style={{ padding: '10px 12px', width: '100%', height: '100%', zIndex: '1001', border: '#ddd 1px solid' }}
                         />
                     </div>
                     <div className={styles.inputGroup}>
@@ -187,7 +187,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                             className={styles.inputField}
                             value={viewContent?.name || ""}
                             placeholder="Tên mẫu..."
-                            disabled = {true}
+                            disabled={true}
                         />
                     </div>
                     <div className={styles.inputGroup}>
@@ -197,7 +197,7 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                             className={styles.inputField}
                             value={viewContent?.description || ""}
                             placeholder="Mô tả..."
-                            disabled = {true}
+                            disabled={true}
                         />
                     </div>
                 </div>
@@ -208,8 +208,8 @@ const PrintPreview: React.FC<PrintPreviewProps> = ({
                             dynamicTables={dynamicTables || {}}
                             dynamicTexts={dynamicTexts || {}}
                             dynamicFunctions={dynamicFunctions || []}
-                            fonts={fonts ?? []}
-                            colors={colors ?? []}
+                            fonts={fonts ? fonts.length > 0 ? fonts : [] : []}
+                            colors={colors ? colors.length > 0 ? colors : [] : []}
                             isPrint={isPrint}
                             isPrinted={handleIsPrinted}
                         />

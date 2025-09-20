@@ -1,16 +1,60 @@
 import { useState } from "react";
 import { DashboardExcelUploadViewer } from "../../../../utils/UploadExcel";
 //import { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig } from "./setting";
-import organizationConfig from "./setting";
 import { messagesEn, messagesVi } from "../../../../utils/validation";
 import { postData, putData } from "../../../../utils/axios";
 import LoadingOverlay from "../../../../utils/LoadingOverlay/LoadingOverlay";
+import type { RuleSchema } from "../../../../utils/validation";
 
-const DashboardOrganizationsExcelUpdateViewer = ({ urlPut, config = organizationConfig, onCancel, onDone }) => {
+
+interface ColumnConfig {
+    id: string;
+    header: string;
+    cell?: any;
+    [key: string]: any; // Cho phép thêm các thuộc tính bất kỳ
+};
+
+
+interface ListIdsConfig {
+    url: string,
+    fieldGet: string,
+    fieldGive: string,
+    fieldSet: string,
+}
+
+interface ColumnValidationConfig {
+    columnNames: Record<string, string>; // { excelField: dbField }
+    urlCheck: string;
+    excludeField?: string; // tên field trong db để loại trừ khi so sánh
+};
+
+
+interface DashboardSubjectsExcelUpdateSetting {
+    columns: ColumnConfig[];
+    ruleSchema: RuleSchema;
+    columnCheckExistance: ColumnValidationConfig[];
+    columnCheckNotExistance: ColumnValidationConfig[];
+    ListIdsConfig: ListIdsConfig;
+    sheetName: string;
+    fileName: string;
+    guideSheet: string;
+    title: string;
+};
+
+
+interface DashboardSubjectsExcelUpdateViewerProps {
+    urlPut: string,
+    config: DashboardSubjectsExcelUpdateSetting,
+    onCancel: (e: any) => void,
+    onDone: (e: any) => void,
+}
+
+
+const DashboardSubjectsExcelUpdateViewer = ({ urlPut, config, onCancel, onDone }: DashboardSubjectsExcelUpdateViewerProps) => {
     const { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig, sheetName, fileName, guideSheet, title } = config;
-    const urlidscodes = ListIdsConfig?.url || "http://localhost:3000/auth/organization/ids-codes"
+    const urlidscodes = ListIdsConfig?.url || ""
     const [isLoading, setIsLoading] = useState(false);
-    const onCheckUpload = async (dataUpload) => {
+    const onCheckUpload = async (dataUpload: any[]) => {
         setIsLoading(true);
         const oldCodes = dataUpload.map(item => item.oldCode);
         // Gửi danh sách oldCode lên server để kiểm tra
@@ -26,12 +70,7 @@ const DashboardOrganizationsExcelUpdateViewer = ({ urlPut, config = organization
                 return item; // nếu không tìm thấy thì giữ nguyên
             });
 
-            //kiểm tra xem oldCodes có code = admin không nếu có thì dừng lại và thông báo lỗi cho người dùng
-            const hasAdmin = oldCodes.some(code => code === 'admin');
-            if (hasAdmin) {
-                alert('Không được update user có mã là admin');
-                return;
-            }
+
             //thực hiên update users
             const { data: dataUpdate, errorCode: errorCodeUpdate, status: statusUpdate } = await putData({ url: urlPut, data: newDataUpload });
 
@@ -69,4 +108,4 @@ const DashboardOrganizationsExcelUpdateViewer = ({ urlPut, config = organization
     )
 }
 
-export default DashboardOrganizationsExcelUpdateViewer;
+export default DashboardSubjectsExcelUpdateViewer;

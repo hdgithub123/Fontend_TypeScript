@@ -48,23 +48,16 @@ import type {
 } from '../../validation';
 
 import LoadingOverlay from '../../LoadingOverlay/LoadingOverlay';
-
-
 import type { ExcelRow, ColumnMap } from '../readExcel'
 import firstColumn from './firstColumn';
-import type { data } from 'react-router-dom';
-
 
 type ColumnConfig = {
   id: string;
   header: string;
   cell?: any;
+  [key: string]: any; // Cho phép thêm các thuộc tính bất kỳ
 };
 
-// type ColumnValidationConfig = {
-//   columnNames: string[];
-//   urlCheck: string;
-// };
 
 
 type ColumnValidationConfig = {
@@ -84,8 +77,8 @@ interface Props {
   isCheckLocalDuplicates?: boolean;
   columnCheckExistance?: ColumnValidationConfig[];
   columnCheckNotExistance?: ColumnValidationConfig[];
-  onCheckUpload?: () => void;
-  onCancel?: () => void;
+  onCheckUpload?: (e:any) => void;
+  onCancel?: (e:any) => void;
   title?: string | null;
   ListIdsConfig?: ListIdsConfig;
 }
@@ -109,7 +102,7 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
   isCheckLocalDuplicates = true,
   columnCheckExistance = [],
   columnCheckNotExistance = [],
-  onCheckUpload = (e) => { },
+  onCheckUpload = ( ) => { },
   onCancel = () => { },
   title = null,
   ListIdsConfig = {},
