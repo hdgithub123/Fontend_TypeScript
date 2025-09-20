@@ -1,5 +1,5 @@
 import type { RuleSchema } from "../../../utils/validation";
-import EditFormDefault from "../../GeneralSubjectComponent/SingleSubject/EditForm/EditFormDefault";
+import {EditFormDefault} from "../../GeneralSubjectComponent";
 
 
 interface Organization {
@@ -66,8 +66,6 @@ export default function EditForm({
   onSuccess = () => { },
   authorization = {}
 }: OrganizationManagementFormProps) {
-
-  console.log("EditForm - activeData:", activeData);
 
   return (
     <EditFormDefault
