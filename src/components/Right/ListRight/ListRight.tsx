@@ -38,7 +38,7 @@ const authorizationExample = {
 
 
 
-const ListRight = ({authorization = authorizationExample, isOwner = true}) => {
+const ListRight = ({authorization = authorizationExample, isOwner = false}) => {
   return (
     <ListSubject
       authorization={authorization}

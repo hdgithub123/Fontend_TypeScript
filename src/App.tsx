@@ -9,6 +9,9 @@ import Register from './pages/Register/Register';
 import User from './pages/User/User';
 import Organization from './pages/Organization/Organization';
 import Right from './pages/Right/Right';
+import Role from './pages/Role/Role';
+import RoleRight from './pages/RoleRight/RoleRight';
+
 
 function App() {
   return (
@@ -26,6 +29,8 @@ function App() {
           <Route path="user" element={<User />} />
           <Route path="/organization" element={<Organization />} />
           <Route path="/right" element={<Right />} />
+          <Route path="/role" element={<Role />} />
+          <Route path="/roleright" element={<RoleRight />} />
         </Route>
       </Routes>
     </BrowserRouter>

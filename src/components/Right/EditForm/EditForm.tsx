@@ -89,12 +89,6 @@ export default function EditForm({
   authorization = {}
 }: OrganizationManagementFormProps) {
 
-  console.log("urlGetPrintContent:", urlGetPrintContent);
-  console.log("urlUpdatePrintDesign:", urlUpdatePrintDesign);
-  console.log("urlDeletePrintDesign:", urlDeletePrintDesign);
-  console.log("urlInsertPrintDesign:", urlInsertPrintDesign);
-
-
   return (
     <EditFormDefault
       urlCheck={urlCheck}

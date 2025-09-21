@@ -6,6 +6,8 @@ const link: Record<string, string> = {
   logout: "/logout",
   organization: "/organization",
   right: "/right",
+  role: "/role",
+  roleright: "/roleright",
 };
 
 
