@@ -1,44 +1,38 @@
 
-import { getAuthHeaders, postData } from "../../../utils/axios";
+import { postData } from "../../../utils/axios";
 
-interface organization {
+interface subject {
   id?: string | null | undefined;
   code?: string;
-  name?: string;
-  address?: string;
-  isActive?: boolean | string | number; // Allow boolean, string, or number
-  isSystem?: boolean;
-  createdBy?: string;
-  updatedBy?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-
-interface OrganizationCheckResult {
-  code?: boolean;
+  [key: string]: string | boolean | string | number; // Allow any additional fields
 }
 
 
 
-const checkOrganizationAvailability = async (
-  { urlCheck = 'http://localhost:3000/auth/organization/check-organization',
-    organization = {}
+interface subjectCheckResult {
+  [key: string]: boolean;
+}
+
+
+
+const checkSubjectAvailability = async (
+  { urlCheck = null,
+    subject = {}
   }: {
-    urlCheck?: string,
-    organization: organization,
-  }): Promise<OrganizationCheckResult> => {
+    urlCheck?: string | null,
+    subject: subject,
+  }): Promise<subjectCheckResult> => {
 
   try {
     const fields: { [key: string]: any } = {};
-    for (const key in organization) {
-      if (organization[key] !== undefined) {
-        fields[key] = organization[key];
+    for (const key in subject) {
+      if (subject[key] !== undefined) {
+        fields[key] = subject[key];
       }
     }
 
     let myOrganizationCheck;
-    if (!organization.id || organization.id === "") {
+    if (!subject.id || subject.id === "") {
       myOrganizationCheck = { fields };
     } else {
       myOrganizationCheck = { fields, excludeField: "id" };
@@ -60,4 +54,4 @@ const checkOrganizationAvailability = async (
   }
 };
 
-export default checkOrganizationAvailability;
+export default checkSubjectAvailability;

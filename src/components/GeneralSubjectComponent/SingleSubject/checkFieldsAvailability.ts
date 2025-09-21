@@ -22,7 +22,7 @@ export default async function checkFieldsAvailability({
       if (data[field] !== undefined) checkObj[field] = data[field];
     }
     checkObj[idField] = data[idField];
-    const result = await checkSubjectAvailability({ urlCheck, organization: checkObj });
+    const result = await checkSubjectAvailability({ urlCheck, subject: checkObj });
     for (const field of fieldExists) {
       if (result[field]) errors[field] = "Thông tin đã tồn tại";
     }
@@ -35,7 +35,7 @@ export default async function checkFieldsAvailability({
       if (data[field] !== undefined) checkObj[field] = data[field];
     }
     checkObj[idField] = data[idField];
-    const result = await checkSubjectAvailability({ urlCheck, organization: checkObj });
+    const result = await checkSubjectAvailability({ urlCheck, subject: checkObj });
     for (const field of fieldNoExists) {
       if (!result[field]) errors[field] = "Thông tin không tồn tại";
     }
