@@ -11,7 +11,7 @@ const footerTypes = [
 ];
 
 const cellTypes = [
-  'TextCell', 'EditableCell', 'DateCell', 'DateUsCell', 'DateVnCell',
+  'TextCell', 'DateCell', 'DateUsCell', 'DateVnCell',
   'DateTimeCell', 'DateTimeUsCell', 'DateTimeVnCell',
   'NumberCell', 'NumberUsCell', 'NumberVnCell'
 ];

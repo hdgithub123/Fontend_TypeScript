@@ -1,32 +1,7 @@
 import type { RuleSchema } from "../../../../utils/validation";
 import {
-    ReactTableBasic,
-    ReactTableBasicArrowkey,
-    ReactTableFull,
-    ReactTableFullArrowkey,
-    ReactTableNomalArrowkey,
-    ReactTablePages,
-    SearchDropDown,
-
-
     TextCell,
-    EditableCell,
-    DateCell,
-    DateUsCell,
-    DateVnCell,
-    DateTimeCell,
-    DateTimeUsCell,
-    DateTimeVnCell,
-    NumberCell,
-    NumberUsCell,
-    NumberVnCell,
     CheckboxCell,
-
-    formatVnDateTime,
-    formatUsDateTime,
-    formatDateTime,
-
-    CountFooter,
     TextGroupCell,
 } from 'react-table'
 
@@ -55,7 +30,6 @@ const columns = [
         id: 'name',
         filterType: 'text',
         cell: TextCell,
-        groupCell: TextGroupCell,
 
     },
     {
@@ -64,7 +38,6 @@ const columns = [
         id: 'address',
         filterType: 'text',
         cell: TextCell,
-        groupCell: TextGroupCell,
 
     },
     {

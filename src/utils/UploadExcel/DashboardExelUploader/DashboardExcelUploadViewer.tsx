@@ -1,34 +1,7 @@
 // import React, { useState } from 'react';
 import {
   ReactTableBasic,
-  ReactTableBasicArrowkey,
-  ReactTableFull,
-  ReactTableFullArrowkey,
-  ReactTableNomalArrowkey,
-  ReactTablePages,
-  SearchDropDown,
-  formatNumber,
-  SumFooter,
-  AverageFooter,
-  CountFooter,
-
-  TextCell,
-  EditableCell,
-  DateCell,
-  DateUsCell,
-  DateVnCell,
-  DateTimeCell,
-  DateTimeUsCell,
-  DateTimeVnCell,
-  NumberCell,
-  NumberUsCell,
-  NumberVnCell,
 } from 'react-table'
-
-
-
-
-
 
 
 import React, { useEffect, useState } from 'react';

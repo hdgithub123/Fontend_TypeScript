@@ -10,29 +10,7 @@ import {
 } from 'hrich-text-editor';
 
 import {
-    ReactTableBasic,
-    ReactTableBasicArrowkey,
-    ReactTableFull,
-    ReactTableFullArrowkey,
-    ReactTableNomalArrowkey,
-    ReactTablePages,
     SearchDropDown,
-    formatNumber,
-    SumFooter,
-    AverageFooter,
-    CountFooter,
-
-    TextCell,
-    EditableCell,
-    DateCell,
-    DateUsCell,
-    DateVnCell,
-    DateTimeCell,
-    DateTimeUsCell,
-    DateTimeVnCell,
-    NumberCell,
-    NumberUsCell,
-    NumberVnCell,
 } from 'react-table'
 
 import { getData } from "../../../utils/axios";

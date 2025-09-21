@@ -1,34 +1,10 @@
 import {
-    ReactTableBasic,
-    ReactTableBasicArrowkey,
-    ReactTableFull,
-    ReactTableFullArrowkey,
-    ReactTableNomalArrowkey,
-    ReactTablePages,
-    SearchDropDown,
-
-
     TextCell,
-    EditableCell,
-    DateCell,
-    DateUsCell,
-    DateVnCell,
     DateTimeCell,
-    DateTimeUsCell,
-    DateTimeVnCell,
-    NumberCell,
-    NumberUsCell,
-    NumberVnCell,
     CheckboxCell,
-
-    formatVnDateTime,
-    formatUsDateTime,
-    formatDateTime,
-
     CountFooter,
     TextGroupCell,
 } from 'react-table'
-
 
 
 const columns = [
@@ -65,7 +41,7 @@ const columns = [
 
         enableGlobalFilter: false
     },
-        {
+    {
         accessorKey: 'isSystem',
         header: 'Hệ Thống',
         id: 'isSystem',

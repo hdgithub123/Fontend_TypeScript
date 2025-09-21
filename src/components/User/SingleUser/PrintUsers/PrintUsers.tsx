@@ -2,37 +2,13 @@
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
-    HRichTextEditor,
     HRichTextEditorPrintPreview,
-    HRichTextEditorPreview,
-        makeDramaticContentStatesObject,
+    makeDramaticContentStatesObject,
     mergeContentStatesObject,
 } from 'hrich-text-editor';
 
 import {
-    ReactTableBasic,
-    ReactTableBasicArrowkey,
-    ReactTableFull,
-    ReactTableFullArrowkey,
-    ReactTableNomalArrowkey,
-    ReactTablePages,
     SearchDropDown,
-    formatNumber,
-    SumFooter,
-    AverageFooter,
-    CountFooter,
-
-    TextCell,
-    EditableCell,
-    DateCell,
-    DateUsCell,
-    DateVnCell,
-    DateTimeCell,
-    DateTimeUsCell,
-    DateTimeVnCell,
-    NumberCell,
-    NumberUsCell,
-    NumberVnCell,
 } from 'react-table'
 
 import { getData } from "../../../../utils/axios";
@@ -134,13 +110,13 @@ const PrintUsers: React.FC<PrintPreviewProps> = ({
                 const dramaticObj = makeDramaticContentStatesObject({
                     contentStateObject: row.content, // hoặc truyền contentStateObject tương ứng nếu có
                     dynamicTables: dynamicTables,
-                    dynamicTexts: {...item}
+                    dynamicTexts: { ...item }
                 });
 
                 contentsObject.push(dramaticObj);
             });
 
-            const newCombineContent = mergeContentStatesObject({contentStates:contentsObject})
+            const newCombineContent = mergeContentStatesObject({ contentStates: contentsObject })
             setCombineContent(newCombineContent)
         }
     }

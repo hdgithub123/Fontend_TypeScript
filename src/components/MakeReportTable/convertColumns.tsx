@@ -2,20 +2,12 @@ import React, { useState } from "react";
 import { evaluate } from 'mathjs';
 // ...existing code...
 import {
-    ReactTableBasic,
-    ReactTableBasicArrowkey,
-    ReactTableFull,
-    ReactTableFullArrowkey,
-    ReactTableNomalArrowkey,
-    ReactTablePages,
-    SearchDropDown,
     formatNumber,
     SumFooter,
     AverageFooter,
     CountFooter,
 
     TextCell,
-    EditableCell,
     DateCell,
     DateUsCell,
     DateVnCell,
@@ -25,10 +17,6 @@ import {
     NumberCell,
     NumberUsCell,
     NumberVnCell,
-
-        formatVnDateTime,
-    formatUsDateTime,
-    formatDateTime,
 } from 'react-table'
 
 
@@ -51,7 +39,6 @@ type ColumnConfig = {
 
 const componentMap: Record<string, React.FC<any>> = {
     TextCell,
-    EditableCell,
     DateCell,
     DateUsCell,
     DateVnCell,
