@@ -182,9 +182,11 @@ export default function EditFormDefault({
             setSubjectDefaultData(prev => ({ ...prev, ...payload }));
             onSuccess?.({ action: "update", subject: subjectData });
           } else {
+            // lặp qua tất cả các lỗi và hiển thị của result?.errorCode?.failData thành một chuỗi
+            const errorMessages = Object.entries(result?.errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
             setAlertinfo({
               isAlertShow: true,
-              alertMessage: `Bạn có chắc chắn muốn cập nhật ${subjectName} này?`,
+              alertMessage: `Có lỗi xảy ra khi cập nhật ${subjectName} này: ${errorMessages}`,
               type: "error",
               title: "Lỗi",
               showConfirm: true,
@@ -221,9 +223,12 @@ export default function EditFormDefault({
           onSuccess?.({ action: "delete", subject: subjectData });
           resetForm();
         } else {
+
+          // lặp qua tất cả các lỗi và hiển thị của result?.errorCode?.failData thành một chuỗi
+          const errorMessages = Object.entries(result?.errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
           setAlertinfo({
             isAlertShow: true,
-            alertMessage: result?.errorCode?.failData?.isSystem === "Cannot delete system records" ? "Không được xóa thông tin hệ thống" : "Xóa tổ chức thất bại",
+            alertMessage: result?.errorCode?.failData?.isSystem === "Cannot delete system records" ? "Không được xóa thông tin hệ thống" : `Xóa thất bại: ${errorMessages}`,
             type: "error",
             title: "Lỗi",
             showConfirm: true,

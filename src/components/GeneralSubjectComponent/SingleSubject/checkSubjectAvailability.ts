@@ -31,16 +31,16 @@ const checkSubjectAvailability = async (
       }
     }
 
-    let myOrganizationCheck;
+    let mySubjectCheck;
     if (!subject.id || subject.id === "") {
-      myOrganizationCheck = { fields };
+      mySubjectCheck = { fields };
     } else {
-      myOrganizationCheck = { fields, excludeField: "id" };
+      mySubjectCheck = { fields, excludeField: "id" };
     }
 
     const res = await postData({
       url: urlCheck,
-      data: myOrganizationCheck,
+      data: mySubjectCheck,
     });
 
     const result: { [key: string]: boolean } = {};

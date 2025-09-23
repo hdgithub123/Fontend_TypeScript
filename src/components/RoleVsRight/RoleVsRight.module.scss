@@ -1,0 +1,162 @@
+//    .inputField {
+//        padding: 10px 12px;
+//        border: 1px solid #ddd;
+//        border-radius: 4px;
+//        font-size: 14px;
+//        transition: border-color 0.2s;
+//        &:focus {
+//            outline: none;
+//            border-color: #3498db;
+//            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+//        }
+
+//        &::placeholder {
+//            color: #aaa;
+//        }
+//    }
+
+
+.container {
+    //   display: flex;
+    //   flex-direction: column;
+    gap: 1rem;
+    padding: 16px;
+    background: #f9f9f9;
+    border-radius: 12px;
+}
+
+.title {
+    font-size: 30px;
+    font-weight: bold;
+    border-bottom: 1px solid #eaeaea;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    color: #333;
+    text-align: center;
+}
+
+.buttonGroup {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.button {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.updateButton {
+    background: #007bff;
+    color: #fff;
+
+    &:hover {
+        background: #0069d9;
+    }
+}
+
+.assignButton {
+    background: #28a745;
+    color: #fff;
+
+    &:hover {
+        background: #218838;
+    }
+}
+
+.unassignButton {
+    background: #dc3545;
+    color: #fff;
+
+    &:hover {
+        background: #c82333;
+    }
+}
+
+.copyButton {
+    background: #6f42c1;
+    color: #fff;
+
+    &:hover {
+        background: #5936a2;
+    }
+}
+
+.closeButton {
+    background: #6c757d;
+    color: #fff;
+
+    &:hover {
+        background: #5a6268;
+    }
+}
+
+.selectBox {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.inputGroup {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.inputField {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 150px;
+}
+
+.tableContainer {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    //   overflow: hidden;
+    height: 450px;
+}
+
+.copyRoleContainer {
+    position: fixed;
+    /* cố định giữa màn hình */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background: #fff;
+    padding: 16px;
+    border: 1px solid #6f42c1;
+    border-radius: 8px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    /* nổi trên các phần khác */
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.copyRoleContainer .buttonCopyGroup {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: flex-end;
+    align-self: flex-end;
+}

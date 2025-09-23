@@ -14,7 +14,7 @@ const urlList = [
     'http://localhost:3000/auth/user/list',
     "http://localhost:3000/auth/role/list",
     "http://localhost:3000/auth/user-zone-role/list",
-    "",
+    "http://localhost:3000/auth/role-right/role-rights/98c147db-87f8-11f0-9b37-0242ac110002",
     "",
     "",
 ]

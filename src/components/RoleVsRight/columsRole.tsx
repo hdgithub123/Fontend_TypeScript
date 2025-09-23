@@ -1,30 +1,38 @@
 import {
     TextCell,
+    DateTimeCell,
+    CheckboxCell,
+    CountFooter,
 } from 'react-table'
 
 
-const columnsContent = [
+
+
+
+
+const columns = [
     {
         accessorKey: 'code',
-        header: 'code',
+        header: 'Mã Vai Trò',
         id: 'code',
+        footer: info => `Count: ${CountFooter(info.table)}`,
         cell: TextCell,
-        // size: '50%'
     },
     {
         accessorKey: 'name',
-        header: 'Name',
+        header: 'Tên Vai Trò',
         id: 'name',
         cell: TextCell,
-        enableGlobalFilter: true        
     },
-        {
+    {
         accessorKey: 'description',
-        header: 'Description',
+        header: 'Mô tả',
         id: 'description',
         cell: TextCell,
-        enableGlobalFilter: false        
-    }
+    },
 ]
 
-export default columnsContent
+export default columns
+
+
+

@@ -1,6 +1,7 @@
 import type { RuleSchema } from "../../../utils/validation";
 import {
     TextCell,
+    CountFooter,
     CheckboxCell,
     TextGroupCell,
 } from 'react-table'
@@ -10,15 +11,16 @@ import {
 const columns = [
     {
         accessorKey: 'oldCode',
-        header: 'Mã tổ chức cũ',
+        header: 'Mã vai trò cũ',
         id: 'oldCode',
         filterType: 'text',
+        footer: info => `Count: ${CountFooter(info.table)}`,
         cell: TextCell,
 
     },
     {
         accessorKey: 'code',
-        header: 'Mã tổ chức mới',
+        header: 'Mã vai trò mới',
         id: 'code',
         filterType: 'text',
         cell: TextCell,
@@ -26,44 +28,28 @@ const columns = [
     },
     {
         accessorKey: 'name',
-        header: 'Tên tổ chức',
+        header: 'Tên vai trò',
         id: 'name',
         filterType: 'text',
         cell: TextCell,
-        groupCell: TextGroupCell,
 
     },
     {
-        accessorKey: 'address',
-        header: 'Địa chỉ',
-        id: 'address',
+        accessorKey: 'description',
+        header: 'Mô tả',
+        id: 'description',
         filterType: 'text',
         cell: TextCell,
-        groupCell: TextGroupCell,
 
-    },
-    {
-        accessorKey: 'isActive',
-        // accessorFn: row => row.isActive === true ? "TRUE" : row.isActive === false ? "FALSE" : "",
-        header: 'Kích Hoạt',
-        id: 'isActive',
-        // filterType: 'range',
-        filterType: 'multiSelect',
-        cell: CheckboxCell,
-        enableGlobalFilter: false
     },
 ]
 
 
 const ruleSchema: RuleSchema = {
-    // id: { type: "string", format: "uuid", required: false },
     oldCode: { type: "string", required: true, minLength: 2, maxLength: 100 },
     code: { type: "string", required: false, minLength: 2, maxLength: 100 },
     name: { type: "string", required: false, minLength: 2, maxLength: 255 },
-    address: { type: "string", required: false, maxLength: 255 },
-    isActive: { type: "boolean", required: false },
-    // createdAt: { type: "string", format: "datetime", required: false },
-    // createdBy: { type: "string", required: false, max: 100 },
+    description: { type: "string", required: false, maxLength: 255 },
 };
 
 
@@ -72,7 +58,7 @@ const columnCheckExistance = [
         columnNames: {
             code: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/organization/check-organizations',
+        urlCheck: 'http://localhost:3000/auth/role/check-roles',
         excludeField: 'id',
     },
 ]
@@ -82,19 +68,19 @@ const columnCheckNotExistance = [
         columnNames: {
             oldCode: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/organization/check-organizations',
+        urlCheck: 'http://localhost:3000/auth/role/check-roles',
 
     },
 
 ]
 
 
-const ListIdsConfig = { url: 'http://localhost:3000/auth/organization/ids-codes', fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
+const ListIdsConfig = { url: 'http://localhost:3000/auth/role/ids-codes', fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
 
-const sheetName = 'Import Organizations'
-const fileName = "organizations_update_template.xlsx"
+const sheetName = 'Import Roles'
+const fileName = "roles_update_template.xlsx"
 const guideSheet = 'Hướng dẫn'
-const title = 'Sửa đổi tổ chức'
+const title = 'Sửa đổi vai trò'
 
 
 export { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig };

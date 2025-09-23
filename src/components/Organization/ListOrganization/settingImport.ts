@@ -24,7 +24,6 @@ const columns = [
         id: 'name',
         filterType: 'text',
         cell: TextCell,
-        groupCell: TextGroupCell,
 
     },
     {
@@ -33,7 +32,6 @@ const columns = [
         id: 'address',
         filterType: 'text',
         cell: TextCell,
-        groupCell: TextGroupCell,
 
     },
     {
