@@ -147,7 +147,6 @@ export default function AddFormDefault({
             url: urlInsert,
             data: subjectToCreate,
           });
-          console.log("Insert result:", result);
 
           if (result?.status) {
             setSubjectData(subjectToCreate);

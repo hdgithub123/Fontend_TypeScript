@@ -70,6 +70,10 @@
     &:hover {
         background: #218838;
     }
+    &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
 }
 
 .unassignButton {
@@ -78,6 +82,10 @@
 
     &:hover {
         background: #c82333;
+    }
+    &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
     }
 }
 
@@ -98,6 +106,35 @@
         background: #5a6268;
     }
 }
+
+.activeMore {
+    background: #17a2b8;
+    color: #fff;
+
+    &:hover {
+        background: #138496;
+    }
+    &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+}
+
+
+.unActiveMore {
+    background: #ffc107;
+    color: #212529;
+
+    &:hover {
+        background: #e0a800;
+    }
+
+    &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+}
+
 
 .selectBox {
     padding: 6px 10px;

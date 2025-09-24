@@ -19,7 +19,6 @@ import { columns as columsRight, columnsAssign as columnsRightAssign } from "./c
 import columnsRole from "./columsRole"
 import { AlertDialog } from "../../utils/AlertDialog";
 import type { AlertInfo } from "../../utils/AlertDialog";
-import { e, re } from "mathjs";
 
 enum AssignType {
   Assigned = 'ASSIGNED',
@@ -27,16 +26,25 @@ enum AssignType {
   Authorization = 'AUTHORIZATION'
 }
 
+const defaultAuthorization = {
+  view: true,
+  updateAuthorization: true,
+  addAssigned: true,
+  deleteAssigned: true,
+}
 
-const RoleVsRight = (authorization) => {
-  const getRightsformRoleUrl = 'http://localhost:3000/auth/role-right/role-rights'; // cần thêm /id
-  const getRightNotHaveRoleUrl = 'http://localhost:3000/auth/role-right/role-not-have-rights'; // cần thêm /id
-  const urlGetRoleList = 'http://localhost:3000/auth/role/list';
-  const urlUpdateRoleRights = 'http://localhost:3000/auth/role-right/list';
-  const urlInsertRoleRights = 'http://localhost:3000/auth/role-right/list';
-  const urlDeleteRoleRights = 'http://localhost:3000/auth/role-right/list';
+const fullUrlList = {
+  getRightsformRoleUrl: 'http://localhost:3000/auth/role-right/role-rights', // cần thêm /id
+  getRightNotHaveRoleUrl: 'http://localhost:3000/auth/role-right/role-not-have-rights', // cần thêm /id
+  urlGetRoleList: 'http://localhost:3000/auth/role/list',
+  urlUpdateRoleRights: 'http://localhost:3000/auth/role-right/list',
+  urlInsertRoleRights: 'http://localhost:3000/auth/role-right/list',
+  urlDeleteRoleRights: 'http://localhost:3000/auth/role-right/list',
+}
 
 
+const RoleVsRight = ({ authorization = defaultAuthorization,urlList = fullUrlList }) => {
+  const { getRightsformRoleUrl, getRightNotHaveRoleUrl, urlGetRoleList, urlUpdateRoleRights, urlInsertRoleRights, urlDeleteRoleRights } = urlList;
   const [searchRoles, setSearchRoles] = useState<string>("");
   const [searchRights, setSearchRights] = useState<string>("");
   const [selectedRights, setSelectedRights] = useState<Record<string, any>[]>([]);
@@ -139,13 +147,16 @@ const RoleVsRight = (authorization) => {
             if (result.status) {
               setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
             } else {
+
+              const errorMessages = Object.entries(result?.errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
               setAlertinfo(
                 ({
                   isAlertShow: true,
-                  alertMessage: "Cập nhật quyền thất bại.",
+                  alertMessage: `Cập nhật quyền thất bại: ${errorMessages}`,
                   type: "error",
                   title: "Lỗi",
                   showCancel: true,
+                  showConfirm: false,
                   onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
                   onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
                 })
@@ -301,12 +312,14 @@ const RoleVsRight = (authorization) => {
             setSelectedRights([]);
             setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
           } else {
+            const errorMessages = Object.entries(result?.errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
             setAlertinfo({
               isAlertShow: true,
-              alertMessage: "Bỏ quyền thất bại.",
+              alertMessage: `Bỏ quyền thất bại: ${errorMessages}`,
               type: "error",
               title: "Lỗi",
               showCancel: true,
+              showConfirm: false,
               onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
               onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
             });
@@ -339,7 +352,7 @@ const RoleVsRight = (authorization) => {
 
       setAlertinfo({
         isAlertShow: true,
-        alertMessage: `Bạn có muốn sao chép quyền từ vai trò ${copyRole.code} sang vai trò ${currentRole.code} không?`,
+        alertMessage: `Bạn có muốn sao chép quyền từ vai trò ${currentRole.code} sang vai trò ${copyRole.code} không?`,
         type: "info",
         title: "Sao chép quyền",
         showConfirm: true,
@@ -357,17 +370,19 @@ const RoleVsRight = (authorization) => {
             data: updatedRoleRights
           });
 
-          console.log("result", result);
           if (result.status) {
             setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
             setIsShowCopyRole(false)
           } else {
+
+            const errorMessages = Object.entries(result?.errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
             setAlertinfo({
               isAlertShow: true,
-              alertMessage: "Cập nhật quyền thất bại.",
+              alertMessage: `Cập nhật quyền thất bại: ${errorMessages}`,
               type: "error",
               title: "Lỗi",
               showCancel: true,
+              showConfirm: false,
               onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
               onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
             });
@@ -386,6 +401,178 @@ const RoleVsRight = (authorization) => {
 
     setIsShowCopyRole(false);
   };
+
+
+  const handleActiveMore = async () => {
+    if (assignType === AssignType.Authorization) {
+      if (!currentRole) {
+        setAlertinfo({
+          isAlertShow: true,
+          alertMessage: "Vui lòng chọn vai trò trước khi cập nhật.",
+          type: "error",
+          title: "Lỗi",
+          showConfirm: false,
+          showCancel: true,
+          onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+          onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
+        });
+        return;
+      }
+
+
+      if (selectedRights.length === 0) {
+        setAlertinfo({
+          isAlertShow: true,
+          alertMessage: "Vui lòng chọn ít nhất một quyền để bỏ.",
+          type: "error",
+          title: "Lỗi",
+          showConfirm: false,
+          showCancel: true,
+          onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+          onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
+        });
+        return;
+      }
+
+
+      setAlertinfo({
+        isAlertShow: true,
+        alertMessage: "Bạn có muốn cập nhật tất cả quyền đã chọn thành kích hoạt không?",
+        type: "info",
+        title: "Câp nhật quyền",
+        showConfirm: true,
+        onConfirm: async () => {
+          if (assignType === AssignType.Authorization) {
+            const updatedRoleRights = selectedRights.map((right) => ({
+              roleId: currentRole.id,
+              rightId: right.id,
+              isActive: true,
+            }));
+            const result = await putData({
+              url: urlUpdateRoleRights,
+              data: updatedRoleRights
+            });
+            if (result.status) {
+              // Cập nhật trạng thái isActive trong searchRights mà nằm trong selectedRights
+              const updatedRights = searchRights.map((right) => {
+                if (selectedRights.find((r) => r.id === right.id)) {
+                  return { ...right, isActive: true };
+                }
+                return right;
+              });
+              setSearchRights(updatedRights);
+              setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
+            }
+            else {
+
+              const errorMessages = Object.entries(result?.errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
+              setAlertinfo({
+                isAlertShow: true,
+                alertMessage: `Cập nhật quyền thất bại: ${errorMessages}`,
+                type: "error",
+                title: "Lỗi",
+                showCancel: true,
+                showConfirm: false,
+                onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+                onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
+              });
+            }
+          }
+        },
+        onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+        showCancel: true,
+        onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
+      });
+
+    } else {
+      return;
+    }
+  };
+
+  const handleUnactiveMore = async () => {
+    if (assignType === AssignType.Authorization) {
+      if (!currentRole) {
+        setAlertinfo({
+          isAlertShow: true,
+          alertMessage: "Vui lòng chọn vai trò trước khi cập nhật.",
+          type: "error",
+          title: "Lỗi",
+          showConfirm: false,
+          showCancel: true,
+          onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+          onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
+        });
+        return;
+      }
+
+      if (selectedRights.length === 0) {
+        setAlertinfo({
+          isAlertShow: true,
+          alertMessage: "Vui lòng chọn ít nhất một quyền để bỏ.",
+          type: "error",
+          title: "Lỗi",
+          showConfirm: false,
+          showCancel: true,
+          onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+          onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
+        });
+        return;
+      }
+
+      setAlertinfo({
+        isAlertShow: true,
+        alertMessage: "Bạn có muốn cập nhật tất cả quyền đã chọn thành không kích hoạt không?",
+        type: "info",
+        title: "Câp nhật quyền",
+        showConfirm: true,
+        onConfirm: async () => {
+          if (assignType === AssignType.Authorization) {
+
+            // sửa lại chỉ lấy những quyền đang được chọn trong selectedRights để cập nhật
+            const updatedRoleRights = selectedRights.map((right) => ({
+              roleId: currentRole.id,
+              rightId: right.id,
+              isActive: false,
+            }));
+            const result = await putData({
+              url: urlUpdateRoleRights,
+              data: updatedRoleRights
+            });
+
+            if (result.status) {
+              // cập nhât trạng thái isActive trong searchRights mà nằm trong selectedRights
+              const updatedRights = searchRights.map((right) => {
+                if (selectedRights.find((r) => r.id === right.id)) {
+                  return { ...right, isActive: false };
+                }
+                return right;
+              });
+              setSearchRights(updatedRights);
+              setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
+            } else {
+              const errorMessages = Object.entries(result?.errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
+              setAlertinfo({
+                isAlertShow: true,
+                alertMessage: `Cập nhật quyền thất bại: ${errorMessages}`,
+                type: "error",
+                title: "Lỗi",
+                showCancel: true,
+                showConfirm: false,
+                onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+                onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
+              });
+            }
+          }
+        },
+        onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+        showCancel: true,
+        onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
+      });
+    } else {
+      return;
+    }
+  };
+
 
   const handleOnRowsSelect = (rows: any[]) => {
     setSelectedRights(rows);
@@ -416,8 +603,9 @@ const RoleVsRight = (authorization) => {
         showConfirm={alertinfo.showConfirm ?? true}
         showCancel={alertinfo.showCancel ?? true}
       />
-      <h2 className={styles.title}>Danh sách phân quyền</h2>
-      <div className={styles.buttonGroup}>
+      
+      {authorization.view && <h2 className={styles.title}>Danh sách phân quyền</h2>}
+      {authorization.view && <div className={styles.buttonGroup}>
         <select
           value={assignType}
           onChange={handleAssignTypeChange}
@@ -427,13 +615,15 @@ const RoleVsRight = (authorization) => {
           <option value={AssignType.Unassigned}>Bỏ quyền</option>
           <option value={AssignType.Assigned}>Thêm quyền</option>
         </select>
-       {AssignType.Authorization === assignType && <button onClick={handleUpdate} className={`${styles.button} ${styles.updateButton}`}>Cập nhật</button>}
-       {AssignType.Assigned === assignType && <button onClick={handleAssign} className={`${styles.button} ${styles.assignButton}`}>Thêm quyền</button>}
-       {AssignType.Unassigned === assignType && <button onClick={handleUnassign} className={`${styles.button} ${styles.unassignButton}`}>Bỏ quyền</button>}
-       {AssignType.Authorization === assignType && <button onClick={() => setIsShowCopyRole(true)} className={`${styles.button} ${styles.copyButton}`}>Sao chép vai trò</button>}
+        {AssignType.Authorization === assignType && authorization.updateAuthorization && <button onClick={handleUpdate} className={`${styles.button} ${styles.updateButton}`}>Cập nhật</button>}
+        {AssignType.Assigned === assignType && authorization.addAssigned && <button disabled={selectedRights.length === 0} onClick={handleAssign} className={`${styles.button} ${styles.assignButton}`}>Thêm quyền</button>}
+        {AssignType.Unassigned === assignType && authorization.deleteAssigned && <button disabled={selectedRights.length === 0} onClick={handleUnassign} className={`${styles.button} ${styles.unassignButton}`}>Bỏ quyền</button>}
+        {AssignType.Authorization === assignType && authorization.updateAuthorization && <button onClick={() => setIsShowCopyRole(true)} className={`${styles.button} ${styles.copyButton}`}>Sao chép vai trò</button>}
+        {AssignType.Authorization === assignType && authorization.updateAuthorization &&<button disabled={selectedRights.length === 0} onClick={handleActiveMore} className={`${styles.button} ${styles.activeMore}`}>Kích hoạt hàng loạt</button>}
+        {AssignType.Authorization === assignType && authorization.updateAuthorization && <button disabled={selectedRights.length === 0} onClick={handleUnactiveMore} className={`${styles.button} ${styles.unActiveMore}`}>Bỏ kích hoạt hàng loạt</button>}
       </div>
-      
-      <div className={styles.inputGroup}>
+      }
+    {authorization.view &&  <div className={styles.inputGroup}>
         <div>
           <SearchDropDown
             data={searchRoles}
@@ -468,7 +658,7 @@ const RoleVsRight = (authorization) => {
         ></input>
 
 
-      </div>
+      </div>}
       {isShowCopyRole && <div className={styles.copyRoleContainer}>
         <h3 className={styles.title}>Chọn vai trò muốn sao chép</h3>
         <SearchDropDown
@@ -507,7 +697,7 @@ const RoleVsRight = (authorization) => {
 
       </div>
       }
-      <div className={styles.tableContainer}>
+     {authorization.view && <div className={styles.tableContainer}>
         <ReactTableBasic
           data={searchRights}
           columns={assignType === AssignType.Authorization ? columsRight : columnsRightAssign}
@@ -519,8 +709,7 @@ const RoleVsRight = (authorization) => {
           exportFile={null}
         >
         </ReactTableBasic>
-      </div>
-
+      </div>}
     </div>
   );
 };
