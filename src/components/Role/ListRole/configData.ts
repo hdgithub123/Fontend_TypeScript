@@ -26,11 +26,12 @@ const fullUrlList = {
 
 const exportFileInfo = { name: "Role.xlsx", sheetName: "Sheet1", title: "Danh sách vai trò", description: null }
 
-
+const columnsShow: string[] = []
 
 export {
   AddFormRole,
   EditFormRole,
   fullUrlList,
-  exportFileInfo
+  exportFileInfo,
+  columnsShow,
 }

@@ -5,8 +5,8 @@ import updateExcelSetting from './settingUpdate'
 import columns from "./colums"
 
 import {
-  AddFormOrganization,
-  EditFormOrganization,
+  AddFormBranch,
+  EditFormBranch,
   fullUrlList,
   exportFileInfo,
   columnsShow,
@@ -42,7 +42,7 @@ const authorizationExample = {
 
 
 
-const ListOrganization = ({authorization = authorizationExample}) => {
+const ListBranch = ({authorization = authorizationExample}) => {
   return (
     <ListSubject
       columns={columns}
@@ -52,12 +52,12 @@ const ListOrganization = ({authorization = authorizationExample}) => {
       exportFile={exportFileInfo || null}
       insertExcelConfig={insertExcelSetting}
       updateExcelConfig={updateExcelSetting}
-      AddFormComponent={AddFormOrganization}
-      EditFormComponent={EditFormOrganization}
-      titleDesignList="Thiết Kế Mẫu In Danh Sách Tổ chức"
-      header="Quản lý Tổ chức"
+      AddFormComponent={AddFormBranch}
+      EditFormComponent={EditFormBranch}
+      titleDesignList="Thiết Kế Mẫu In Danh Sách Chi Nhánh"
+      header="Quản lý Chi Nhánh"
     />
   );
 };
 
-export default ListOrganization;
+export default ListBranch;

@@ -43,7 +43,9 @@ const fullUrlList = {
 }
 
 
-const RoleVsRight = ({ authorization = defaultAuthorization,urlList = fullUrlList }) => {
+const columnsShowDetails: string[] = []
+
+const RoleVsRight = ({ authorization = defaultAuthorization,urlList = fullUrlList, columnsShow = {columnsShowDetails } }) => {
   const { getRightsformRoleUrl, getRightNotHaveRoleUrl, urlGetRoleList, urlUpdateRoleRights, urlInsertRoleRights, urlDeleteRoleRights } = urlList;
   const [searchRoles, setSearchRoles] = useState<string>("");
   const [searchRights, setSearchRights] = useState<string>("");
@@ -701,6 +703,7 @@ const RoleVsRight = ({ authorization = defaultAuthorization,urlList = fullUrlLis
         <ReactTableBasic
           data={searchRights}
           columns={assignType === AssignType.Authorization ? columsRight : columnsRightAssign}
+          columnsShow={columnsShow} 
           isGlobalFilter={true}
           // onOriginalRowSelect={handleOnRowSelect}
           onOriginalRowsSelect={handleOnRowsSelect}

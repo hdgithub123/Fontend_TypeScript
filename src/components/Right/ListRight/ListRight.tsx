@@ -6,6 +6,7 @@ import {
   fullUrlList,
   fullUrlListOwner,
   exportFileInfo,
+  columnsShow,
 } from './configData'
 
 
@@ -43,6 +44,7 @@ const ListRight = ({authorization = authorizationExample, isOwner = false}) => {
     <ListSubject
       authorization={authorization}
       columns= {columns}
+      columnsShow={columnsShow}
       urlList={isOwner ? fullUrlListOwner : fullUrlList}
       exportFile={exportFileInfo || null}
       insertExcelConfig={null}

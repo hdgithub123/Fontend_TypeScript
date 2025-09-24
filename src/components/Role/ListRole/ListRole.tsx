@@ -9,6 +9,7 @@ import {
   EditFormRole,
   fullUrlList,
   exportFileInfo,
+  columnsShow,  
 } from './configData'
 
 
@@ -45,6 +46,7 @@ const ListRole = ({authorization = authorizationExample}) => {
   return (
     <ListSubject
       columns={columns}
+      columnsShow={columnsShow}
       authorization={authorization}
       urlList={fullUrlList}
       exportFile={exportFileInfo || null}

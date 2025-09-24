@@ -40,11 +40,12 @@ const fullUrlListOwner = {
 
 const exportFileInfo = { name: "Right.xlsx", sheetName: "Sheet1", title: "Danh sách quyền", description: null }
 
-
+const columnsShow: string[] = []
 
 export {
   EditForm,
   fullUrlList,
   fullUrlListOwner,
-  exportFileInfo
+  exportFileInfo,
+  columnsShow,
 }

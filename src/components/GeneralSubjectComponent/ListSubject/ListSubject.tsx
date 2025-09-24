@@ -179,6 +179,7 @@ export interface ListSubjectProps {
 
   authorization?: authorization;
   columns?: ColumnConfig[];
+  columnsShow?: string[];
   urlList?: fullUrlList;
   exportFile?: exportFileInfo;
   insertExcelConfig?: configExcelInsertSetting | null;
@@ -200,6 +201,7 @@ const ListSubject = ({
   authorization = authorizationFalse,
   urlList = {},
   columns = [],
+  columnsShow = [],
   exportFile = exportFileDefault || null,
   insertExcelConfig = insertExcelSetting || null,
   updateExcelConfig = updateExcelSetting || null,
@@ -353,6 +355,7 @@ const ListSubject = ({
         <ReactTableBasic
           data={data}
           columns={columns}
+          columnsShow= {columnsShow}
           isGlobalFilter={true}
           onOriginalRowSelect={handleOnRowSelect}
           onOriginalRowsSelect={handleOnRowsSelect}

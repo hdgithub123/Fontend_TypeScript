@@ -26,11 +26,12 @@ const fullUrlList = {
 
 const exportFileInfo = { name: "Organization.xlsx", sheetName: "Sheet1", title: "Danh sách tổ chức", description: null }
 
-
+const columnsShow: string[] = []
 
 export {
   AddFormOrganization,
   EditFormOrganization,
   fullUrlList,
-  exportFileInfo
+  exportFileInfo,
+  columnsShow,
 }

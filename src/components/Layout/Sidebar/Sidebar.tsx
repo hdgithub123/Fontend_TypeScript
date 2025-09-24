@@ -8,6 +8,7 @@ const link: Record<string, string> = {
   right: "/right",
   role: "/role",
   roleright: "/roleright",
+  branch: "/branch",
 };
 
 
