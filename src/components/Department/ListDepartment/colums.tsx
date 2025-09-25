@@ -6,14 +6,28 @@ import {
 } from 'react-table'
 
 
-
+// interface department {
+//   id?: string;
+//   code?: string;
+//   name?: string;
+//   address?: string;
+//   description?: string;
+//   parentId?: string | null;
+//   branchId?: string;
+//   isActive?: boolean;
+//   isSystem?: boolean;
+//   createdBy?: string;
+//   updatedBy?: string;
+//   createdAt?: string;
+//   updatedAt?: string;
+// }
 
 
 
 const columns = [
     {
         accessorKey: 'code',
-        header: 'Mã chi nhánh',
+        header: 'Mã khu vực',
         id: 'code',
         filterType: 'text',
         footer: info => `Count: ${CountFooter(info.table)}`,
@@ -21,7 +35,7 @@ const columns = [
     },
     {
         accessorKey: 'name',
-        header: 'Tên chi nhánh',
+        header: 'Tên khu vực',
         id: 'name',
         filterType: 'text',
         cell: TextCell,
@@ -37,6 +51,13 @@ const columns = [
         accessorKey: 'description',
         header: 'Mô tả',
         id: 'description',
+        filterType: 'text',
+        cell: TextCell,
+    },
+    {
+        accessorKey: 'parentId',
+        header: 'Thuộc về khu vực',
+        id: 'parentId',
         filterType: 'text',
         cell: TextCell,
     },
@@ -68,14 +89,6 @@ const columns = [
         id: 'updatedBy',
         filterType: 'text',
         cell: TextCell,
-        enableGlobalFilter: false
-    },
-        {
-        accessorKey: 'isIndependent',
-        header: 'Chi nhánh độc lập',
-        id: 'isIndependent',
-        filterType: 'multiSelect',
-        cell: CheckboxCell,
         enableGlobalFilter: false
     },
     {

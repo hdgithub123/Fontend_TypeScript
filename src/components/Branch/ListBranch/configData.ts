@@ -26,7 +26,7 @@ const fullUrlList = {
 
 const exportFileInfo = { name: "Branch.xlsx", sheetName: "Sheet1", title: "Danh sách chi nhánh", description: null }
 
-const columnsShow = ['code', 'name', 'address', 'description', 'isActive']
+const columnsShow = ['code', 'name', 'address', 'description', 'isActive', 'isIndependent']
 
 export {
   AddFormBranch,

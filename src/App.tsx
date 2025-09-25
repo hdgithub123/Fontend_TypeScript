@@ -12,6 +12,7 @@ import Right from './pages/Right/Right';
 import Role from './pages/Role/Role';
 import RoleRight from './pages/RoleRight/RoleRight';
 import Branch from './pages/Branch/Branch';
+import Department from './pages/Department/Department';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           <Route path="/role" element={<Role />} />
           <Route path="/roleright" element={<RoleRight />} />
           <Route path="/branch" element={<Branch />} />
+          <Route path="/department" element={<Department />} />
         </Route>
       </Routes>
     </BrowserRouter>

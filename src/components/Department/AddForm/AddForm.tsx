@@ -2,14 +2,14 @@ import type { RuleSchema } from "../../../utils/validation";
 import {AddFormDefault} from "../../GeneralSubjectComponent";
 
 
-
-interface branch {
+interface department {
   id?: string;
   code?: string;
   name?: string;
   address?: string;
   description?: string;
-  isIndependent?: boolean;
+  parentId?: string | null;
+  branchId?: string;
   isActive?: boolean;
   isSystem?: boolean;
   createdBy?: string;
@@ -21,24 +21,25 @@ interface branch {
 
 
 
-interface branchManagementFormProps {
+interface roleManagementFormProps {
   urlCheck?: string;
   urlInsert?: string;
-  activeData?: branch | null; // Changed from initialOrganization to organization
-  onSuccess?: (params: { action: 'insert' | 'update' | 'delete' | 'cancel', branch?: branch }) => void;
+  activeData?: department | null; // Changed from initialOrganization to organization
+  onSuccess?: (params: { action: 'insert' | 'update' | 'delete' | 'cancel', department?: department }) => void;
   authorization?: object
 }
 
 
 
 
-const branchSchema: RuleSchema = {
+const roleSchema: RuleSchema = {
   id: { type: "string", format: "uuid", required: false },
   code: { type: "string", required: true, minLength: 2, maxLength: 100 },
   name: { type: "string", required: true, minLength: 2, maxLength: 255 },
   address: { type: "string", required: false, maxLength: 255 },
   description: { type: "string", required: false, maxLength: 255 },
-  isIndependent: { type: "boolean", required: false },
+  parentId: { type: "string", format: "uuid", required: false },
+  branchId: { type: "string", format: "uuid", required: true },
   isActive: { type: "boolean", required: false },
   isSystem: { type: "boolean", required: false },
   createdBy: { type: "string", required: false, maxLength: 100 },
@@ -48,11 +49,12 @@ const branchSchema: RuleSchema = {
 };
 
 const fieldRoleLabels: Record<string, { label: string; type: string; placeholder?: string }> = {
-  code: { label: "Mã chi nhánh (*)", type: "text", placeholder: "Nhập mã chi nhánh" },
-  name: { label: "Tên chi nhánh (*)", type: "text", placeholder: "Nhập tên chi nhánh" },
+  code: { label: "Mã khu vực (*)", type: "text", placeholder: "Nhập mã khu vực" },
+  name: { label: "Tên khu vực (*)", type: "text", placeholder: "Nhập tên khu vực" },
   address: { label: "Địa chỉ", type: "text", placeholder: "Nhập địa chỉ" },
   description: { label: "Mô tả", type: "text", placeholder: "Nhập mô tả" },
-  isIndependent: { label: "Chi nhánh độc lập", type: "checkbox" },
+  branchId: { label: "Chi nhánh (*)", type: "text" },
+  parentId: { label: "Phòng ban cha", type: "text" },
   isActive: { label: "Kích hoạt", type: "checkbox" },
 
 };
@@ -64,7 +66,7 @@ export default function AddForm({
   activeData = null, // Changed parameter name
   onSuccess = () => { },
   authorization = {}
-}: branchManagementFormProps) {
+}: roleManagementFormProps) {
 
   return (
     <AddFormDefault
@@ -74,10 +76,10 @@ export default function AddForm({
       onSuccess={onSuccess}
       authorization={authorization}
       fieldLabels={fieldRoleLabels}
-      ruleSchema={branchSchema}
+      ruleSchema={roleSchema}
       checkFieldExists={["code"]}
       checkFieldNoExists={[]}
-      subjectName="chi nhánh"
+      subjectName="Khu vực"
     />
   );
 }
