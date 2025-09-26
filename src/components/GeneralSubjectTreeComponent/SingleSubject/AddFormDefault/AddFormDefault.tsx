@@ -144,11 +144,11 @@ export default function AddFormDefault({
           const newId = uuidv4();
           const subjectToCreate: Subject = { ...subjectData, id: newId };
           // loại bỏ các key bắt đầu bằng dấu gạch dưới
-          Object.keys(subjectToCreate).forEach(key => {
-            if (key.startsWith('_')) {
-              delete subjectToCreate[key];
-            }
-          });
+          // Object.keys(subjectToCreate).forEach(key => {
+          //   if (key.startsWith('_')) {
+          //     delete subjectToCreate[key];
+          //   }
+          // });
 
 
           const result = await postData({

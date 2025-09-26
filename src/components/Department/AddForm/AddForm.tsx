@@ -9,7 +9,6 @@ interface department {
   address?: string;
   description?: string;
   parentId?: string | null;
-  _parentCode?: string | null;
   branchId?: string;
   isActive?: boolean;
   isSystem?: boolean;
@@ -40,7 +39,6 @@ const roleSchema: RuleSchema = {
   address: { type: "string", required: false, maxLength: 255 },
   description: { type: "string", required: false, maxLength: 255 },
   parentId: { type: "string", format: "uuid", required: false },
-  _parentCode: { type: "string", required: false, maxLength: 100 },
   branchId: { type: "string", format: "uuid", required: true },
   isActive: { type: "boolean", required: false },
   isSystem: { type: "boolean", required: false },
@@ -56,7 +54,7 @@ const fieldRoleLabels: Record<string, { label: string; type: string; placeholder
   address: { label: "Địa chỉ", type: "text", placeholder: "Nhập địa chỉ" },
   description: { label: "Mô tả", type: "text", placeholder: "Nhập mô tả" },
   branchId: { label: "Chi nhánh (*)", type: "text" },
-  _parentCode: { label: "Phòng ban cha", render: (props) => <ParentComponent {...props} />, type: "custom" },
+  parentId: { label: "Phòng ban cha", render: (props) => <ParentComponent {...props} />, type: "custom" },
   isActive: { label: "Kích hoạt", type: "checkbox" },
 
 };
