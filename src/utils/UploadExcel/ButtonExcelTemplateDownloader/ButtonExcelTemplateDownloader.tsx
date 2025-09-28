@@ -93,6 +93,8 @@ export function createGuideSheet(
         .join('\n');
       return [col, commentText];
     }),
+    ['', ''],
+    ['!Chú ý: Hãy xóa các cột không bắt buộc nếu bạn không muốn đưa dữ liệu vào']
   ];
 
   const sheet = XLSX.utils.aoa_to_sheet(guideSheetData);
@@ -106,7 +108,8 @@ export function createGuideSheet(
   // Merge cells cho tiêu đề
   sheet['!merges'] = [
     { s: { r: 0, c: 0 }, e: { r: 0, c: 1 } }, // Merge dòng tiêu đề
-    { s: { r: 1, c: 0 }, e: { r: 1, c: 1 } }  // Merge dòng trống
+    { s: { r: 1, c: 0 }, e: { r: 1, c: 1 } },  // Merge dòng trống
+    { s: { r: guideSheetData.length - 1, c: 0 }, e: { r: guideSheetData.length - 1, c: 1 } }
   ];
 
   // Style cho tiêu đề chính
@@ -196,6 +199,43 @@ export function createGuideSheet(
       },
     };
   });
+
+
+  // Style dòng chú ý cuối cùng
+  const lastRowIndex = guideSheetData.length - 1;
+  const noteCellA = XLSX.utils.encode_cell({ r: lastRowIndex, c: 0 });
+  const noteCellB = XLSX.utils.encode_cell({ r: lastRowIndex, c: 1 });
+
+  const noteStyle = {
+    font: {
+      bold: true,
+      italic: true,
+      sz: 11,
+      color: { rgb: 'C00000' }
+    },
+    alignment: {
+      wrapText: true,
+      vertical: 'center',
+      horizontal: 'left'
+    },
+    fill: {
+      fgColor: { rgb: 'FFF2CC' }
+    },
+    border: {
+      top: { style: 'medium', color: { rgb: 'C00000' } },
+      bottom: { style: 'medium', color: { rgb: 'C00000' } },
+      left: { style: 'medium', color: { rgb: 'C00000' } },
+      right: { style: 'medium', color: { rgb: 'C00000' } },
+    }
+  };
+
+  // ✅ Tạo ô nếu chưa tồn tại
+  if (!sheet[noteCellA]) sheet[noteCellA] = { t: 's', v: guideSheetData[lastRowIndex][0] || '' };
+  if (!sheet[noteCellB]) sheet[noteCellB] = { t: 's', v: guideSheetData[lastRowIndex][1] || '' };
+
+  // ✅ Gán style cho cả hai ô
+  sheet[noteCellA].s = noteStyle;
+  sheet[noteCellB].s = noteStyle;
 
   return sheet;
 }
