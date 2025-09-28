@@ -50,8 +50,8 @@ interface Props {
   isCheckLocalDuplicates?: boolean;
   columnCheckExistance?: ColumnValidationConfig[];
   columnCheckNotExistance?: ColumnValidationConfig[];
-  onCheckUpload?: (e:any) => void;
-  onCancel?: (e:any) => void;
+  onCheckUpload?: (e: any) => void;
+  onCancel?: (e: any) => void;
   title?: string | null;
   ListIdsConfig?: ListIdsConfig;
 }
@@ -75,7 +75,7 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
   isCheckLocalDuplicates = true,
   columnCheckExistance = [],
   columnCheckNotExistance = [],
-  onCheckUpload = ( ) => { },
+  onCheckUpload = () => { },
   onCancel = () => { },
   title = null,
   ListIdsConfig = {},
@@ -372,30 +372,22 @@ export const validateWithDatabase = async (
     await handleValidation(columnCheckNotExistance, false);
   }
 
-  // loại bỏ các key  trong từng phần tử của errorsMap mà không có trong rows
 
-  Object.keys(errorsMap).forEach(indexStr => {
-    const index = Number(indexStr);
-    const row = rows[index];
-    if (row) {
-      Object.keys(errorsMap[index]).forEach(key => {
-        if (!(key in row)) {
-          delete errorsMap[index][key];
-        }
-      });
-      if (Object.keys(errorsMap[index]).length === 0) {
-        delete errorsMap[index];
+ // ✅ Bước 4: gắn lỗi và trạng thái hợp lệ
+  const enrichedRows = rows.map((row, index) => {
+    // kiểm tra errorsMap[index] xem có key nào mà row.key = "", undefined, null không, nếu có thì xóa key đó khỏi errorsMap[index]
+    Object.keys(errorsMap[index] || {}).forEach((key) => {
+      if (row[key] === "" || row[key] === undefined || row[key] === null) {
+        delete errorsMap[index][key];
       }
-    }
-  }
-  );
+    });
 
-  // ✅ Bước 4: gắn lỗi và trạng thái hợp lệ
-  const enrichedRows = rows.map((row, index) => ({
-    ...row,
-    _errors: errorsMap[index] || {},
-    _valid: !errorsMap[index] || Object.keys(errorsMap[index]).length === 0,
-  }));
+    return {
+      ...row,
+      _errors: errorsMap[index] || {},
+      _valid: !errorsMap[index] || Object.keys(errorsMap[index]).length === 0,
+    };
+  });
 
   return enrichedRows;
 };
