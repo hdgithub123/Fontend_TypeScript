@@ -105,6 +105,7 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
 
 
   const handleLoadFile = async (rawData: ExcelRow[]) => {
+    console.log("rawData", rawData);
     setIsLoading(true);
     let enriched = rawData;
     if (isCheckLocalDuplicates) {
@@ -240,6 +241,8 @@ export const validateWithDatabase = async (
   columnCheckExistance?: ColumnValidationConfig[],
   columnCheckNotExistance?: ColumnValidationConfig[]
 ): Promise<ExcelRow[]> => {
+  console.log("rows", rows);
+  console.log("listIds", listIds);
   const errorsMap: Record<number, Record<string, string>> = {};
 
   // 🔍 Bước 1: enrich dữ liệu với fieldGet (ví dụ: id)
@@ -369,12 +372,32 @@ export const validateWithDatabase = async (
     await handleValidation(columnCheckNotExistance, false);
   }
 
+  // loại bỏ các key  trong từng phần tử của errorsMap mà không có trong rows
+
+  Object.keys(errorsMap).forEach(indexStr => {
+    const index = Number(indexStr);
+    const row = rows[index];
+    if (row) {
+      Object.keys(errorsMap[index]).forEach(key => {
+        if (!(key in row)) {
+          delete errorsMap[index][key];
+        }
+      });
+      if (Object.keys(errorsMap[index]).length === 0) {
+        delete errorsMap[index];
+      }
+    }
+  }
+  );
+
   // ✅ Bước 4: gắn lỗi và trạng thái hợp lệ
-  return rows.map((row, index) => ({
+  const enrichedRows = rows.map((row, index) => ({
     ...row,
     _errors: errorsMap[index] || {},
     _valid: !errorsMap[index] || Object.keys(errorsMap[index]).length === 0,
   }));
+
+  return enrichedRows;
 };
 
 
