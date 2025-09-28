@@ -39,7 +39,14 @@ export function autoGenMessageRulesMultiLang(
       ruleMessages.max = translateMessages.max
         ?.replace('{label}', label)
         .replace('{max}', String(props.max));
-
+    if (props.minLength !== undefined)
+      ruleMessages.minLength = translateMessages.minLength
+        ?.replace('{label}', label)
+        .replace('{minLength}', String(props.minLength));
+    if (props.maxLength !== undefined)
+      ruleMessages.maxLength = translateMessages.maxLength
+        ?.replace('{label}', label)
+        .replace('{maxLength}', String(props.maxLength));
     if (props.enum)
       ruleMessages.enum = translateMessages.enum
         ?.replace('{label}', label)

@@ -6,6 +6,7 @@ import LoadingOverlay from "../../../../utils/LoadingOverlay/LoadingOverlay";
 import type { RuleSchema } from "../../../../utils/validation";
 import { AlertDialog } from "../../../../utils/AlertDialog";
 import type { AlertInfo } from "../../../../utils/AlertDialog";
+import { resolve } from "mathjs";
 
 interface ColumnConfig {
     id: string;
@@ -30,6 +31,7 @@ interface DashboardSubjectsExcelInsertSetting {
     fileName: string;
     guideSheet: string;
     title: string;
+    resolveDataFunction?: (data: any[]) => any[] | null, // hàm để xử lý dữ liệu trước khi gửi lên server
 };
 
 interface DashboardSubjectsExcelInsertViewerProps {
@@ -37,33 +39,38 @@ interface DashboardSubjectsExcelInsertViewerProps {
     config: DashboardSubjectsExcelInsertSetting,
     onCancel: (e: any) => void,
     onDone: (e: any) => void,
+
 }
 
 
 const DashboardSubjectsExcelInsertViewer = ({ urlPost, config, onCancel, onDone }: DashboardSubjectsExcelInsertViewerProps) => {
 
-    const { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, sheetName, fileName, guideSheet, title } = config;
+    const { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, sheetName, fileName, guideSheet, title, resolveDataFunction } = config;
     const [isLoading, setIsLoading] = useState(false);
 
-      const [alertinfo, setAlertinfo] = useState<AlertInfo>({
+    const [alertinfo, setAlertinfo] = useState<AlertInfo>({
         isAlertShow: false,
         alertMessage: '',
         type: 'error',
         title: 'Lỗi',
         showConfirm: true,
         showCancel: true
-      });
+    });
 
 
 
     const onCheckUpload = async (dataUpload: any[]) => {
         setIsLoading(true);
-        const { data, errorCode, status } = await postData({ url: urlPost, data: dataUpload });
+
+        const resolveDataUpload = resolveDataFunction ? await resolveDataFunction(dataUpload) : dataUpload;
+
+        const result = await postData({ url: urlPost, data: resolveDataUpload });
+        const { data, errorCode, status } = result
         if (status) {
             setIsLoading(false);
             onDone(true);
         } else {
-
+            console.log("errorCode", errorCode);
             const errorMessages = Object.entries(errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
             setAlertinfo({
                 isAlertShow: true,

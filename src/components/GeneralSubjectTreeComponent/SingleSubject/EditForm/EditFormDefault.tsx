@@ -307,10 +307,17 @@ export default function EditFormDefault({
       </h2>}
 
       {(authorization.view) && <form className={styles.subjectForm}>
-        {Object.entries(fieldLabels).map(([field, { label, type, placeholder }]) => (
+        {Object.entries(fieldLabels).map(([field, { label, type, placeholder, render }]) => (
           <div className={styles.formGroup} key={field}>
             <label htmlFor={field}>{label}:</label>
-            {type === "checkbox" ? (
+            {render ? (
+              render({
+                value: subjectData,
+                onChange: handleChange,
+                id: field,
+                name: field
+              })
+            ) : type === "checkbox" ? (
               <input
                 type="checkbox"
                 id={field}

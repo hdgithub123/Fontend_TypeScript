@@ -1,6 +1,6 @@
 import type { RuleSchema } from "../../../utils/validation";
-import {EditFormDefault} from "../../GeneralSubjectTreeComponent";
-
+import {EditFormDefault, ParentComponent, SubComponent} from "../../GeneralSubjectTreeComponent";
+import { columnsParent, columnsSub } from "../columnsDef/columns";
 
 interface department {
   id?: string;
@@ -53,13 +53,18 @@ const departmentSchema: RuleSchema = {
   updatedAt: { type: "string", format: "datetime", required: false },
 };
 
+const urlGetBranchList = 'http://localhost:3000/auth/branch/list';
+const urlGetParentList = 'http://localhost:3000/auth/department/list';
+
 const fieldDepartmentLabels: Record<string, { label: string; type: string; placeholder?: string }> = {
   code: { label: "Mã khu vực (*)", type: "text", placeholder: "Nhập mã khu vực" },
   name: { label: "Tên khu vực (*)", type: "text", placeholder: "Nhập tên khu vực" },
   address: { label: "Địa chỉ", type: "text", placeholder: "Nhập địa chỉ" },
   description: { label: "Mô tả", type: "text", placeholder: "Nhập mô tả" },
-  branchId: { label: "Chi nhánh (*)", type: "text" },
-  parentId: { label: "Phòng ban cha", type: "text" },
+  // branchId: { label: "Chi nhánh (*)", type: "text" },
+  // parentId: { label: "Phòng ban cha", type: "text" },
+  branchId: { label: "Chi nhánh", render: (props) => <SubComponent {...props} urlGet={urlGetBranchList} columns={columnsSub} />, type: "custom" },
+  parentId: { label: "Phòng ban cha", render: (props) => <ParentComponent {...props} urlGet={urlGetParentList} columns={columnsParent} />, type: "custom" },
   isActive: { label: "Kích hoạt", type: "checkbox" },
 };
 

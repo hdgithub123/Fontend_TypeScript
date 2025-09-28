@@ -1,15 +1,13 @@
 import { useEffect, useState } from "react";
-import { getData, postData } from "../../../utils/axios";
+import { getData, postData } from "../../../../utils/axios";
 import {
     SearchDropDown,
 } from 'react-table'
-import transformToSubRowsTree from "../../GeneralSubjectTreeComponent/transformToSubRowsTree";
-
-import columns from "./colums";
+import transformToSubRowsTree from "../../transformToSubRowsTree";
 
 
-const ParentComponent = ({ name, id, value, onChange }) => {
-    const urlGet = 'http://localhost:3000/auth/department/list';
+
+const ParentComponent = ({ name, id, value, onChange, urlGet = urlGetList, columns = {} }) => {
     const [listParent, setListParent] = useState([]);
     const [parentCode, setParentCode] = useState();
 
@@ -47,40 +45,45 @@ const ParentComponent = ({ name, id, value, onChange }) => {
                 return null;
             };
             const parentNode = findParent(listParent, value.parentId);
-            console.log("ParentComponent - parentNode: ", parentNode);
             if (parentNode) {
                 setParentCode(parentNode.code);
-               // onChange({ target: { name: '_parentCode', value: parentNode.code } });
             } else {
                 setParentCode(null);
-                // onChange({ target: { name: '_parentCode', value: null } });
             }
         } else {
             setParentCode(null);
-            //onChange({ target: { name: '_parentCode', value: null } });
         }
- 
 
-    }, [value,listParent]);
+
+    }, [value, listParent]);
+
+
 
     const handleonRowSelect = (row: any) => {
         onChange({ target: { name: name, value: row?.id || "" } });
     }
 
+    const handleGlobalFilterChange = (filter: string) => {
+        if (parentCode && filter !== parentCode && filter === "") {
+            onChange({ target: { name: name, value: null } });
+        }
+    }
+
 
     return (
-        <SearchDropDown
-            data={listParent}
-            columns={columns}
-            onRowSelect={handleonRowSelect}
-            // onChangeGlobalFilter={handleGlobalFilterChange}
-            columnDisplay={'code'}
-            columnsShow={['code', 'name', 'description']}
-            globalFilterValue={parentCode ? parentCode : ""}
-            placeholder="Mã mục cha ..."
-        >
+            <SearchDropDown
+                data={listParent}
+                columns={columns}
+                cssStyleTable = {{width:'100%'}}
+                onRowSelect={handleonRowSelect}
+                onChangeGlobalFilter={handleGlobalFilterChange}
+                columnDisplay={'code'}
+                columnsShow={['code', 'name', 'description']}
+                globalFilterValue={parentCode ? parentCode : ""}
+                placeholder="Mã mục cha ..."
+            >
 
-        </SearchDropDown>
+            </SearchDropDown>
     )
 }
 

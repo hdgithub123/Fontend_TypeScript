@@ -7,6 +7,7 @@ import LoadingOverlay from "../../../../utils/LoadingOverlay/LoadingOverlay";
 import type { RuleSchema } from "../../../../utils/validation";
 import { AlertDialog } from "../../../../utils/AlertDialog";
 import type { AlertInfo } from "../../../../utils/AlertDialog";
+import { e } from "mathjs";
 
 
 interface ColumnConfig {
@@ -41,6 +42,7 @@ interface DashboardSubjectsExcelUpdateSetting {
     fileName: string;
     guideSheet: string;
     title: string;
+    resolveDataFunction?: (data: any[]) => any[] | null, // hàm để xử lý dữ liệu trước khi gửi lên server
 };
 
 
@@ -49,11 +51,12 @@ interface DashboardSubjectsExcelUpdateViewerProps {
     config: DashboardSubjectsExcelUpdateSetting,
     onCancel: (e: any) => void,
     onDone: (e: any) => void,
+    // resolveDataFunction?: (data: any[]) => any[] | null, // hàm để xử lý dữ liệu trước khi gửi lên server
 }
 
 
 const DashboardSubjectsExcelUpdateViewer = ({ urlPut, config, onCancel, onDone }: DashboardSubjectsExcelUpdateViewerProps) => {
-    const { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig, sheetName, fileName, guideSheet, title } = config;
+    const { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig, sheetName, fileName, guideSheet, title, resolveDataFunction } = config;
     const urlidscodes = ListIdsConfig?.url || ""
     const [isLoading, setIsLoading] = useState(false);
 
@@ -71,10 +74,15 @@ const DashboardSubjectsExcelUpdateViewer = ({ urlPut, config, onCancel, onDone }
         const oldCodes = dataUpload.map(item => item.oldCode);
         // Gửi danh sách oldCode lên server để kiểm tra
         const { data, errorCode, status } = await postData({ url: urlidscodes, data: { data: oldCodes } });
+
+        console.log("data", data);
+        console.log("errorCode", errorCode);
+        console.log("status", status);
         if (status) {
             // tạo ra danh sách mới bằng cách gán id vào dataUpload và loại bỏ key oldCode ra khỏi dataUpload
             const newDataUpload = dataUpload.map(item => {
                 const found = data.find(d => d.code === item.oldCode);
+                console.log("found", found.id);
                 if (found) {
                     const { oldCode, ...rest } = item;
                     return { ...rest, id: found.id };
@@ -82,9 +90,12 @@ const DashboardSubjectsExcelUpdateViewer = ({ urlPut, config, onCancel, onDone }
                 return item; // nếu không tìm thấy thì giữ nguyên
             });
 
+            console.log("newDataUpload", newDataUpload);
+
+            const resolveDataUpload = resolveDataFunction ? await resolveDataFunction(newDataUpload) : newDataUpload;
 
             //thực hiên update users
-            const { data: dataUpdate, errorCode: errorCodeUpdate, status: statusUpdate } = await putData({ url: urlPut, data: newDataUpload });
+            const { data: dataUpdate, errorCode: errorCodeUpdate, status: statusUpdate } = await putData({ url: urlPut, data: resolveDataUpload });
 
             if (statusUpdate) {
                 setIsLoading(false);

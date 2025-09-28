@@ -143,12 +143,12 @@ export default function AddFormDefault({
         onConfirm: async () => {
           const newId = uuidv4();
           const subjectToCreate: Subject = { ...subjectData, id: newId };
-          // loại bỏ các key bắt đầu bằng dấu gạch dưới
-          // Object.keys(subjectToCreate).forEach(key => {
-          //   if (key.startsWith('_')) {
-          //     delete subjectToCreate[key];
-          //   }
-          // });
+          // loại bỏ fields không có trong ruleSchema
+          Object.keys(subjectToCreate).forEach(key => {
+            if (!ruleSchema.hasOwnProperty(key)) {
+              delete subjectToCreate[key];
+            }
+          });
 
 
           const result = await postData({
@@ -221,7 +221,6 @@ export default function AddFormDefault({
             <label htmlFor={field}>{label}:</label>
             {render ? (
               render({
-                // value: subjectData[field as keyof Subject] || "",
                 value: subjectData,
                 onChange: handleChange,
                 id: field,

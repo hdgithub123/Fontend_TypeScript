@@ -1,3 +1,4 @@
+import { size } from 'mathjs'
 import {
     TextCell,
     DateTimeCell,
@@ -8,53 +9,38 @@ import {
 
 
 
-const columns = [
+const columnsParent = [
     {
         accessorKey: 'code',
         header: 'Mã khu vực',
         id: 'code',
-        filterType: 'text',
         footer: info => `Count: ${CountFooter(info.table)}`,
         cell: ExplandingTextCell,
         aggregatedCell: ExplandingTextCell,
+        size: 150,
+        
     },
     {
         accessorKey: 'name',
         header: 'Tên khu vực',
         id: 'name',
-        filterType: 'text',
         cell: TextCell,
-         aggregatedCell: TextCell,
+        size: 150,
     },
     {
         accessorKey: 'address',
         header: 'Địa chỉ',
         id: 'address',
-        filterType: 'text',
         cell: TextCell,
+        size: 20,
     },
     {
         accessorKey: 'description',
         header: 'Mô tả',
         id: 'description',
-        filterType: 'text',
         cell: TextCell,
+        size: 200,
     },
-    {
-        accessorKey: '_branchCode',
-        header: 'Mã chi nhánh',
-        id: '_branchCode',
-        filterType: 'text',
-        cell: TextCell,
-    },
-    {
-        accessorKey: '_branchName',
-        header: 'Tên chi nhánh',
-        id: '_branchName',
-        filterType: 'text',
-        cell: TextCell,
-    },
-
     // {
     //     accessorKey: 'parentId',
     //     header: 'Thuộc về khu vực',
@@ -66,31 +52,25 @@ const columns = [
         accessorKey: 'createdAt',
         header: 'Ngày tạo',
         id: 'createdAt',
-        filterType: 'dateTime',
         cell: DateTimeCell,
-        aggregatedCell: DateTimeCell,
         enableGlobalFilter: false
     },
     {
         accessorKey: 'createdBy',
         header: 'Người tạo',
         id: 'createdBy',
-        filterType: 'text',
         cell: TextCell,
         enableGlobalFilter: false
     }, {
         accessorKey: 'updatedAt',
         header: 'Ngày cập nhật',
         id: 'updatedAt',
-        filterType: 'dateTime',
         cell: DateTimeCell,
-        aggregatedCell: DateTimeCell,
         enableGlobalFilter: false
     }, {
         accessorKey: 'updatedBy',
         header: 'Người cập nhật',
         id: 'updatedBy',
-        filterType: 'text',
         cell: TextCell,
         enableGlobalFilter: false
     },
@@ -98,24 +78,103 @@ const columns = [
         accessorKey: 'isActive',
         header: 'Kích hoạt',
         id: 'isActive',
-        filterType: 'multiSelect',
         cell: CheckboxCell,
-        aggregatedCell: CheckboxCell,
         enableGlobalFilter: false
     },
     {
         accessorKey: 'isSystem',
         header: 'Hệ Thống',
         id: 'isSystem',
-        filterType: 'multiSelect',
         cell: CheckboxCell,
-        aggregatedCell: CheckboxCell,
         enableGlobalFilter: false
     },
 
 ]
 
-export default columns
+
+const columnsSub = [
+    {
+        accessorKey: 'code',
+        header: 'Mã chi nhánh',
+        id: 'code',
+        footer: info => `Count: ${CountFooter(info.table)}`,
+        cell: ExplandingTextCell,
+        aggregatedCell: ExplandingTextCell,
+        size: 150,
+        
+    },
+    {
+        accessorKey: 'name',
+        header: 'Tên chi nhánh',
+        id: 'name',
+        cell: TextCell,
+        size: 150,
+    },
+    {
+        accessorKey: 'address',
+        header: 'Địa chỉ',
+        id: 'address',
+        cell: TextCell,
+        size: 20,
+    },
+    {
+        accessorKey: 'description',
+        header: 'Mô tả',
+        id: 'description',
+        cell: TextCell,
+        size: 200,
+    },
+    // {
+    //     accessorKey: 'parentId',
+    //     header: 'Thuộc về khu vực',
+    //     id: 'parentId',
+    //     filterType: 'text',
+    //     cell: TextCell,
+    // },
+    {
+        accessorKey: 'createdAt',
+        header: 'Ngày tạo',
+        id: 'createdAt',
+        cell: DateTimeCell,
+        enableGlobalFilter: false
+    },
+    {
+        accessorKey: 'createdBy',
+        header: 'Người tạo',
+        id: 'createdBy',
+        cell: TextCell,
+        enableGlobalFilter: false
+    }, {
+        accessorKey: 'updatedAt',
+        header: 'Ngày cập nhật',
+        id: 'updatedAt',
+        cell: DateTimeCell,
+        enableGlobalFilter: false
+    }, {
+        accessorKey: 'updatedBy',
+        header: 'Người cập nhật',
+        id: 'updatedBy',
+        cell: TextCell,
+        enableGlobalFilter: false
+    },
+    {
+        accessorKey: 'isActive',
+        header: 'Kích hoạt',
+        id: 'isActive',
+        cell: CheckboxCell,
+        enableGlobalFilter: false
+    },
+    {
+        accessorKey: 'isSystem',
+        header: 'Hệ Thống',
+        id: 'isSystem',
+        cell: CheckboxCell,
+        enableGlobalFilter: false
+    },
+
+]
+
+export { columnsParent, columnsSub };
 
 
 
