@@ -90,9 +90,20 @@ const DashboardSubjectsExcelUpdateViewer = ({ urlPut, config, onCancel, onDone }
                 return item; // nếu không tìm thấy thì giữ nguyên
             });
 
-            console.log("newDataUpload", newDataUpload);
 
-            const resolveDataUpload = resolveDataFunction ? await resolveDataFunction(newDataUpload) : newDataUpload;
+            let resolveDataUpload = resolveDataFunction ? await resolveDataFunction(newDataUpload) : newDataUpload;
+
+            // loại bỏ các giá trị = null, undefine khỏi từng phần tử của resolveDataUpload
+            resolveDataUpload = resolveDataUpload.map((item: any) => {
+                const newItem: any = {};
+                for (const key in item) {
+                    if (item[key] !== null && item[key] !== undefined) {
+                        newItem[key] = item[key];
+                    }
+                }
+                return newItem;
+            });
+
 
             //thực hiên update users
             const { data: dataUpdate, errorCode: errorCodeUpdate, status: statusUpdate } = await putData({ url: urlPut, data: resolveDataUpload });
