@@ -30,9 +30,6 @@ const postData = async ({
       headers,
       withCredentials: isCookie,
     });
-    console.log("response", response);
-    console.log("url", url);
-    console.log("data", data);
 
     return response.data;
   } catch (error: any) {

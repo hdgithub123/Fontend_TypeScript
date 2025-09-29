@@ -5,8 +5,8 @@ import EditFormDepartment from "../EditForm/EditForm";
 const fullUrlList = {
   urlGetList: 'http://localhost:3000/auth/department/list',
   urlDeleteList: 'http://localhost:3000/auth/department/list',
-  urlPostList: 'http://localhost:3000/auth/department/list',
-  urlPutList: 'http://localhost:3000/auth/department/list',
+  urlPostList: 'http://localhost:3000/auth/department/list/code',
+  urlPutList: 'http://localhost:3000/auth/department/list/code',
   urlCheck: 'http://localhost:3000/auth/department/check-department',
   urlUpdate: "http://localhost:3000/auth/department/detail",
   urlDelete: "http://localhost:3000/auth/department/detail",

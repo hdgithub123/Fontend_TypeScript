@@ -54,14 +54,6 @@ const columns = [
         filterType: 'text',
         cell: TextCell,
     },
-
-    // {
-    //     accessorKey: 'parentId',
-    //     header: 'Thuộc về khu vực',
-    //     id: 'parentId',
-    //     filterType: 'text',
-    //     cell: TextCell,
-    // },
     {
         accessorKey: 'createdAt',
         header: 'Ngày tạo',

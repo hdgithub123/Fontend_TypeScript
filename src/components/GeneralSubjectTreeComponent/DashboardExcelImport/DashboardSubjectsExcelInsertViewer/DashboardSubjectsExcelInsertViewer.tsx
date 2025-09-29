@@ -70,7 +70,6 @@ const DashboardSubjectsExcelInsertViewer = ({ urlPost, config, onCancel, onDone 
             setIsLoading(false);
             onDone(true);
         } else {
-            console.log("errorCode", errorCode);
             const errorMessages = Object.entries(errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
             setAlertinfo({
                 isAlertShow: true,

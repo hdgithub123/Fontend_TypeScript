@@ -61,8 +61,6 @@ const fieldDepartmentLabels: Record<string, { label: string; type: string; place
   name: { label: "Tên khu vực (*)", type: "text", placeholder: "Nhập tên khu vực" },
   address: { label: "Địa chỉ", type: "text", placeholder: "Nhập địa chỉ" },
   description: { label: "Mô tả", type: "text", placeholder: "Nhập mô tả" },
-  // branchId: { label: "Chi nhánh (*)", type: "text" },
-  // parentId: { label: "Phòng ban cha", type: "text" },
   branchId: { label: "Chi nhánh", render: (props) => <SubComponent {...props} urlGet={urlGetBranchList} columns={columnsSub} />, type: "custom" },
   parentId: { label: "Phòng ban cha", render: (props) => <ParentComponent {...props} urlGet={urlGetParentList} columns={columnsParent} />, type: "custom" },
   isActive: { label: "Kích hoạt", type: "checkbox" },

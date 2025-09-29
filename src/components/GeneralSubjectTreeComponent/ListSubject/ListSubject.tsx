@@ -121,6 +121,7 @@ interface configExcelInsertSetting {
   fileName: string;
   guideSheet: string;
   title: string;
+  resolveDataFunction?: (data: any) => Promise<any>;
 };
 
 
@@ -143,6 +144,7 @@ interface configExcelUpdateSetting {
   fileName: string;
   guideSheet: string;
   title: string;
+  resolveDataFunction?: (data: any) => Promise<any>;
 };
 
 
@@ -255,6 +257,10 @@ const ListSubject = ({
   }
 
 
+
+
+
+  
   useEffect(() => {
     if (authorization.viewList) {
       handleGetList();
@@ -350,6 +356,7 @@ const ListSubject = ({
           selectSubjects={selectSubjects}
           setSelectSubjects={setSelectSubjects}
           setData={setData}
+          data={data}
           className={styles.buttonDelete}
         />}
         {authorization.addList && insertExcelConfig && <button onClick={handleImportExcel} className={styles.buttonImport}>Add by Excel</button>}

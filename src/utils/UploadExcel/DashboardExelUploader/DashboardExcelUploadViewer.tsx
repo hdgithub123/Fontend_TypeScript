@@ -105,7 +105,6 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
 
 
   const handleLoadFile = async (rawData: ExcelRow[]) => {
-    console.log("rawData", rawData);
     setIsLoading(true);
     let enriched = rawData;
     if (isCheckLocalDuplicates) {
@@ -233,16 +232,12 @@ const DashboardExcelUploadViewer: React.FC<Props> = ({
 export default DashboardExcelUploadViewer;
 
 
-
-
 export const validateWithDatabase = async (
   rows: ExcelRow[],
   listIds: ListIdsConfig,
   columnCheckExistance?: ColumnValidationConfig[],
   columnCheckNotExistance?: ColumnValidationConfig[]
 ): Promise<ExcelRow[]> => {
-  console.log("rows", rows);
-  console.log("listIds", listIds);
   const errorsMap: Record<number, Record<string, string>> = {};
 
   // 🔍 Bước 1: enrich dữ liệu với fieldGet (ví dụ: id)

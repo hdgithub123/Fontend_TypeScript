@@ -50,9 +50,9 @@ const columns = [
         cell: TextCell,
     },
     {
-        accessorKey: '_parentCode',
+        accessorKey: 'parentId',
         header: 'Mã khu vực cha',
-        id: '_parentCode',
+        id: 'parentId',
         filterType: 'text',
         cell: TextCell,
     },
@@ -73,7 +73,7 @@ const ruleSchema: RuleSchema = {
     address: { type: "string", required: false, maxLength: 255 },
     description: { type: "string", required: false, maxLength: 255 },
     _branchCode: { type: "string", required: true, maxLength: 100 },
-    _parentCode: { type: "string", required: false, maxLength: 100 },
+    parentId: { type: "string", required: false, maxLength: 100 },
     isActive: { type: "boolean", required: false },
 };
 
@@ -88,12 +88,6 @@ const columnCheckExistance = [
 ]
 
 const columnCheckNotExistance = [
-    {
-        columnNames: {
-            _parentCode: 'code',
-        },
-        urlCheck: 'http://localhost:3000/auth/department/check-departments',
-    },
     {
         columnNames: {
             _branchCode: 'code',
@@ -114,26 +108,23 @@ export { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance };
 
 const resolveDataFunction = async (department) => {
     const urlBranchIdCode = 'http://localhost:3000/auth/branch/ids-codes';
-    const urlParentIdCode = 'http://localhost:3000/auth/department/ids-codes';
+
 
     // lấy ra danh sách tất cả brachCode và parentCode trong department
     const branchCodes = Array.from(new Set(department.map(item => item._branchCode).filter(code => code)));
-    const parentCodes = Array.from(new Set(department.map(item => item._parentCode).filter(code => code)));
+
 
     // Gọi API để lấy về danh sách id và code tương ứng
     const { data: branchIdCodePromise, status: branchIdCodeStatus, errorCode: branchIdCodeError } = await postData({ url: urlBranchIdCode, data: { data: branchCodes } });
-    const { data: parentIdCodePromise, status: parentIdCodeStatus, errorCode: parentIdCodeError } = await postData({ url: urlParentIdCode, data: { data: parentCodes } });
 
-    if (!branchIdCodeStatus || !parentIdCodeStatus) {
+    if (!branchIdCodeStatus) {
         return null;
     }
     let newDepartment = department.map(item => {
         const branch = branchIdCodePromise.find(b => b.code === item._branchCode);
-        const parent = parentIdCodePromise.find(p => p.code === item._parentCode);
         return {
             ...item,
             branchId: branch ? branch.id : null,
-            parentId: parent ? parent.id : null,
         };
     });
 

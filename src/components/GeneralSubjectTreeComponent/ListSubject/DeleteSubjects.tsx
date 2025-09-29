@@ -6,10 +6,11 @@ interface DeleteSubjectsProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
   deleteUrl: string;
   selectSubjects: any[];
   setSelectSubjects: (users: any[]) => void;
+  data: any[];
   setData: (data: any) => void;
   children?: React.ReactNode;
 }
-const DeleteSubjects = ({ deleteUrl, selectSubjects, setSelectSubjects, setData, children, ...buttonProps }: DeleteSubjectsProps) => {
+const DeleteSubjects = ({ deleteUrl, selectSubjects, setSelectSubjects,data, setData, children, ...buttonProps }: DeleteSubjectsProps) => {
 
     const [alertinfo, setAlertinfo] = useState<AlertInfo>({
         isAlertShow: false,
@@ -57,9 +58,17 @@ const DeleteSubjects = ({ deleteUrl, selectSubjects, setSelectSubjects, setData,
                     // xóa đi selectSubjects khỏi data gán lại vào setData
                     if (Array.isArray(selectSubjects) && selectSubjects.length > 0) {
                         const deleteIds = selectSubjects.map((user: any) => user.id);
-                        setData(prev =>
-                            prev.filter((user: any) => !deleteIds.includes(user.id))
-                        );
+                        // tạo data mới bằng cách lọc bỏ các phần tử có id trong deleteIds có chứa trong cả subrows của subrows
+                        const filterData: (data: any[]) => any[] = (data: any[]) => {
+                            return data
+                                .filter(item => !deleteIds.includes(item.id))
+                                .map(item => ({
+                                    ...item,
+                                    subRows: item.subRows ? filterData(item.subRows) : []
+                                }));
+                        };
+                        const newData = filterData(data);
+                        setData(newData);
                         setSelectSubjects([]);
                     }
                     setAlertinfo(prev => ({ ...prev, isAlertShow: false }))

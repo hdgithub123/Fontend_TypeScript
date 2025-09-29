@@ -75,9 +75,6 @@ const DashboardSubjectsExcelUpdateViewer = ({ urlPut, config, onCancel, onDone }
         // Gửi danh sách oldCode lên server để kiểm tra
         const { data, errorCode, status } = await postData({ url: urlidscodes, data: { data: oldCodes } });
 
-        console.log("data", data);
-        console.log("errorCode", errorCode);
-        console.log("status", status);
         if (status) {
             // tạo ra danh sách mới bằng cách gán id vào dataUpload và loại bỏ key oldCode ra khỏi dataUpload
             const newDataUpload = dataUpload.map(item => {
@@ -92,19 +89,6 @@ const DashboardSubjectsExcelUpdateViewer = ({ urlPut, config, onCancel, onDone }
 
 
             let resolveDataUpload = resolveDataFunction ? await resolveDataFunction(newDataUpload) : newDataUpload;
-
-            // loại bỏ các giá trị = null, undefine khỏi từng phần tử của resolveDataUpload
-            resolveDataUpload = resolveDataUpload.map((item: any) => {
-                const newItem: any = {};
-                for (const key in item) {
-                    if (item[key] !== null && item[key] !== undefined) {
-                        newItem[key] = item[key];
-                    }
-                }
-                return newItem;
-            });
-
-
             //thực hiên update users
             const { data: dataUpdate, errorCode: errorCodeUpdate, status: statusUpdate } = await putData({ url: urlPut, data: resolveDataUpload });
 

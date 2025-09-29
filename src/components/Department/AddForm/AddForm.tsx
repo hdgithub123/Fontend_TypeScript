@@ -58,7 +58,6 @@ const fieldRoleLabels: Record<string, { label: string; type: string; placeholder
   name: { label: "Tên khu vực (*)", type: "text", placeholder: "Nhập tên khu vực" },
   address: { label: "Địa chỉ", type: "text", placeholder: "Nhập địa chỉ" },
   description: { label: "Mô tả", type: "text", placeholder: "Nhập mô tả" },
-  //branchId: { label: "Chi nhánh (*)", type: "text" },
   branchId: { label: "Chi nhánh", render: (props) => <SubComponent {...props} urlGet={urlGetBranchList} columns={columnsSub} />, type: "custom" },
   parentId: { label: "Phòng ban cha", render: (props) => <ParentComponent {...props} urlGet={urlGetParentList} columns={columnsParent} />, type: "custom" },
   isActive: { label: "Kích hoạt", type: "checkbox" },
@@ -74,7 +73,6 @@ export default function AddForm({
   authorization = {}
 }: roleManagementFormProps) {
 
-  console.log("activeData: ", activeData);
   return (
     <AddFormDefault
       urlCheck={urlCheck}
