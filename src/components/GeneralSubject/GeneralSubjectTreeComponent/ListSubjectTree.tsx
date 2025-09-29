@@ -198,7 +198,7 @@ export interface ListSubjectProps {
 
 
 
-const ListSubject = ({
+const ListSubjectTree = ({
   authorization = authorizationFalse,
   urlList = {},
   columns = [],
@@ -511,4 +511,4 @@ const ListSubject = ({
   );
 };
 
-export default ListSubject;
+export default ListSubjectTree;

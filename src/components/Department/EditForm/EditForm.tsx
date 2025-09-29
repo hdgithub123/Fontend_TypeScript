@@ -1,5 +1,5 @@
 import type { RuleSchema } from "../../../utils/validation";
-import {EditFormDefault} from "../../GeneralSubject";
+import { EditFormDefault, EditFormDefaultWithRoot } from "../../GeneralSubject";
 import { columnsParent, columnsSub } from "../FieldComponent/columns";
 import ParentComponent from "../FieldComponent/ParentComponent";
 import SubComponent from "../FieldComponent/SubComponent";
@@ -45,7 +45,7 @@ const departmentSchema: RuleSchema = {
   name: { type: "string", required: true, minLength: 2, maxLength: 255 },
   address: { type: "string", required: false, maxLength: 255 },
   description: { type: "string", required: false, maxLength: 255 },
-  parentId: { type: "string", format: "uuid", required: false },
+  parentId: { type: "string", format: "uuid", required: true },
   branchId: { type: "string", format: "uuid", required: true },
   isActive: { type: "boolean", required: false },
   isSystem: { type: "boolean", required: false },
@@ -85,7 +85,7 @@ export default function EditForm({
 }: DepartmentManagementFormProps) {
 
   return (
-    <EditFormDefault
+    <EditFormDefaultWithRoot
       urlCheck={urlCheck}
       urlUpdate={urlUpdate}
       urlDelete={urlDelete}
@@ -100,6 +100,9 @@ export default function EditForm({
       ruleSchema={departmentSchema}
       checkFieldExists={['code']}
       subjectName="Khu vực"
+      fieldRoot='code'
+      valueRoot='General'
+      fieldCheck='parentId'
     />
   );
 }

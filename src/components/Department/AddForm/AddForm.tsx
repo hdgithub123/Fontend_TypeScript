@@ -1,4 +1,3 @@
-import { im } from "mathjs";
 import type { RuleSchema } from "../../../utils/validation";
 import {AddFormDefault} from "../../GeneralSubject";
 import { columnsParent, columnsSub } from "../FieldComponent/columns";
@@ -41,7 +40,7 @@ const roleSchema: RuleSchema = {
   name: { type: "string", required: true, minLength: 2, maxLength: 255 },
   address: { type: "string", required: false, maxLength: 255 },
   description: { type: "string", required: false, maxLength: 255 },
-  parentId: { type: "string", format: "uuid", required: false },
+  parentId: { type: "string", format: "uuid", required: true },
   branchId: { type: "string", format: "uuid", required: true },
   isActive: { type: "boolean", required: false },
   isSystem: { type: "boolean", required: false },
