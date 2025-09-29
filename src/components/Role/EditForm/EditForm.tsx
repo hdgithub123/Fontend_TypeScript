@@ -1,5 +1,5 @@
 import type { RuleSchema } from "../../../utils/validation";
-import {EditFormDefault} from "../../GeneralSubjectComponent";
+import {EditFormDefault} from "../../GeneralSubject/GeneralSubjectComponent";
 
 
 interface role {

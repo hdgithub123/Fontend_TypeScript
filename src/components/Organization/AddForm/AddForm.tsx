@@ -1,5 +1,5 @@
 import type { RuleSchema } from "../../../utils/validation";
-import {AddFormDefault} from "../../GeneralSubjectComponent";
+import {AddFormDefault} from "../../GeneralSubject/GeneralSubjectComponent";
 
 
 interface Organization {

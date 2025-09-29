@@ -1,6 +1,8 @@
 import type { RuleSchema } from "../../../utils/validation";
-import {EditFormDefault, ParentComponent, SubComponent} from "../../GeneralSubjectTreeComponent";
+import {EditFormDefault} from "../../GeneralSubject/GeneralSubjectTreeComponent";
 import { columnsParent, columnsSub } from "../columnsDef/columns";
+import ParentComponent from "../FieldComponent/ParentComponent";
+import SubComponent from "../FieldComponent/SubComponent";
 
 interface department {
   id?: string;

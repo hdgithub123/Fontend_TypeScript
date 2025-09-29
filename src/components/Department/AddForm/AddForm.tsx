@@ -1,8 +1,9 @@
 import { im } from "mathjs";
 import type { RuleSchema } from "../../../utils/validation";
-import {AddFormDefault, ParentComponent, SubComponent} from "../../GeneralSubjectTreeComponent";
+import {AddFormDefault} from "../../GeneralSubject/GeneralSubjectTreeComponent";
 import { columnsParent, columnsSub } from "../columnsDef/columns";
-
+import ParentComponent from "../FieldComponent/ParentComponent";
+import SubComponent from "../FieldComponent/SubComponent";
 
 interface department {
   id?: string;

@@ -1,4 +1,4 @@
-import {ListSubject} from "../../GeneralSubjectComponent"
+import {ListSubject} from "../../GeneralSubject/GeneralSubjectComponent"
 import columns from "./colums"
 
 import {

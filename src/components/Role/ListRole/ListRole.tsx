@@ -1,5 +1,5 @@
-import {ListSubject} from "../../GeneralSubjectComponent"
-import type { ListSubjectProps } from '../../GeneralSubjectComponent'
+import {ListSubject} from "../../GeneralSubject/GeneralSubjectComponent"
+import type { ListSubjectProps } from '../../GeneralSubject/GeneralSubjectComponent'
 import insertExcelSetting from './settingImport'
 import updateExcelSetting from './settingUpdate'
 import columns from "./colums"
