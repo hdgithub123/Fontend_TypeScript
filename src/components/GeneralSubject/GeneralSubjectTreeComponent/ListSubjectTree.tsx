@@ -12,26 +12,24 @@ import {
   putData,
   deleteData,
   patchData
-} from '../../../../utils/axios'
+} from '../../../utils/axios'
 
 
-import DesignPrint from '../../../Print/DesignPrint/DesignPrint';
-import PrintPreview from '../../../Print/PrintPreview/PrintPreview';
-import MakeReportTable from '../../../MakeReportTable/MakeReportTable'
+import DesignPrint from '../../Print/DesignPrint/DesignPrint';
+import PrintPreview from '../../Print/PrintPreview/PrintPreview';
+import MakeReportTable from '../../MakeReportTable/MakeReportTable'
 import ReactDOM from 'react-dom';
 // import DesignPrint from "../../Print/DesignPrint/DesignPrint";
-import PrintSubjects from '../PrintSubjects/PrintSubjects'
-import DashboardSubjectsExcelInsertViewer from "../DashboardExcelImport/DashboardSubjectsExcelInsertViewer/DashboardSubjectsExcelInsertViewer";
-import DashboardSubjectsExcelUpdateViewer from "../DashboardExcelImport/DashboardSubjectsExcelUpdateViewer/DashboardSubjectsExcelUpdateViewer";
+import PrintSubjects from '../ultil/PrintSubjects/PrintSubjects'
+import DashboardSubjectsExcelInsertViewer from "../ultil/DashboardExcelImport/DashboardSubjectsExcelInsertViewer/DashboardSubjectsExcelInsertViewer";
+import DashboardSubjectsExcelUpdateViewer from "../ultil/DashboardExcelImport/DashboardSubjectsExcelUpdateViewer/DashboardSubjectsExcelUpdateViewer";
 import DeleteSubjects from "./DeleteSubjects";
-import NotifyNotSelectedButton from "./Notifibutton";
-import styles from './ListSubject.module.scss'
-//import AddForm from "../SingleSubject/AddFormDefault/AddFormDefault";
-//import EditForm from "../SingleSubject/EditForm/EditFormDefault";
-import insertExcelSetting from "../DashboardExcelImport/DashboardSubjectsExcelInsertViewer/setting";
-import updateExcelSetting from "../DashboardExcelImport/DashboardSubjectsExcelUpdateViewer/setting";
-import type { RuleSchema } from "../../../../utils/validation";
-import transformToSubRowsTree from "../transformToSubRowsTree";
+import NotifyNotSelectedButton from "../ultil/Notifibutton";
+import styles from './ListSubjectTree.module.scss'
+import insertExcelSetting from "../ultil/DashboardExcelImport/DashboardSubjectsExcelInsertViewer/setting";
+import updateExcelSetting from "../ultil/DashboardExcelImport/DashboardSubjectsExcelUpdateViewer/setting";
+import type { RuleSchema } from "../../../utils/validation";
+import transformToSubRowsTree from "../ultil/transformToSubRowsTree";
 
 
 

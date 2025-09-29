@@ -1,5 +1,5 @@
-import {ListSubject} from "../../GeneralSubject/GeneralSubjectTreeComponent"
-import type { ListSubjectProps } from '../../GeneralSubject/GeneralSubjectComponent'
+import {ListSubjectTree} from "../../GeneralSubject"
+import type { ListSubjectProps } from '../../GeneralSubject'
 import insertExcelSetting from './settingImport'
 import updateExcelSetting from './settingUpdate'
 import columns from "./colums"
@@ -44,7 +44,7 @@ const authorizationExample = {
 
 const ListDepartment = ({authorization = authorizationExample}) => {
   return (
-    <ListSubject
+    <ListSubjectTree
       columns={columns}
       columnsShow={columnsShow}
       authorization={authorization}

@@ -3,7 +3,7 @@ import { getData, postData } from "../../../utils/axios";
 import {
     SearchDropDown,
 } from 'react-table'
-import transformToSubRowsTree from "../../GeneralSubject/GeneralSubjectTreeComponent/transformToSubRowsTree";
+import transformToSubRowsTree from "../../GeneralSubject/ultil/transformToSubRowsTree";
 
 
 
