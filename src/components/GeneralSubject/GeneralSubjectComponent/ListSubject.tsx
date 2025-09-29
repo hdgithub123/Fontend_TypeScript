@@ -20,16 +20,16 @@ import PrintPreview from '../../Print/PrintPreview/PrintPreview';
 import MakeReportTable from '../../MakeReportTable/MakeReportTable'
 import ReactDOM from 'react-dom';
 // import DesignPrint from "../../Print/DesignPrint/DesignPrint";
-import PrintSubjects from '../ultil/PrintSubjects/PrintSubjects'
-import DashboardSubjectsExcelInsertViewer from "../ultil/DashboardExcelImport/DashboardSubjectsExcelInsertViewer/DashboardSubjectsExcelInsertViewer";
-import DashboardSubjectsExcelUpdateViewer from "../ultil/DashboardExcelImport/DashboardSubjectsExcelUpdateViewer/DashboardSubjectsExcelUpdateViewer";
+import PrintSubjects from '../utils/PrintSubjects/PrintSubjects'
+import DashboardSubjectsExcelInsertViewer from "../utils/DashboardExcelImport/DashboardSubjectsExcelInsertViewer/DashboardSubjectsExcelInsertViewer";
+import DashboardSubjectsExcelUpdateViewer from "../utils/DashboardExcelImport/DashboardSubjectsExcelUpdateViewer/DashboardSubjectsExcelUpdateViewer";
 import DeleteSubjects from "./DeleteSubjects";
-import NotifyNotSelectedButton from "../ultil/Notifibutton";
+import NotifyNotSelectedButton from "../utils/Notifibutton";
 import styles from './ListSubject.module.scss'
 //import AddForm from "../SingleSubject/AddFormDefault/AddFormDefault";
 //import EditForm from "../SingleSubject/EditForm/EditFormDefault";
-import insertExcelSetting from "../ultil/DashboardExcelImport/DashboardSubjectsExcelInsertViewer/setting";
-import updateExcelSetting from "../ultil/DashboardExcelImport/DashboardSubjectsExcelUpdateViewer/setting";
+import insertExcelSetting from "../utils/DashboardExcelImport/DashboardSubjectsExcelInsertViewer/setting";
+import updateExcelSetting from "../utils/DashboardExcelImport/DashboardSubjectsExcelUpdateViewer/setting";
 import type { RuleSchema } from "../../../utils/validation";
 
 
