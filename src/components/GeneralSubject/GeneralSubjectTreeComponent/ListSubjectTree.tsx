@@ -23,7 +23,7 @@ import ReactDOM from 'react-dom';
 import PrintSubjects from '../ultil/PrintSubjects/PrintSubjects'
 import DashboardSubjectsExcelInsertViewer from "../ultil/DashboardExcelImport/DashboardSubjectsExcelInsertViewer/DashboardSubjectsExcelInsertViewer";
 import DashboardSubjectsExcelUpdateViewer from "../ultil/DashboardExcelImport/DashboardSubjectsExcelUpdateViewer/DashboardSubjectsExcelUpdateViewer";
-import DeleteSubjects from "./DeleteSubjects";
+import DeleteSubjectsTree from "./DeleteSubjectsTree";
 import NotifyNotSelectedButton from "../ultil/Notifibutton";
 import styles from './ListSubjectTree.module.scss'
 import insertExcelSetting from "../ultil/DashboardExcelImport/DashboardSubjectsExcelInsertViewer/setting";
@@ -349,7 +349,7 @@ const ListSubject = ({
         </NotifyNotSelectedButton>}
         {authorization.printList && <NotifyNotSelectedButton className={styles.buttonPrint} data={selectSubjects} onTrigger={handlePrintListSubject} > Print list</NotifyNotSelectedButton>}
         {authorization.print && <NotifyNotSelectedButton className={styles.buttonPrintMore} data={selectSubjects} onTrigger={handlePrintMoreSubjects} > Print more</NotifyNotSelectedButton>}
-        {authorization.deleteList && urlDeleteList && <DeleteSubjects
+        {authorization.deleteList && urlDeleteList && <DeleteSubjectsTree
           deleteUrl={urlDeleteList}
           selectSubjects={selectSubjects}
           setSelectSubjects={setSelectSubjects}
