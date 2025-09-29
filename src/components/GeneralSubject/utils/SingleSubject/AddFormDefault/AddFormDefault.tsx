@@ -156,7 +156,6 @@ export default function AddFormDefault({
             data: subjectToCreate,
           });
 
-          console.log("Insert result:", result);
           if (result?.status) {
             setSubjectData(subjectToCreate);
             onSuccess?.({ action: "insert", subject: result.data });

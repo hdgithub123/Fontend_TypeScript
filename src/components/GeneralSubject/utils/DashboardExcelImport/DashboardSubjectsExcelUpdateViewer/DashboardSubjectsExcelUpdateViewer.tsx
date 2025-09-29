@@ -99,7 +99,7 @@ const DashboardSubjectsExcelUpdateViewer = ({ urlPut, config, onCancel, onDone }
                 const errorMessages = Object.entries(errorCodeUpdate?.failData || {}).map(([key, value]) => `${value}`).join(', ');
                 setAlertinfo({
                     isAlertShow: true,
-                    alertMessage: `Có lỗi xảy ra khi upload dữ liệu: ${errorMessages}`,
+                    alertMessage: `Có lỗi xảy ra khi upload dữ liệu: ${errorMessages} ${errorCodeUpdate?.sqlMessage || ''}`,
                     type: "error",
                     title: "Lỗi",
                     showCancel: true,
