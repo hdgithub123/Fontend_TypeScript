@@ -172,7 +172,7 @@ export default function EditFormDefault({
             const errorMessages = Object.entries(result?.errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
             setAlertinfo({
               isAlertShow: true,
-              alertMessage: `Có lỗi xảy ra khi cập nhật ${subjectName} này: ${errorMessages} ${result?.errorCode?.sqlMessage || ''}`,
+              alertMessage: `Có lỗi xảy ra khi cập nhật ${subjectName} này: ${errorMessages} ${result?.errorCode?.sqlMessage || ''} ${result?.errorCode?.message || ''}`,
               type: "error",
               title: "Lỗi",
               showConfirm: true,
