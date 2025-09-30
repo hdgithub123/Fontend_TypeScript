@@ -10,21 +10,7 @@ import PrintPreview from '../../../../Print/PrintPreview/PrintPreview';
 
 import checkFieldsAvailability from "../checkFieldsAvailability";
 
-
-interface Subject {
-  id?: string;
-  code?: string;
-  name?: string;
-  address?: string;
-  isActive?: boolean | string | number; // Allow boolean, string, or number
-  isSystem?: boolean;
-  createdBy?: string;
-  updatedBy?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-
+interface Subject extends Record<string, any> { }
 
 
 interface SubjectManagementFormProps {

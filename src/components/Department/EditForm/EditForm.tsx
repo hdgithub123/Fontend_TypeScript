@@ -100,9 +100,7 @@ export default function EditForm({
       ruleSchema={departmentSchema}
       checkFieldExists={['code']}
       subjectName="Khu vực"
-      fieldRoot='code'
-      valueRoot='General'
-      fieldCheck='parentId'
+      fieldCheckNull='parentId'
     />
   );
 }

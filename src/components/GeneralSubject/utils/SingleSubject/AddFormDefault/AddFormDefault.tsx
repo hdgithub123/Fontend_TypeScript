@@ -6,22 +6,7 @@ import { postData, deleteData, putData, getAuthHeaders } from "../../../../../ut
 import { AlertDialog, type AlertInfo } from '../../../../../utils/AlertDialog';
 import { v4 as uuidv4 } from 'uuid';
 import checkFieldsAvailability from "../checkFieldsAvailability";
-import { re } from "mathjs";
 
-
-
-// interface Subject {
-//   id?: string;
-//   code?: string;
-//   name?: string;
-//   address?: string;
-//   isActive?: boolean | string | number; // Allow boolean, string, or number
-//   isSystem?: boolean;
-//   createdBy?: string;
-//   updatedBy?: string;
-//   createdAt?: string;
-//   updatedAt?: string;
-// }
 
 interface Subject extends Record<string, any> { }
 
@@ -159,6 +144,18 @@ export default function AddFormDefault({
           if (result?.status) {
             setSubjectData(subjectToCreate);
             onSuccess?.({ action: "insert", subject: result.data });
+          } else {
+            const errorMessages = Object.entries(result?.errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
+            setAlertinfo({
+              isAlertShow: true,
+              alertMessage: `Có lỗi xảy ra khi thêm mới ${subjectName} này: ${errorMessages} ${result?.errorCode?.sqlMessage || ''}`,
+              type: "error",
+              title: "Lỗi",
+              showConfirm: true,
+              showCancel: false,
+              onClose: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+              onConfirm: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),
+            });
           }
         },
         onCancel: () => setAlertinfo(prev => ({ ...prev, isAlertShow: false })),

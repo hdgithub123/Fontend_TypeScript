@@ -11,18 +11,7 @@ import PrintPreview from '../../../../Print/PrintPreview/PrintPreview';
 import checkFieldsAvailability from "../checkFieldsAvailability";
 
 
-interface Subject {
-  id?: string;
-  code?: string;
-  name?: string;
-  address?: string;
-  isActive?: boolean | string | number; // Allow boolean, string, or number
-  isSystem?: boolean;
-  createdBy?: string;
-  updatedBy?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
+interface Subject extends Record<string, any> { }
 
 
 
@@ -46,9 +35,7 @@ interface SubjectManagementFormProps {
   checkFieldExists?: string[];
   checkFieldNoExists?: string[];
   subjectName?: string;
-  fieldRoot?: string;
-  valueRoot?: string;
-  fieldCheck?: string;
+  fieldCheckNull?: string;
 }
 
 
@@ -70,9 +57,7 @@ export default function EditFormDefaultWithRoot({
   ruleSchema = {},
   checkFieldExists = [],
   checkFieldNoExists = [],
-  fieldRoot = 'code',
-  valueRoot = 'General',
-  fieldCheck = 'parentId',
+  fieldCheckNull = 'parentId',
   subjectName = "",
 
 }: SubjectManagementFormProps) {
@@ -121,8 +106,8 @@ export default function EditFormDefaultWithRoot({
 
     const singleFieldData = { [name]: val };
     let newRuleSchema = { ...ruleSchema };
-    if (subjectData[fieldRoot] === valueRoot) {
-      const { [fieldCheck]: removedField, ...rest } = ruleSchema;
+    if (activeData?.[fieldCheckNull] == null || activeData?.[fieldCheckNull] === '' || activeData?.[fieldCheckNull] === undefined) {
+      const { [fieldCheckNull]: removedField, ...rest } = newRuleSchema;
       newRuleSchema = rest;
     }
 
@@ -135,10 +120,10 @@ export default function EditFormDefaultWithRoot({
   };
 
   const validateForm = () => {
-    // kiểm tra xem subjectData.code = 'General' thì loại bỏ parentId khỏi tạo ruleSchema mới bỏ đi parentId
+    // kiểm tra trong activeData nếu có activeData.parentId = null , undefined, '' thì bỏ parentId khỏi tạo ruleSchema mới bỏ đi parentId
     let newRuleSchema = { ...ruleSchema };
-    if (subjectData[fieldRoot] === valueRoot) {
-      const { [fieldCheck]: removedField, ...rest } = ruleSchema;
+    if (activeData?.[fieldCheckNull] == null || activeData?.[fieldCheckNull] === '' || activeData?.[fieldCheckNull] === undefined) {
+      const { [fieldCheckNull]: removedField, ...rest } = newRuleSchema;
       newRuleSchema = rest;
     }
 
