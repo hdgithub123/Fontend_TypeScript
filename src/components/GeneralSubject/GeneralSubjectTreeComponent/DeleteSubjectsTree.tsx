@@ -73,9 +73,10 @@ const DeleteSubjects = ({ deleteUrl, selectSubjects, setSelectSubjects,data, set
                     }
                     setAlertinfo(prev => ({ ...prev, isAlertShow: false }))
                 } else {
+                    const errorMessages = Object.entries(result?.errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
                     setAlertinfo({
                         isAlertShow: true,
-                        alertMessage: result?.errorCode?.failData?.isSystem === "Cannot delete system records" ? "Không được xóa thông tin hệ thống" : "Xóa dữ liệu thất bại",
+                        alertMessage: result?.errorCode?.failData?.isSystem === "Cannot delete system records" ? "Không được xóa thông tin hệ thống" : `Xóa dữ liệu thất bại: ${errorMessages}`,
                         type: "error",
                         title: "Lỗi",
                         showConfirm: true,
