@@ -232,7 +232,7 @@ export default function EditFormDefaultWithRoot({
           const errorMessages = Object.entries(result?.errorCode?.failData || {}).map(([key, value]) => `${value}`).join(', ');
           setAlertinfo({
             isAlertShow: true,
-            alertMessage: result?.errorCode?.failData?.isSystem === "Cannot delete system records" ? "Không được xóa thông tin hệ thống" : `Xóa thất bại: ${errorMessages}`,
+            alertMessage: result?.errorCode?.failData?.isSystem === "Cannot delete system records" ? "Không được xóa thông tin hệ thống" : `Xóa thất bại: ${errorMessages} ${result?.errorCode?.sqlMessage || ''} ${result?.errorCode?.message || ''}`,
             type: "error",
             title: "Lỗi",
             showConfirm: true,
