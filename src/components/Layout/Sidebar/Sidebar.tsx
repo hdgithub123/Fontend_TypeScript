@@ -10,6 +10,7 @@ const link: Record<string, string> = {
   roleright: "/roleright",
   branch: "/branch",
   department: "/department",
+  userdepartmentrole: "/userdepartmentrole",
 };
 
 
