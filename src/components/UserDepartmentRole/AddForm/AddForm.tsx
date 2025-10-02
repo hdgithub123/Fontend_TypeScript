@@ -1,6 +1,6 @@
 import type { RuleSchema } from "../../../utils/validation";
 import { AddFormDefault } from "../../GeneralSubject";
-import { columnsParent, columnsSub } from "../FieldComponent/columns";
+import { columnsDepartmentParent, columnsRoleSub, columnsUserSub } from "../FieldComponent/columns";
 import ParentComponent from "../FieldComponent/ParentComponent";
 import SubComponent from "../FieldComponent/SubComponent";
 
@@ -38,9 +38,9 @@ const roleSchema: RuleSchema = {
 
 
 const fieldRoleLabels: Record<string, { label: string; type: string; placeholder?: string }> = {
-  userId: { label: "Người dùng", render: (props) => <SubComponent {...props} urlGet={'http://localhost:3000/auth/user/list'} columns={columnsSub} />, type: "custom" },
-  departmentId: { label: "Khu vực", render: (props) => <ParentComponent {...props} urlGet={'http://localhost:3000/auth/department/list'} columns={columnsSub} />, type: "custom" },
-  roleId: { label: "Vai trò", render: (props) => <SubComponent {...props} urlGet={'http://localhost:3000/auth/role/list'} columns={columnsSub} />, type: "custom" },
+  userId: { label: "Người dùng", render: (props) => <SubComponent {...props} urlGet={'http://localhost:3000/auth/user/list'} columns={columnsUserSub} columnsShow={['code', 'name', 'address']}/>, type: "custom" },
+  departmentId: { label: "Khu vực", render: (props) => <ParentComponent {...props} urlGet={'http://localhost:3000/auth/department/list'} columns={columnsDepartmentParent} />, type: "custom" },
+  roleId: { label: "Vai trò", render: (props) => <SubComponent {...props} urlGet={'http://localhost:3000/auth/role/list'} columns={columnsRoleSub} />, type: "custom" },
   isActive: { label: "Kích hoạt", type: "checkbox" },
 };
 

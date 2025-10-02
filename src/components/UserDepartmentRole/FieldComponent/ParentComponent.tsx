@@ -9,8 +9,8 @@ import transformToSubRowsTree from "../../GeneralSubject/utils/transformToSubRow
 
 const ParentComponent = ({ name, id, value, onChange, urlGet = urlGetList, columns = {}, disabled = false }) => {
     const [listParent, setListParent] = useState([]);
+    const [listData, setListData] = useState([]);
     const [parentCode, setParentCode] = useState();
-
     useEffect(() => {
         const fetchData = async () => {
             const result = await getData({ url: urlGet });
@@ -21,6 +21,7 @@ const ParentComponent = ({ name, id, value, onChange, urlGet = urlGetList, colum
                     parentField: 'parentId',
                 });
                 setListParent(subrowsData);
+                setListData(result.data);
             } else {
                 setListParent([]);
             }
@@ -31,20 +32,22 @@ const ParentComponent = ({ name, id, value, onChange, urlGet = urlGetList, colum
 
     useEffect(() => {
         // tìm ra parentCode từ listParent theo parentId = value.parentId với parentId = id của listParent
-        if (value && value.parentId) {
-            const findParent = (nodes, parentId) => {
+        if (value && id) {
+            const findNode = (nodes, id) => {
                 for (let node of nodes) {
-                    if (node.id === parentId) {
+                    if (node.id === id) {
                         return node;
                     }
                     if (node.subRows && node.subRows.length > 0) {
-                        const found = findParent(node.subRows, parentId);
+                        const found = findNode(node.subRows, id);
                         if (found) return found;
                     }
                 }
                 return null;
             };
-            const parentNode = findParent(listParent, value.parentId);
+            const parentNode = findNode(listData, value[id]);
+
+           
             if (parentNode) {
                 setParentCode(parentNode.code);
             } else {
@@ -54,6 +57,11 @@ const ParentComponent = ({ name, id, value, onChange, urlGet = urlGetList, colum
             setParentCode(null);
         }
 
+        // if (value && codeKey) {
+        //     setParentCode(value[codeKey]);
+        // } else {
+        //     setParentCode(null);
+        // }
 
     }, [value, listParent]);
 
@@ -71,20 +79,20 @@ const ParentComponent = ({ name, id, value, onChange, urlGet = urlGetList, colum
 
 
     return (
-            <SearchDropDown
-                data={listParent}
-                columns={columns}
-                cssStyleTable = {{width:'100%'}}
-                onRowSelect={handleonRowSelect}
-                onChangeGlobalFilter={handleGlobalFilterChange}
-                columnDisplay={'code'}
-                columnsShow={['code', 'name', 'description']}
-                globalFilterValue={parentCode ? parentCode : ""}
-                placeholder="Mã mục cha ..."
-                disabled={disabled}
-            >
+        <SearchDropDown
+            data={listParent}
+            columns={columns}
+            cssStyleTable={{ width: '100%' }}
+            onRowSelect={handleonRowSelect}
+            onChangeGlobalFilter={handleGlobalFilterChange}
+            columnDisplay={'code'}
+            columnsShow={['code', 'name', 'description']}
+            globalFilterValue={parentCode ? parentCode : ""}
+            placeholder="Mã mục cha ..."
+            disabled={disabled}
+        >
 
-            </SearchDropDown>
+        </SearchDropDown>
     )
 }
 

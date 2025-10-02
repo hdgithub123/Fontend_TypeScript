@@ -9,7 +9,7 @@ import {
 
 
 
-const columnsParent = [
+const columnsDepartmentParent = [
     {
         accessorKey: 'code',
         header: 'Mã khu vực',
@@ -18,7 +18,7 @@ const columnsParent = [
         cell: ExplandingTextCell,
         aggregatedCell: ExplandingTextCell,
         size: 150,
-        
+
     },
     {
         accessorKey: 'name',
@@ -41,13 +41,6 @@ const columnsParent = [
         cell: TextCell,
         size: 200,
     },
-    // {
-    //     accessorKey: 'parentId',
-    //     header: 'Thuộc về khu vực',
-    //     id: 'parentId',
-    //     filterType: 'text',
-    //     cell: TextCell,
-    // },
     {
         accessorKey: 'createdAt',
         header: 'Ngày tạo',
@@ -92,20 +85,20 @@ const columnsParent = [
 ]
 
 
-const columnsSub = [
+const columnsRoleSub = [
     {
         accessorKey: 'code',
-        header: 'Mã chi nhánh',
+        header: 'Mã vai trò',
         id: 'code',
         footer: info => `Count: ${CountFooter(info.table)}`,
         cell: ExplandingTextCell,
         aggregatedCell: ExplandingTextCell,
         size: 150,
-        
+
     },
     {
         accessorKey: 'name',
-        header: 'Tên chi nhánh',
+        header: 'Tên vai trò',
         id: 'name',
         cell: TextCell,
         size: 150,
@@ -124,13 +117,6 @@ const columnsSub = [
         cell: TextCell,
         size: 200,
     },
-    // {
-    //     accessorKey: 'parentId',
-    //     header: 'Thuộc về khu vực',
-    //     id: 'parentId',
-    //     filterType: 'text',
-    //     cell: TextCell,
-    // },
     {
         accessorKey: 'createdAt',
         header: 'Ngày tạo',
@@ -174,7 +160,82 @@ const columnsSub = [
 
 ]
 
-export { columnsParent, columnsSub };
+const columnsUserSub = [
+    {
+        accessorKey: 'code',
+        header: 'Mã người dùng',
+        id: 'code',
+        footer: info => `Count: ${CountFooter(info.table)}`,
+        cell: ExplandingTextCell,
+        aggregatedCell: ExplandingTextCell,
+        size: 150,
+
+    },
+    {
+        accessorKey: 'name',
+        header: 'Tên người dùng',
+        id: 'name',
+        cell: TextCell,
+        size: 150,
+    },
+    {
+        accessorKey: 'address',
+        header: 'Địa chỉ',
+        id: 'address',
+        cell: TextCell,
+        size: 200,
+    },
+    {
+        accessorKey: 'description',
+        header: 'Mô tả',
+        id: 'description',
+        cell: TextCell,
+        size: 200,
+    },
+    {
+        accessorKey: 'createdAt',
+        header: 'Ngày tạo',
+        id: 'createdAt',
+        cell: DateTimeCell,
+        enableGlobalFilter: false
+    },
+    {
+        accessorKey: 'createdBy',
+        header: 'Người tạo',
+        id: 'createdBy',
+        cell: TextCell,
+        enableGlobalFilter: false
+    }, {
+        accessorKey: 'updatedAt',
+        header: 'Ngày cập nhật',
+        id: 'updatedAt',
+        cell: DateTimeCell,
+        enableGlobalFilter: false
+    }, {
+        accessorKey: 'updatedBy',
+        header: 'Người cập nhật',
+        id: 'updatedBy',
+        cell: TextCell,
+        enableGlobalFilter: false
+    },
+    {
+        accessorKey: 'isActive',
+        header: 'Kích hoạt',
+        id: 'isActive',
+        cell: CheckboxCell,
+        enableGlobalFilter: false
+    },
+    {
+        accessorKey: 'isSystem',
+        header: 'Hệ Thống',
+        id: 'isSystem',
+        cell: CheckboxCell,
+        enableGlobalFilter: false
+    },
+
+]
+
+export { columnsDepartmentParent, columnsRoleSub, columnsUserSub };
 
 
 

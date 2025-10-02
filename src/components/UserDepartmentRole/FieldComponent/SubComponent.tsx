@@ -5,7 +5,7 @@ import {
 } from 'react-table'
 
 
-const SubComponent = ({ name, id, value, onChange, urlGet = '', columns = {}, disabled = false }) => {
+const SubComponent = ({ name, id, value, onChange, urlGet = '', columns = {}, disabled = false, columnsShow=['code', 'name', 'description'] }) => {
     const [listData, setListData] = useState([]);
     const [currentCode, setCurrentCode] = useState();
 
@@ -68,7 +68,7 @@ const SubComponent = ({ name, id, value, onChange, urlGet = '', columns = {}, di
             onRowSelect={handleonRowSelect}
             onChangeGlobalFilter={handleGlobalFilterChange}
             columnDisplay={'code'}
-            columnsShow={['code', 'name', 'description']}
+            columnsShow={columnsShow}
             globalFilterValue={currentCode ? currentCode : ""}
             placeholder="Mã ..."
             disabled={disabled}
