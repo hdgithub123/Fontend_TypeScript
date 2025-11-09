@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import SelectDepartment from "../../SelectDepartment/SelectDepartment";
 
 const link: Record<string, string> = {
   home: "/",
@@ -11,6 +13,7 @@ const link: Record<string, string> = {
   branch: "/branch",
   department: "/department",
   userdepartmentrole: "/userdepartmentrole",
+  selectDepartment: "/select-department",
 };
 
 
@@ -21,7 +24,8 @@ function Sidebar() {
       <ul>
         {Object.entries(link).map(([name, url]) => (
           <li key={name}>
-            <a href={url}>{name}</a>
+            {/* <a href={url}>{name}</a> */}
+            <Link to={url}>{name}</Link>
           </li>
         ))}
       </ul>

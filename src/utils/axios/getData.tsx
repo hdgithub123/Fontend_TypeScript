@@ -73,7 +73,7 @@ const getData = async ({
       }
     }
 
-    console.error('Lỗi khi lấy dữ liệu:', err.message);
+    console.error('Lỗi khi lấy dữ liệu:', error, err.message);
     return {
       status: false,
       message: 'Lỗi khi kết nối dữ liệu.',

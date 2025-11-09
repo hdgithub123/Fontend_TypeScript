@@ -31,6 +31,9 @@ import {
     validateTablesDataArray
 } from '../utils/validation/index'
 
+import { useDispatch, useSelector } from 'react-redux';
+
+
 function Test() {
     const [data, setData] = useState('');
     const [body, setBody] = useState('{}');
@@ -38,10 +41,15 @@ function Test() {
     const urlLogin = 'http://localhost:3000/auth/login';
     const urlRefreshToken = 'http://localhost:3000/auth/refresh-token';
 
+    const user = useSelector((state: any) => state.user);
+
+
+
     const handleGetClick = async () => {
         const result = await getData({ url: url, headers: getAuthHeaders(), urlRefreshToken, isCookie: false });
         console.log(result);
         setData(result.data);
+            console.log('User from Redux store:', user);
     };
 
     const handlePostClick = async () => {

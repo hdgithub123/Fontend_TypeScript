@@ -14,6 +14,7 @@ import RoleRight from './pages/RoleRight/RoleRight';
 import Branch from './pages/Branch/Branch';
 import Department from './pages/Department/Department';
 import UserDepartmentRole from './pages/UserDepartmentRole/UserDepartmentRole';
+import SelectDepartment from './pages/SelectDepartment/SelectDepartment';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="/branch" element={<Branch />} />
           <Route path="/department" element={<Department />} />
           <Route path="/userdepartmentrole" element={<UserDepartmentRole />} />
+          <Route path="/select-department" element={<SelectDepartment />} />
         </Route>
       </Routes>
     </BrowserRouter>

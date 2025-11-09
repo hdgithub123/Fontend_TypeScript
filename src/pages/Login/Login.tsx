@@ -1,21 +1,27 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postData, getAuthHeaders } from '../../utils/axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser} from '../../features/userSlice';
+
 
 function Login() {
   const urlLogin = 'http://localhost:3000/auth/login';
   const urlRefreshToken = 'http://localhost:3000/auth/refresh-token';
-  const [user, setUser] = useState({
+  const [userLogin, setUserLogin] = useState({
     username: 'admin',
     password: 'admin',
     organization: 'ORG001'
   });
 
+  const dispatch = useDispatch();
+  // const userSystem = useSelector((state: any) => state.user);
+
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setUser(prev => ({
+    setUserLogin(prev => ({
       ...prev,
       [name]: value
     }));
@@ -23,8 +29,17 @@ function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await postData({ url: urlLogin, data: user, headers: getAuthHeaders(), isCookie: true, urlRefreshToken })
+    const result = await postData({ url: urlLogin, data: userLogin, headers: getAuthHeaders(), isCookie: true, urlRefreshToken })
+    console.log('Login result:', result);
     if (result.status) {
+      dispatch(setUser({
+        userName: result.data.code,
+        fullName: result.data.name,
+        image: result.data.image,
+        organizationCode: result.data.organizationCode,
+        organizationName: result.data.organizationName
+      }));
+
       // lưu result.token vào localStorage
       localStorage.setItem('token', result.token);
       navigate('/');
@@ -59,7 +74,7 @@ function Login() {
           <input
             type="text"
             name="username"
-            value={user.username}
+            value={userLogin.username}
             onChange={handleChange}
             required
             style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
@@ -71,7 +86,7 @@ function Login() {
           <input
             type="password"
             name="password"
-            value={user.password}
+            value={userLogin.password}
             onChange={handleChange}
             required
             style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
@@ -83,7 +98,7 @@ function Login() {
           <input
             type="text"
             name="organization"
-            value={user.organization}
+            value={userLogin.organization}
             onChange={handleChange}
             required
             style={{ width: '100%', padding: '0.5rem', marginTop: '0.25rem' }}
