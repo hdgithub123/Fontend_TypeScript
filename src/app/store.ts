@@ -5,25 +5,28 @@ import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, 
 import userReducer from '../features/userSlice';
 import headerReducer from '../features/headerSlice';
 
-// Cấu hình redux-persist
+// ⚙️ Cấu hình persist cho riêng slice 'user'
 const userPersistConfig = {
-  key: 'user',       // key để lưu vào localStorage
-  storage,           // loại storage (mặc định là localStorage)
-  whitelist: ['user'] // chỉ lưu slice 'user'
+  key: 'user', // 👈 key lưu trong localStorage
+  storage,     // 👈 sử dụng localStorage (mặc định)
+};
+
+const headerPersistConfig = {
+  key: 'header',
+  storage
 };
 
 
+// ✅ Kết hợp reducer
 const rootReducer = combineReducers({
-  user: userReducer,
-  header: headerReducer,
+  user: persistReducer(userPersistConfig, userReducer), // chỉ user được persist
+  header: persistReducer(headerPersistConfig, headerReducer), // header được persist
+  //header: headerReducer, // nếu muốn header không được persist
 });
 
-const persistedReducer = persistReducer(userPersistConfig, rootReducer);
-
-
-// Tạo store
+// 🧩 Tạo store
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
@@ -32,10 +35,8 @@ export const store = configureStore({
     }),
 });
 
-
+// 🗝️ Tạo persistor để dùng trong <PersistGate>
 export const persistor = persistStore(store);
-
-// Kiểu cho TypeScript
+// 🧠 Kiểu cho TypeScript
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-

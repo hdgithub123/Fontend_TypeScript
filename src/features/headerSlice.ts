@@ -2,7 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction  } from '@reduxjs/toolkit';
 
 interface headerState {
-  userName: string | null,
   organizationIds: string[] | null,
   branchId: string | null,
   branchIds: string[] | null,
@@ -13,7 +12,6 @@ interface headerState {
 
 
 const initialState: headerState  = {
-  userName: '',
   organizationIds: [],
   branchId: null,
   branchIds: [],
