@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { postData } from '../../utils/axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from '../../features/userSlice';
+import { setUser } from '../../redux/slice/userSlice';
 import storage from 'redux-persist/lib/storage';
 
 function Login() {

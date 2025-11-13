@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../../app/store';
+import type { RootState } from '../../redux/store';
 
 // const zoneId = '98dc9cee-87f8-11f0-9b37-0242ac110002';
 
@@ -43,7 +43,7 @@ import type { RootState } from '../../app/store';
 
 
 // getAuthHeaders.ts
-import { store } from '../../app/store';
+import { store } from '../../redux/store';
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem("token");

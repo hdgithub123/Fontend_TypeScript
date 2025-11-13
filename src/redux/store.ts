@@ -2,8 +2,8 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 
-import userReducer from '../features/userSlice';
-import headerReducer from '../features/headerSlice';
+import userReducer from './slice/userSlice';
+import headerReducer from './slice/headerSlice';
 
 // ⚙️ Cấu hình persist cho riêng slice 'user'
 const userPersistConfig = {

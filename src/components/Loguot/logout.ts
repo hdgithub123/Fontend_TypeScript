@@ -1,5 +1,5 @@
   import {  postData } from "../../utils/axios";
-  import {persistor} from "../../app/store";
+  import {persistor} from "../../redux/store";
 
 
   const logout = async () => {

@@ -54,9 +54,9 @@
 
 import { useEffect, useState } from 'react';
 import { getData } from '../../utils/axios/index';
-import type { RootState } from '../../app/store';
+import type { RootState } from '../../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
-import { setHeader } from '../../features/headerSlice';
+import { setHeader } from '../../redux/slice/headerSlice';
 import { useNavigate } from 'react-router-dom';
 
 function SelectDepartment() {
