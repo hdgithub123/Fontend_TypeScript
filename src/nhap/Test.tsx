@@ -2,7 +2,6 @@ import { useState } from 'react'
 import {
     getData,
     postData,
-    getAuthHeaders,
     putData,
     deleteData,
     patchData
@@ -46,21 +45,21 @@ function Test() {
 
 
     const handleGetClick = async () => {
-        const result = await getData({ url: url, headers: getAuthHeaders(), urlRefreshToken, isCookie: false });
+        const result = await getData({ url: url, urlRefreshToken, isCookie: false });
         console.log(result);
         setData(result.data);
             console.log('User from Redux store:', user);
     };
 
     const handlePostClick = async () => {
-        const result = await postData({ url: url, data: body, headers: getAuthHeaders(), urlRefreshToken, isCookie: false });
+        const result = await postData({ url: url, data: body, urlRefreshToken, isCookie: false });
         console.log(result);
         setData(result.data);
     }
 
     const handleDeleteClick = async () => {
         const parsedBody = body ? JSON.parse(body) : {};
-        const result = await deleteData({ url: url, data: parsedBody, headers: getAuthHeaders(), urlRefreshToken, isCookie: false });
+        const result = await deleteData({ url: url, data: parsedBody, urlRefreshToken, isCookie: false });
         console.log(result);
         // setData(result.data);
         setData({});
@@ -69,7 +68,7 @@ function Test() {
 
 
     const handlePutClick = async () => {
-        const result = await putData({ url: url, data: body, headers: getAuthHeaders(), urlRefreshToken, isCookie: false });
+        const result = await putData({ url: url, data: body, urlRefreshToken, isCookie: false });
         console.log(result);
         setData(result.data);
     }

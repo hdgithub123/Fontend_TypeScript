@@ -2,7 +2,7 @@ import { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
 import styles from "./EditForm.module.scss";
 import { validateDataArray, messagesVi } from "../../../../utils/validation";
 import type { RuleSchema } from "../../../../utils/validation";
-import { postData, deleteData, putData, getAuthHeaders } from "../../../../utils/axios/index";
+import { postData, deleteData, putData } from "../../../../utils/axios/index";
 import { AlertDialog, type AlertInfo } from '../../../../utils/AlertDialog';
 import { v4 as uuidv4 } from 'uuid';
 import checkUserAvailability from "../checkUserAvailability";

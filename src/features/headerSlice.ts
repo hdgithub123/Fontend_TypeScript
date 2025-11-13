@@ -2,9 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction  } from '@reduxjs/toolkit';
 
 interface headerState {
-  organizationIds: string[] | null,
+  organizationIds?: string[] | null,
   branchId: string | null,
-  branchIds: string[] | null,
+  branchIds?: string[] | null,
   departmentId: string | null,
   departmentIds: string[] | null
 }

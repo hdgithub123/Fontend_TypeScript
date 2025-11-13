@@ -1,5 +1,5 @@
 
-import { getAuthHeaders, postData } from "../../../utils/axios";
+import {postData } from "../../../utils/axios";
 
 interface User {
   id: string;

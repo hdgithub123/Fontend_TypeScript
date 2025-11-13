@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { postData, getAuthHeaders } from '../../utils/axios';
+import { postData } from '../../utils/axios';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser} from '../../features/userSlice';
-
+import { setUser } from '../../features/userSlice';
+import storage from 'redux-persist/lib/storage';
 
 function Login() {
   const urlLogin = 'http://localhost:3000/auth/login';
@@ -29,9 +29,9 @@ function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const result = await postData({ url: urlLogin, data: userLogin, headers: getAuthHeaders(), isCookie: true, urlRefreshToken })
-    console.log('Login result:', result);
+    const result = await postData({ url: urlLogin, data: userLogin, isCookie: true, urlRefreshToken })
     if (result.status) {
+      storage.removeItem('persist:header');
       dispatch(setUser({
         userName: result.data.code,
         fullName: result.data.name,
@@ -42,7 +42,7 @@ function Login() {
 
       // lưu result.token vào localStorage
       localStorage.setItem('token', result.token);
-      navigate('/');
+      navigate('/select-department');
     } else {
       alert('Sai tên đăng nhập hoặc mật khẩu!');
     }

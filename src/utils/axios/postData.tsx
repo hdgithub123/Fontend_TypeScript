@@ -25,6 +25,7 @@ const postData = async ({
   urlRefreshToken = urlRefreshTokenDefault ? urlRefreshTokenDefault : '',
   redirect = '/login',
 }: PostDataParams): Promise<ApiResponse> => {
+
   try {
     const response = await axios.post(url, data, {
       headers,

@@ -1,4 +1,3 @@
-import RegistrationForm from '../../components/User/SingleUser/RegistrationForm/RegistrationForm';
 import { useNavigate } from 'react-router-dom';
 
 function Register() {
@@ -13,10 +12,7 @@ function Register() {
 
   return (
     <div>
-    <RegistrationForm
-    onRegisterSuccess = {handleonRegisterSuccess}
-    
-    ></RegistrationForm>
+      <h1>Register Page</h1>
     </div>
   );
 }

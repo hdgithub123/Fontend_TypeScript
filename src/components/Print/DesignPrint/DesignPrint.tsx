@@ -11,7 +11,7 @@ import {
     SearchDropDown,
 } from 'react-table'
 
-import { postData, deleteData, putData, getAuthHeaders, getData } from "../../../utils/axios";
+import { postData, deleteData, putData, getData } from "../../../utils/axios";
 
 import columnsContent from './columContent';
 import { AlertDialog, type AlertInfo } from '../../../utils/AlertDialog';
@@ -260,7 +260,6 @@ const DesignPrint: React.FC<DesignPrintProps> = ({
                 try {
                     const result = await deleteData({
                         url: `${urlDelete}/${addContent.id}`,
-                        headers: getAuthHeaders(),
                         data: {},
                     });
                     if (result?.status) {
