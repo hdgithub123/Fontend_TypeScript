@@ -1,5 +1,5 @@
 
-import { postData } from "../../../../utils/axios";
+import { postData } from "../../../../../utils/axios";
 
 interface subject {
   id?: string | null | undefined;

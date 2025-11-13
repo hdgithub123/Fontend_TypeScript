@@ -1,4 +1,4 @@
-import {ListSubject} from "../../GeneralSubject"
+import {ListSubject} from "../../utils/GeneralSubject"
 import columns from "./colums"
 
 import {

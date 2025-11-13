@@ -7,7 +7,7 @@ import {
 } from 'react-table'
 
 // import formatDateTime from './formatDateTime'
-import convertColumns from '../../MakeReportTable/convertColumns'
+import convertColumns from '../../utils/MakeReportTable/convertColumns'
 
 
 // code: { label: "Tên đăng nhập (*)", type: "text", placeholder: "Nhập tên đăng nhập" },

@@ -1,4 +1,4 @@
-import {ListSubject} from "../../GeneralSubject"
+import {ListSubject} from "../../utils/GeneralSubject"
 import insertExcelSetting from './settingImport'
 import updateExcelSetting from './settingUpdate'
 import columns from "./columns"

@@ -12,12 +12,12 @@ import {
   putData,
   deleteData,
   patchData
-} from '../../../utils/axios'
+} from '../../../../utils/axios'
 
 
-import DesignPrint from '../../Print/DesignPrint/DesignPrint';
-import PrintPreview from '../../Print/PrintPreview/PrintPreview';
-import MakeReportTable from '../../MakeReportTable/MakeReportTable'
+import DesignPrint from '../../../Print/DesignPrint/DesignPrint';
+import PrintPreview from '../../../Print/PrintPreview/PrintPreview';
+import MakeReportTable from '../../../utils/MakeReportTable/MakeReportTable'
 import ReactDOM from 'react-dom';
 // import DesignPrint from "../../Print/DesignPrint/DesignPrint";
 import PrintSubjects from '../utils/PrintSubjects/PrintSubjects'
@@ -30,7 +30,7 @@ import styles from './ListSubject.module.scss'
 //import EditForm from "../SingleSubject/EditForm/EditFormDefault";
 import insertExcelSetting from "../utils/DashboardExcelImport/DashboardSubjectsExcelInsertViewer/setting";
 import updateExcelSetting from "../utils/DashboardExcelImport/DashboardSubjectsExcelUpdateViewer/setting";
-import type { RuleSchema } from "../../../utils/validation";
+import type { RuleSchema } from "../../../../utils/validation";
 
 
 

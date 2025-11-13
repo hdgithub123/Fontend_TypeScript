@@ -1,5 +1,5 @@
-import {ListSubjectTree} from "../../GeneralSubject"
-import type { ListSubjectProps } from '../../GeneralSubject'
+import {ListSubjectTree} from "../../utils/GeneralSubject"
+import type { ListSubjectProps } from "../../utils/GeneralSubject"
 import insertExcelSetting from './settingImport'
 import updateExcelSetting from './settingUpdate'
 import columns from "./colums"

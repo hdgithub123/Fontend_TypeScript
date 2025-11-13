@@ -1,5 +1,5 @@
 import type { RuleSchema } from "../../../utils/validation";
-import {EditFormDefault} from "../../GeneralSubject";
+import {EditFormDefault} from "../../utils/GeneralSubject";
 
 
 interface branch {

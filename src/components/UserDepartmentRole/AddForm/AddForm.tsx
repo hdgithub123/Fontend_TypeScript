@@ -1,5 +1,5 @@
 import type { RuleSchema } from "../../../utils/validation";
-import { AddFormDefault } from "../../GeneralSubject";
+import { AddFormDefault } from "../../utils/GeneralSubject";
 import { columnsDepartmentParent, columnsRoleSub, columnsUserSub } from "../FieldComponent/columns";
 import ParentComponent from "../FieldComponent/ParentComponent";
 import SubComponent from "../FieldComponent/SubComponent";

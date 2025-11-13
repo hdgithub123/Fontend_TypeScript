@@ -13,7 +13,7 @@ import {
     SearchDropDown,
 } from 'react-table'
 
-import { getData } from "../../../../utils/axios";
+import { getData } from "../../../../../utils/axios";
 
 import columnsContent from './columContent';
 import styles from "./PrintSubjects.module.scss";

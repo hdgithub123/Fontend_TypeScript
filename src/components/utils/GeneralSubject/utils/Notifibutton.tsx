@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AlertDialog, type AlertInfo } from '../../../utils/AlertDialog';
+import { AlertDialog, type AlertInfo } from '../../../../utils/AlertDialog';
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     message?: string;

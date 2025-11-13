@@ -17,7 +17,7 @@ import {
 import columnsUser from './columUser'
 import DesignPrint from '../../Print/DesignPrint/DesignPrint';
 import PrintPreview from '../../Print/PrintPreview/PrintPreview';
-import MakeReportTable from '../../MakeReportTable/MakeReportTable'
+import MakeReportTable from '../../utils/MakeReportTable/MakeReportTable'
 import ReactDOM from 'react-dom';
 // import DesignPrint from "../../Print/DesignPrint/DesignPrint";
 import PrintUsers from '../SingleUser/PrintUsers/PrintUsers'

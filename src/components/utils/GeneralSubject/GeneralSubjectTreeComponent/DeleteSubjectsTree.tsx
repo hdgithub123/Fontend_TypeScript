@@ -1,6 +1,6 @@
 // viết 1 component xóa users với tham số đầu vào là url xóa và mảng selectOrganizations
-import { deleteData } from "../../../utils/axios";
-import { AlertDialog, type AlertInfo } from '../../../utils/AlertDialog';
+import { deleteData } from "../../../../utils/axios";
+import { AlertDialog, type AlertInfo } from '../../../../utils/AlertDialog';
 import { useState } from "react";
 interface DeleteSubjectsProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   deleteUrl: string;

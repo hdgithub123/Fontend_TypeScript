@@ -1,5 +1,5 @@
 import type { RuleSchema } from "../../../utils/validation";
-import { EditFormDefault, EditFormDefaultWithRoot } from "../../GeneralSubject";
+import { EditFormDefault, EditFormDefaultWithRoot } from "../../utils/GeneralSubject";
 import { columnsDepartmentParent, columnsUserSub,columnsRoleSub } from "../FieldComponent/columns";
 import ParentComponent from "../FieldComponent/ParentComponent";
 import SubComponent from "../FieldComponent/SubComponent";
