@@ -95,7 +95,17 @@ export default function EditFormDefault({
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
+    //const val = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
+
+    let val: any;
+
+    if (type === "checkbox") {
+      val = (e.target as HTMLInputElement).checked;
+    } else if (type === "number") {
+      val = value === "" ? "" : Number(value);
+    } else {
+      val = value;
+    }
 
     setSubjectData(prev => ({ ...prev, [name]: val }));
 
