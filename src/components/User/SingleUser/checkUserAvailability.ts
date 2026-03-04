@@ -1,6 +1,6 @@
 
 import {postData } from "../../../utils/axios";
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 interface user {
   id?: string | null | undefined;
   code?: string;
@@ -26,7 +26,7 @@ interface UserCheckResult {
 
 
 const checkUserAvailability = async (
-  { urlCheckUser = 'http://localhost:3000/auth/user/check-user',
+  { urlCheckUser = `${backendEndpoint}/auth/user/check-user`,
     user = {}
   }: {
     urlCheckUser?: string,

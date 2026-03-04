@@ -4,7 +4,7 @@ import {
     CheckboxCell,
     TextGroupCell,
 } from 'react-table'
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 
 const columns = [
@@ -70,7 +70,7 @@ const columnCheckExistance = [
         columnNames: {
             code: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/organization/check-organizations',
+        urlCheck: `${backendEndpoint}/auth/organization/check-organizations`,
         excludeField: 'id',
     },
 ]
@@ -80,14 +80,14 @@ const columnCheckNotExistance = [
         columnNames: {
             oldCode: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/organization/check-organizations',
+        urlCheck: `${backendEndpoint}/auth/organization/check-organizations`,
 
     },
 
 ]
 
 
-const ListIdsConfig = { url: 'http://localhost:3000/auth/organization/ids-codes', fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
+const ListIdsConfig = { url: `${backendEndpoint}/auth/organization/ids-codes`, fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
 
 const sheetName = 'Import Organizations'
 const fileName = "organizations_update_template.xlsx"

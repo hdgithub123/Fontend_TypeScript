@@ -1,2 +1,3 @@
-const urlRefreshTokenDefault: string  = "http://localhost:3000/auth/refresh-token";
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
+const urlRefreshTokenDefault: string  = `${backendEndpoint}/auth/refresh-token`;
 export default urlRefreshTokenDefault;

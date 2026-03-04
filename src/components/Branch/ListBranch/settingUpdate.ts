@@ -5,7 +5,7 @@ import {
     CheckboxCell,
     TextGroupCell,
 } from 'react-table'
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 
 const columns = [
@@ -85,7 +85,7 @@ const columnCheckExistance = [
         columnNames: {
             code: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/branch/check-branches',
+        urlCheck: `${backendEndpoint}/auth/branch/check-branches`,
         excludeField: 'id',
     },
 ]
@@ -95,14 +95,14 @@ const columnCheckNotExistance = [
         columnNames: {
             oldCode: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/branch/check-branches',
+        urlCheck: `${backendEndpoint}/auth/branch/check-branches`,
 
     },
 
 ]
 
 
-const ListIdsConfig = { url: 'http://localhost:3000/auth/branch/ids-codes', fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
+const ListIdsConfig = { url: `${backendEndpoint}/auth/branch/ids-codes`, fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
 
 const sheetName = 'Import Branches'
 const fileName = "Branches_update_template.xlsx"

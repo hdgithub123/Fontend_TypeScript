@@ -31,7 +31,7 @@ import EditForm from "../SingleUser/EditForm/EditForm";
 
 import inputExcellConfig from '../DashboardExcelImport/DashboardUsersExcelInsertViewer/setting'
 import updateExcellConfig from '../DashboardExcelImport/DashboardUsersExcelUpdateViewer/setting'
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 interface User {
   id: string,
   code: string;
@@ -99,22 +99,22 @@ const authorizationExample2 = {
 }
 
 const ListUser = ({ authorization = authorizationExample }) => {
-  const urlGetList: string = 'http://localhost:3000/auth/user/list'
-  const urlDeleteList: string = 'http://localhost:3000/auth/user/list'
-  const urlPostList: string = 'http://localhost:3000/auth/user/list'
-  const urlPutList: string = 'http://localhost:3000/auth/user/list'
+  const urlGetList: string = `${backendEndpoint}/auth/user/list`
+  const urlDeleteList: string = `${backendEndpoint}/auth/user/list`
+  const urlPostList: string = `${backendEndpoint}/auth/user/list`
+  const urlPutList: string = `${backendEndpoint}/auth/user/list`
 
-  const urlCheckUser = 'http://localhost:3000/auth/user/check-user'
-  const urlInsertUser = 'http://localhost:3000/auth/user/detail/insert'
-  const urlUpdateUser = 'http://localhost:3000/auth/user/detail'
-  const urlDeleteUser = 'http://localhost:3000/auth/user/detail'
+  const urlCheckUser = `${backendEndpoint}/auth/user/check-user`
+  const urlInsertUser = `${backendEndpoint}/auth/user/detail/insert`
+  const urlUpdateUser = `${backendEndpoint}/auth/user/detail`
+  const urlDeleteUser = `${backendEndpoint}/auth/user/detail`
 
-  const urlGetPrintContent = 'http://localhost:3000/template-contents/users/list'
-  const urlGetPrintDesign = "http://localhost:3000/template-contents/users/list"
-  
-  const urlUpdatePrintDesign = "http://localhost:3000/template-contents/users/detail"
-  const urlDeletePrintDesign = "http://localhost:3000/template-contents/users/detail"
-  const urlInsertPrintDesign = "http://localhost:3000/template-contents/users/detail/insert"
+  const urlGetPrintContent = `${backendEndpoint}/template-contents/users/list`
+  const urlGetPrintDesign = `${backendEndpoint}/template-contents/users/list`
+
+  const urlUpdatePrintDesign = `${backendEndpoint}/template-contents/users/detail`
+  const urlDeletePrintDesign = `${backendEndpoint}/template-contents/users/detail`
+  const urlInsertPrintDesign = `${backendEndpoint}/template-contents/users/detail/insert`
 
   const configInsertExcell = inputExcellConfig
   const configUpdateExcell = updateExcellConfig
@@ -324,7 +324,6 @@ const ListUser = ({ authorization = authorizationExample }) => {
               //   user: data
               // }}
               // contentStateObject={blockUser}
-              // urlGet="http://localhost:3000/template-contents/user/list"
               urlGet={urlGetPrintContent}
               onCancel={() => {
                 setIsPrintMoreUsers(false)

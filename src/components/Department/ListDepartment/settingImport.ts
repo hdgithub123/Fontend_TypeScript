@@ -7,7 +7,7 @@ import {
     TextGroupCell,
 } from 'react-table'
 
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 const columns = [
     {
@@ -83,7 +83,7 @@ const columnCheckExistance = [
         columnNames: {
             code: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/department/check-departments',
+        urlCheck: `${backendEndpoint}/auth/department/check-departments`,
     },
 ]
 
@@ -92,7 +92,7 @@ const columnCheckNotExistance = [
         columnNames: {
             _branchCode: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/branch/check-branches',
+        urlCheck: `${backendEndpoint}/auth/branch/check-branches`,
     },
 
 ]
@@ -107,7 +107,7 @@ export { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance };
 
 
 const resolveDataFunction = async (department) => {
-    const urlBranchIdCode = 'http://localhost:3000/auth/branch/ids-codes';
+    const urlBranchIdCode = `${backendEndpoint}/auth/branch/ids-codes`;
 
 
     // lấy ra danh sách tất cả brachCode và parentCode trong department

@@ -6,7 +6,7 @@ import {
     TextGroupCell,
 } from 'react-table'
 
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 const columns = [
     {
@@ -62,7 +62,7 @@ const columnCheckExistance = [
         columnNames: {
             code: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/organization/check-organizations',
+        urlCheck: `${backendEndpoint}/auth/organization/check-organizations`,
     },
 ]
 

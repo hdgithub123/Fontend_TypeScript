@@ -3,7 +3,7 @@ import { AddFormDefault } from "../../utils/GeneralSubject";
 import { columnsDepartmentParent, columnsRoleSub, columnsUserSub } from "../FieldComponent/columns";
 import ParentComponent from "../FieldComponent/ParentComponent";
 import SubComponent from "../FieldComponent/SubComponent";
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 // const sqlQuery = `SELECT udr.id as id, udr.userId as userId, u.code as _userCode, u.name as _userName, d.id as departmentId, d.code as _departmentCode, d.name as _departmentName, r.id as roleId, r.code as _roleCode, r.name as _roleName,
 
@@ -38,9 +38,9 @@ const roleSchema: RuleSchema = {
 
 
 const fieldRoleLabels: Record<string, { label: string; type: string; placeholder?: string }> = {
-  userId: { label: "Người dùng", render: (props) => <SubComponent {...props} urlGet={'http://localhost:3000/auth/user/list'} columns={columnsUserSub} columnsShow={['code', 'name', 'address']}/>, type: "custom" },
-  departmentId: { label: "Khu vực", render: (props) => <ParentComponent {...props} urlGet={'http://localhost:3000/auth/department/list'} columns={columnsDepartmentParent} />, type: "custom" },
-  roleId: { label: "Vai trò", render: (props) => <SubComponent {...props} urlGet={'http://localhost:3000/auth/role/list'} columns={columnsRoleSub} />, type: "custom" },
+  userId: { label: "Người dùng", render: (props) => <SubComponent {...props} urlGet={`${backendEndpoint}/auth/user/list`} columns={columnsUserSub} columnsShow={['code', 'name', 'address']}/>, type: "custom" },
+  departmentId: { label: "Khu vực", render: (props) => <ParentComponent {...props} urlGet={`${backendEndpoint}/auth/department/list`} columns={columnsDepartmentParent} />, type: "custom" },
+  roleId: { label: "Vai trò", render: (props) => <SubComponent {...props} urlGet={`${backendEndpoint}/auth/role/list`} columns={columnsRoleSub} />, type: "custom" },
   isActive: { label: "Kích hoạt", type: "checkbox" },
 };
 

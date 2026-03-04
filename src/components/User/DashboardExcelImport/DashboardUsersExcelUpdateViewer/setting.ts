@@ -4,7 +4,7 @@ import {
     CheckboxCell,
     TextGroupCell,
 } from 'react-table'
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 
 const columns = [
@@ -124,7 +124,7 @@ const columnCheckExistance = [
             code: 'code',
             email: 'email',
         },
-        urlCheck: 'http://localhost:3000/auth/user/check-users',
+        urlCheck: `${backendEndpoint}/auth/user/check-users`,
         excludeField: 'id',
     },
 ]
@@ -134,14 +134,14 @@ const columnCheckNotExistance = [
         columnNames: {
             oldCode: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/user/check-users',
+        urlCheck: `${backendEndpoint}/auth/user/check-users`,
 
     },
 
 ]
 
 
-const ListIdsConfig = { url: 'http://localhost:3000/auth/user/ids-codes', fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
+const ListIdsConfig = { url: `${backendEndpoint}/auth/user/ids-codes`, fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
 
 export { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig };
 const setting = { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance, ListIdsConfig };

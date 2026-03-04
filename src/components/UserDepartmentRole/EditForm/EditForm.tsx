@@ -3,7 +3,7 @@ import { EditFormDefault, EditFormDefaultWithRoot } from "../../utils/GeneralSub
 import { columnsDepartmentParent, columnsUserSub,columnsRoleSub } from "../FieldComponent/columns";
 import ParentComponent from "../FieldComponent/ParentComponent";
 import SubComponent from "../FieldComponent/SubComponent";
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 
 interface userDepartmentRole {
@@ -41,9 +41,9 @@ const ruleSchema: RuleSchema = {
 };
 
 const fieldLabels: Record<string, { label: string; type: string; placeholder?: string }> = {
-  userId: { label: "Người dùng", render: (props) => <SubComponent {...props} disabled = {true} urlGet={'http://localhost:3000/auth/user/list'} columns={columnsUserSub} columnsShow={['code', 'name', 'address']} />, type: "custom" },
-  departmentId: { label: "Khu vực", render: (props) => <ParentComponent {...props} disabled = {true} urlGet={'http://localhost:3000/auth/department/list'} columns={columnsDepartmentParent} />, type: "custom" },
-  roleId: { label: "Vai trò", render: (props) => <SubComponent {...props} disabled = {true} urlGet={'http://localhost:3000/auth/role/list'} columns={columnsRoleSub} />, type: "custom" },
+  userId: { label: "Người dùng", render: (props) => <SubComponent {...props} disabled = {true} urlGet={`${backendEndpoint}/auth/user/list`} columns={columnsUserSub} columnsShow={['code', 'name', 'address']} />, type: "custom" },
+  departmentId: { label: "Khu vực", render: (props) => <ParentComponent {...props} disabled = {true} urlGet={`${backendEndpoint}/auth/department/list`} columns={columnsDepartmentParent} />, type: "custom" },
+  roleId: { label: "Vai trò", render: (props) => <SubComponent {...props} disabled = {true} urlGet={`${backendEndpoint}/auth/role/list`} columns={columnsRoleSub} />, type: "custom" },
   isActive: { label: "Kích hoạt", type: "checkbox" },
 };
 

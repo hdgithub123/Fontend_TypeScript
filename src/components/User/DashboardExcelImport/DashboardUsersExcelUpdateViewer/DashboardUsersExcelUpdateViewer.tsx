@@ -5,11 +5,11 @@ import userSetting from "./setting";
 import { messagesEn, messagesVi } from "../../../../utils/validation";
 import { postData, putData } from "../../../../utils/axios";
 import LoadingOverlay from "../../../../utils/LoadingOverlay/LoadingOverlay";
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 
 const DashboardUsersExcelUpdateViewer = ({ urlPut, config = userSetting, onCancel, onDone }) => {
-    const urlidscodes = config.ListIdsConfig?.url || "http://localhost:3000/auth/user/ids-codes"
+    const urlidscodes = config.ListIdsConfig?.url || `${backendEndpoint}/auth/user/ids-codes`
     const [isLoading, setIsLoading] = useState(false);
     const onCheckUpload = async (dataUpload) => {
         setIsLoading(true);

@@ -15,7 +15,7 @@ import { getData } from "../../../../utils/axios";
 
 import columnsContent from './columContent';
 import styles from "./PrintUsers.module.scss";
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 type DynamicTables = {
     [tableKey: string]: {
         [key: string]: string | number | boolean | null;
@@ -74,7 +74,7 @@ const PrintUsers: React.FC<PrintPreviewProps> = ({
     fonts,
     colors,
     onCancel = () => { },
-    urlGet = "http://localhost:3000/template-contents/user/list",
+    urlGet = `${backendEndpoint}/template-contents/user/list`,
 }) => {
 
     const [viewContent, setViewContent] = useState<{ [key: string]: string }>({});

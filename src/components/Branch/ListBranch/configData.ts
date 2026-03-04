@@ -1,26 +1,26 @@
 import AddFormBranch from "../AddForm/AddForm";
 import EditFormBranch from "../EditForm/EditForm";
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 const fullUrlList = {
-  urlGetList: 'http://localhost:3000/auth/branch/list',
-  urlDeleteList: 'http://localhost:3000/auth/branch/list',
-  urlPostList: 'http://localhost:3000/auth/branch/list',
-  urlPutList: 'http://localhost:3000/auth/branch/list',
-  urlCheck: 'http://localhost:3000/auth/branch/check-branch',
-  urlUpdate: "http://localhost:3000/auth/branch/detail",
-  urlDelete: "http://localhost:3000/auth/branch/detail",
-  urlInsert: 'http://localhost:3000/auth/branch/detail/insert',
+  urlGetList: `${backendEndpoint}/auth/branch/list`,
+  urlDeleteList: `${backendEndpoint}/auth/branch/list`,
+  urlPostList: `${backendEndpoint}/auth/branch/list`,
+  urlPutList: `${backendEndpoint}/auth/branch/list`,
+  urlCheck: `${backendEndpoint}/auth/branch/check-branch`,
+  urlUpdate: `${backendEndpoint}/auth/branch/detail`,
+  urlDelete: `${backendEndpoint}/auth/branch/detail`,
+  urlInsert: `${backendEndpoint}/auth/branch/detail/insert`,
 
-  urlGetPrintContent: "http://localhost:3000/template-contents/branch/list",
-  urlUpdatePrintDesign: "http://localhost:3000/template-contents/branch/detail",
-  urlDeletePrintDesign: "http://localhost:3000/template-contents/branch/detail",
-  urlInsertPrintDesign: "http://localhost:3000/template-contents/branch/detail/insert",
+  urlGetPrintContent: `${backendEndpoint}/template-contents/branch/list`,
+  urlUpdatePrintDesign: `${backendEndpoint}/template-contents/branch/detail`,
+  urlDeletePrintDesign: `${backendEndpoint}/template-contents/branch/detail`,
+  urlInsertPrintDesign: `${backendEndpoint}/template-contents/branch/detail/insert`,
 
-  urlGetPrintContents: "http://localhost:3000/template-contents/branches/list",
-  urlUpdatePrintDesigns: "http://localhost:3000/template-contents/branches/detail",
-  urlDeletePrintDesigns: "http://localhost:3000/template-contents/branches/detail",
-  urlInsertPrintDesigns: "http://localhost:3000/template-contents/branches/detail/insert",
+  urlGetPrintContents: `${backendEndpoint}/template-contents/branches/list`,
+  urlUpdatePrintDesigns: `${backendEndpoint}/template-contents/branches/detail`,
+  urlDeletePrintDesigns: `${backendEndpoint}/template-contents/branches/detail`,
+  urlInsertPrintDesigns: `${backendEndpoint}/template-contents/branches/detail/insert`,
 
 }
 

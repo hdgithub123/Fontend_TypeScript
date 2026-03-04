@@ -6,7 +6,7 @@ import {
     CountFooter,
     TextGroupCell,
 } from 'react-table'
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 const columns = [
     {
@@ -60,7 +60,7 @@ const columnCheckExistance = [
     //     columnNames: {
     //         _branchCode: 'code',
     //     },
-    //     urlCheck: 'http://localhost:3000/auth/branch/check-branches',
+    //     urlCheck: `${backendEndpoint}/auth/branch/check-branches`,
     // },
 
 ]
@@ -70,19 +70,19 @@ const columnCheckNotExistance = [
         columnNames: {
             _userCode: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/user/check-users',
+        urlCheck: `${backendEndpoint}/auth/user/check-users`,
     },
     {
         columnNames: {
             _departmentCode: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/department/check-departments',
+        urlCheck: `${backendEndpoint}/auth/department/check-departments`,
     },
     {
         columnNames: {
             _roleCode: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/role/check-roles',
+        urlCheck: `${backendEndpoint}/auth/role/check-roles`,
     },
 ]
 
@@ -97,9 +97,9 @@ export { columns, ruleSchema, columnCheckExistance, columnCheckNotExistance };
 
 
 const resolveDataFunction = async (data) => {
-    const urlUserCode = 'http://localhost:3000/auth/user/ids-codes';
-    const urlDepartmentCode = 'http://localhost:3000/auth/department/ids-codes';
-    const urlRoleCode = 'http://localhost:3000/auth/role/ids-codes';
+    const urlUserCode = `${backendEndpoint}/auth/user/ids-codes`;
+    const urlDepartmentCode = `${backendEndpoint}/auth/department/ids-codes`;
+    const urlRoleCode = `${backendEndpoint}/auth/role/ids-codes`;
 
 
     // lấy ra danh sách tất cả userCode

@@ -4,10 +4,10 @@ import { postData } from '../../utils/axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from '../../redux/slice/userSlice';
 import storage from 'redux-persist/lib/storage';
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 function Login() {
-  const urlLogin = 'http://localhost:3000/auth/login';
-  const urlRefreshToken = 'http://localhost:3000/auth/refresh-token';
+  const urlLogin = `${backendEndpoint}/auth/login`;
+  const urlRefreshToken = `${backendEndpoint}/auth/refresh-token`;
   const [userLogin, setUserLogin] = useState({
     username: 'admin',
     password: 'admin',

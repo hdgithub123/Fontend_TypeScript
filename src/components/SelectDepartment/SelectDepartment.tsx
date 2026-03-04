@@ -1,71 +1,18 @@
-// import { useDispatch, useSelector } from 'react-redux';
-// import { setUser } from '../../features/userSlice';
-// import { setHeader } from '../../features/headerSlice';
-// import type { RootState } from '../../app/store';
-// import { useEffect, useState } from 'react';
-// import { getData } from '../../utils/axios/index';
-
-// function SelectDepartment() {
-
-//   const user = useSelector((state: RootState) => state.user);
-//   console.log('User from Redux store:', user);
-//   const urlGetOrganizations = 'http://localhost:3000/auth/organization/list';
-//   const urlGetBranches = 'http://localhost:3000/auth/branch/setting/list';
-//   const urlGetDepartments = 'http://localhost:3000/auth/department/setting/list';
-
-
-//   const [organizations, setOrganizations] = useState<object[]>([]);
-//   const [branchId, setBranchId] = useState<string | null>(null);
-//   const [branchIds, setBranchIds] = useState<object[]>([]);
-//   const [departmentId, setDepartmentId] = useState<string | null>(null);
-//   const [departmentIds, setDepartmentIds] = useState<object[]>([]);
-
-//   useEffect(() => {
-//           const handleGetList = async () => {
-//               let result = await getData({ url: urlGetOrganizations });
-//               if (result.data) {
-//                 setOrganizations(result.data);
-//               }
-//               result = await getData({ url: urlGetBranches });
-//               if (result.data) {
-//                 setBranchIds(result.data);
-//               }
-//               result = await getData({ url: urlGetDepartments });
-//               if (result.data) {
-//                 setDepartmentIds(result.data);
-//               }
-//           };
-//           handleGetList();
-//   }, []);
-
-
-
-
-//   return (
-//     <div>
-//       <button onClick={() => { console.log('User from Redux store:', user); }}>user</button>
-//     </div>
-//   );
-// }
-
-// export default SelectDepartment;
-
-
-
 import { useEffect, useState } from 'react';
 import { getData } from '../../utils/axios/index';
 import type { RootState } from '../../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { setHeader } from '../../redux/slice/headerSlice';
 import { useNavigate } from 'react-router-dom';
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 function SelectDepartment() {
   const myState = useSelector((state: RootState) => state);
   console.log('User from Redux store:', myState);
 
-  const urlGetOrganizations = 'http://localhost:3000/auth/organization/list';
-  const urlGetBranches = 'http://localhost:3000/auth/branch/setting/list';
-  const urlGetDepartments = 'http://localhost:3000/auth/department/setting/list';
+  const urlGetOrganizations = `${backendEndpoint}/auth/organization/list`;
+  const urlGetBranches = `${backendEndpoint}/auth/branch/setting/list`;
+  const urlGetDepartments = `${backendEndpoint}/auth/department/setting/list`;
 
   const [organizations, setOrganizations] = useState<any[]>([]);
   const [branchId, setBranchId] = useState<string | null>(null);

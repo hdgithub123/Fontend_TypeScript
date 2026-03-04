@@ -10,6 +10,7 @@ import { HRichTextEditor, HRichTextEditorPrintPreview, HRichTextEditorPreview } 
 import ReactDOM from 'react-dom';
 import DesignPrint from "../../../Print/DesignPrint/DesignPrint";
 import PrintPreview from '../../../Print/PrintPreview/PrintPreview';
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 interface User {
   id?: string;
@@ -76,8 +77,8 @@ const fieldLabels: Record<string, { label: string; type: string; placeholder?: s
 
 
 export default function AddForm({
-  urlCheckUser = 'http://localhost:3000/auth/user/check-user',
-  urlInsertUser = 'http://localhost:3000/auth/user/detail/insert',
+  urlCheckUser = `${backendEndpoint}/auth/user/check-user`,
+  urlInsertUser = `${backendEndpoint}/auth/user/detail/insert`,
 
   user = null, // Changed parameter name
   onSuccess = () => { },

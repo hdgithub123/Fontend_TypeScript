@@ -1,26 +1,26 @@
 import AddFormRole from "../AddForm/AddForm";
 import EditFormRole from "../EditForm/EditForm";
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 const fullUrlList = {
-  urlGetList: 'http://localhost:3000/auth/role/list',
-  urlDeleteList: 'http://localhost:3000/auth/role/list',
-  urlPostList: 'http://localhost:3000/auth/role/list',
-  urlPutList: 'http://localhost:3000/auth/role/list',
-  urlCheck: 'http://localhost:3000/auth/role/check-role',
-  urlUpdate: "http://localhost:3000/auth/role/detail",
-  urlDelete: "http://localhost:3000/auth/role/detail",
-  urlInsert: 'http://localhost:3000/auth/role/detail/insert',
+  urlGetList: `${backendEndpoint}/auth/role/list`,
+  urlDeleteList: `${backendEndpoint}/auth/role/list`,
+  urlPostList: `${backendEndpoint}/auth/role/list`,
+  urlPutList: `${backendEndpoint}/auth/role/list`,
+  urlCheck: `${backendEndpoint}/auth/role/check-role`,
+  urlUpdate: `${backendEndpoint}/auth/role/detail`,
+  urlDelete: `${backendEndpoint}/auth/role/detail`,
+  urlInsert: `${backendEndpoint}/auth/role/detail/insert`,
 
-  urlGetPrintContent: "http://localhost:3000/template-contents/role/list",
-  urlUpdatePrintDesign: "http://localhost:3000/template-contents/role/detail",
-  urlDeletePrintDesign: "http://localhost:3000/template-contents/role/detail",
-  urlInsertPrintDesign: "http://localhost:3000/template-contents/role/detail/insert",
+  urlGetPrintContent: `${backendEndpoint}/template-contents/role/list`,
+  urlUpdatePrintDesign: `${backendEndpoint}/template-contents/role/detail`,
+  urlDeletePrintDesign: `${backendEndpoint}/template-contents/role/detail`,
+  urlInsertPrintDesign: `${backendEndpoint}/template-contents/role/detail/insert`,
 
-  urlGetPrintContents: "http://localhost:3000/template-contents/roles/list",
-  urlUpdatePrintDesigns: "http://localhost:3000/template-contents/roles/detail",
-  urlDeletePrintDesigns: "http://localhost:3000/template-contents/roles/detail",
-  urlInsertPrintDesigns: "http://localhost:3000/template-contents/roles/detail/insert",
+  urlGetPrintContents: `${backendEndpoint}/template-contents/roles/list`,
+  urlUpdatePrintDesigns: `${backendEndpoint}/template-contents/roles/detail`,
+  urlDeletePrintDesigns: `${backendEndpoint}/template-contents/roles/detail`,
+  urlInsertPrintDesigns: `${backendEndpoint}/template-contents/roles/detail/insert`,
 
 }
 

@@ -1,26 +1,26 @@
 import AddFormOrganization from "../AddForm/AddForm";
 import EditFormOrganization from "../EditForm/EditForm";
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 const fullUrlList = {
-  urlGetList: 'http://localhost:3000/auth/organization/list',
-  urlDeleteList: 'http://localhost:3000/auth/organization/list',
-  urlPostList: 'http://localhost:3000/auth/organization/list',
-  urlPutList: 'http://localhost:3000/auth/organization/list',
-  urlCheck: 'http://localhost:3000/auth/organization/check-organization',
-  urlUpdate: "http://localhost:3000/auth/organization/detail",
-  urlDelete: "http://localhost:3000/auth/organization/detail",
-  urlInsert: 'http://localhost:3000/auth/organization/detail/insert',
+  urlGetList: `${backendEndpoint}/auth/organization/list`,
+  urlDeleteList: `${backendEndpoint}/auth/organization/list`,
+  urlPostList: `${backendEndpoint}/auth/organization/list`,
+  urlPutList: `${backendEndpoint}/auth/organization/list`,
+  urlCheck: `${backendEndpoint}/auth/organization/check-organization`,
+  urlUpdate: `${backendEndpoint}/auth/organization/detail`,
+  urlDelete: `${backendEndpoint}/auth/organization/detail`,
+  urlInsert: `${backendEndpoint}/auth/organization/detail/insert`,
 
-  urlGetPrintContent: "http://localhost:3000/template-contents/organization/list",
-  urlUpdatePrintDesign: "http://localhost:3000/template-contents/organization/detail",
-  urlDeletePrintDesign: "http://localhost:3000/template-contents/organization/detail",
-  urlInsertPrintDesign: "http://localhost:3000/template-contents/organization/detail/insert",
+  urlGetPrintContent: `${backendEndpoint}/template-contents/organization/list`,
+  urlUpdatePrintDesign: `${backendEndpoint}/template-contents/organization/detail`,
+  urlDeletePrintDesign: `${backendEndpoint}/template-contents/organization/detail`,
+  urlInsertPrintDesign: `${backendEndpoint}/template-contents/organization/detail/insert`,
 
-  urlGetPrintContents: "http://localhost:3000/template-contents/organizations/list",
-  urlUpdatePrintDesigns: "http://localhost:3000/template-contents/organizations/detail",
-  urlDeletePrintDesigns: "http://localhost:3000/template-contents/organizations/detail",
-  urlInsertPrintDesigns: "http://localhost:3000/template-contents/organizations/detail/insert",
+  urlGetPrintContents: `${backendEndpoint}/template-contents/organizations/list`,
+  urlUpdatePrintDesigns: `${backendEndpoint}/template-contents/organizations/detail`,
+  urlDeletePrintDesigns: `${backendEndpoint}/template-contents/organizations/detail`,
+  urlInsertPrintDesigns: `${backendEndpoint}/template-contents/organizations/detail/insert`,
 
 }
 

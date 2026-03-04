@@ -10,6 +10,7 @@ import { HRichTextEditor, HRichTextEditorPrintPreview, HRichTextEditorPreview } 
 import ReactDOM from 'react-dom';
 import DesignPrint from "../../../Print/DesignPrint/DesignPrint";
 import PrintPreview from '../../../Print/PrintPreview/PrintPreview';
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 interface User {
   id?: string;
@@ -75,9 +76,9 @@ const fieldLabels: Record<string, { label: string; type: string; placeholder?: s
 
 
 export default function UserManagerForm({
-  urlCheckUser = 'http://localhost:3000/auth/user/check-user',
-  urlUpdateUser = 'http://localhost:3000/auth/user/detail',
-  urlDeleteUser = 'http://localhost:3000/auth/user/detail',
+  urlCheckUser = `${backendEndpoint}/auth/user/check-user`,
+  urlUpdateUser = `${backendEndpoint}/auth/user/detail`,
+  urlDeleteUser = `${backendEndpoint}/auth/user/detail`,
 
   user = null, // Changed parameter name
   onSuccess = () => { },
@@ -401,10 +402,10 @@ export default function UserManagerForm({
       {isPrintDesign && authorization.viewPrintDesign &&
         ReactDOM.createPortal(<div style={{ position: 'fixed', top: '0%', left: 0, width: '100vw', height: '100vh', scale: '0.9', overflowY: 'auto', overflowX: 'auto' }} >
           <DesignPrint
-            urlGet="http://localhost:3000/template-contents/user/list"
-            urlUpdate="http://localhost:3000/template-contents/user/detail"
-            urlDelete="http://localhost:3000/template-contents/user/detail"
-            urlInsert="http://localhost:3000/template-contents/user/detail/insert"
+            urlGet={`${backendEndpoint}/template-contents/user/list`}
+            urlUpdate={`${backendEndpoint}/template-contents/user/detail`}
+            urlDelete={`${backendEndpoint}/template-contents/user/detail`}
+            urlInsert={`${backendEndpoint}/template-contents/user/detail/insert`}
             dynamicTexts={userData || {}}
             // contentStateObject={blockUser}
             onCancel={handleOnCancel}
@@ -426,7 +427,7 @@ export default function UserManagerForm({
           <PrintPreview
             dynamicTexts={userData}
             // contentStateObject={blockUser}
-            urlGet="http://localhost:3000/template-contents/user/list"
+            urlGet={`${backendEndpoint}/template-contents/user/list`}
             onCancel={handleOnPrintCancel}
           >
           </PrintPreview>

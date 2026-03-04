@@ -3,7 +3,7 @@ import { EditFormDefault, EditFormDefaultWithRoot } from "../../utils/GeneralSub
 import { columnsParent, columnsSub } from "../FieldComponent/columns";
 import ParentComponent from "../FieldComponent/ParentComponent";
 import SubComponent from "../FieldComponent/SubComponent";
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 interface department {
   id?: string;
   code?: string;
@@ -55,8 +55,8 @@ const departmentSchema: RuleSchema = {
   updatedAt: { type: "string", format: "datetime", required: false },
 };
 
-const urlGetBranchList = 'http://localhost:3000/auth/branch/list';
-const urlGetParentList = 'http://localhost:3000/auth/department/list';
+const urlGetBranchList = `${backendEndpoint}/auth/branch/list`;
+const urlGetParentList = `${backendEndpoint}/auth/department/list`;
 
 const fieldDepartmentLabels: Record<string, { label: string; type: string; placeholder?: string }> = {
   code: { label: "Mã khu vực (*)", type: "text", placeholder: "Nhập mã khu vực" },

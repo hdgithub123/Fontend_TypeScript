@@ -5,7 +5,7 @@ import {
     CheckboxCell,
     TextGroupCell,
 } from 'react-table'
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 
 const columns = [
@@ -58,7 +58,7 @@ const columnCheckExistance = [
         columnNames: {
             code: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/role/check-roles',
+        urlCheck: `${backendEndpoint}/auth/role/check-roles`,
         excludeField: 'id',
     },
 ]
@@ -68,14 +68,14 @@ const columnCheckNotExistance = [
         columnNames: {
             oldCode: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/role/check-roles',
+        urlCheck: `${backendEndpoint}/auth/role/check-roles`,
 
     },
 
 ]
 
 
-const ListIdsConfig = { url: 'http://localhost:3000/auth/role/ids-codes', fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
+const ListIdsConfig = { url: `${backendEndpoint}/auth/role/ids-codes`, fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
 
 const sheetName = 'Import Roles'
 const fileName = "roles_update_template.xlsx"

@@ -19,6 +19,7 @@ import { columns as columsRight, columnsAssign as columnsRightAssign } from "./c
 import columnsRole from "./columsRole"
 import { AlertDialog } from "../../utils/AlertDialog";
 import type { AlertInfo } from "../../utils/AlertDialog";
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 enum AssignType {
   Assigned = 'ASSIGNED',
@@ -34,12 +35,12 @@ const defaultAuthorization = {
 }
 
 const fullUrlList = {
-  getRightsformRoleUrl: 'http://localhost:3000/auth/role-right/role-rights', // cần thêm /id
-  getRightNotHaveRoleUrl: 'http://localhost:3000/auth/role-right/role-not-have-rights', // cần thêm /id
-  urlGetRoleList: 'http://localhost:3000/auth/role/list',
-  urlUpdateRoleRights: 'http://localhost:3000/auth/role-right/list',
-  urlInsertRoleRights: 'http://localhost:3000/auth/role-right/list',
-  urlDeleteRoleRights: 'http://localhost:3000/auth/role-right/list',
+  getRightsformRoleUrl: `${backendEndpoint}/auth/role-right/role-rights`, // cần thêm /id
+  getRightNotHaveRoleUrl: `${backendEndpoint}/auth/role-right/role-not-have-rights`, // cần thêm /id
+  urlGetRoleList: `${backendEndpoint}/auth/role/list`,
+  urlUpdateRoleRights: `${backendEndpoint}/auth/role-right/list`,
+  urlInsertRoleRights: `${backendEndpoint}/auth/role-right/list`,
+  urlDeleteRoleRights: `${backendEndpoint}/auth/role-right/list`,
 }
 
 

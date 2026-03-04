@@ -1,26 +1,26 @@
 import AddFormDepartment from "../AddForm/AddForm";
 import EditFormDepartment from "../EditForm/EditForm";
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 const fullUrlList = {
-  urlGetList: 'http://localhost:3000/auth/department/list',
-  urlDeleteList: 'http://localhost:3000/auth/department/list',
-  urlPostList: 'http://localhost:3000/auth/department/list/code',
-  urlPutList: 'http://localhost:3000/auth/department/list/code',
-  urlCheck: 'http://localhost:3000/auth/department/check-department',
-  urlUpdate: "http://localhost:3000/auth/department/detail",
-  urlDelete: "http://localhost:3000/auth/department/detail",
-  urlInsert: 'http://localhost:3000/auth/department/detail/insert',
+  urlGetList: `${backendEndpoint}/auth/department/list`,
+  urlDeleteList: `${backendEndpoint}/auth/department/list`,
+  urlPostList: `${backendEndpoint}/auth/department/list/code`,
+  urlPutList: `${backendEndpoint}/auth/department/list/code`,
+  urlCheck: `${backendEndpoint}/auth/department/check-department`,
+  urlUpdate: `${backendEndpoint}/auth/department/detail`,
+  urlDelete: `${backendEndpoint}/auth/department/detail`,
+  urlInsert: `${backendEndpoint}/auth/department/detail/insert`,
 
-  urlGetPrintContent: "http://localhost:3000/template-contents/department/list",
-  urlUpdatePrintDesign: "http://localhost:3000/template-contents/department/detail",
-  urlDeletePrintDesign: "http://localhost:3000/template-contents/department/detail",
-  urlInsertPrintDesign: "http://localhost:3000/template-contents/department/detail/insert",
+  urlGetPrintContent: `${backendEndpoint}/template-contents/department/list`,
+  urlUpdatePrintDesign: `${backendEndpoint}/template-contents/department/detail`,
+  urlDeletePrintDesign: `${backendEndpoint}/template-contents/department/detail`,
+  urlInsertPrintDesign: `${backendEndpoint}/template-contents/department/detail/insert`,
 
-  urlGetPrintContents: "http://localhost:3000/template-contents/departments/list",
-  urlUpdatePrintDesigns: "http://localhost:3000/template-contents/departments/detail",
-  urlDeletePrintDesigns: "http://localhost:3000/template-contents/departments/detail",
-  urlInsertPrintDesigns: "http://localhost:3000/template-contents/departments/detail/insert",
+  urlGetPrintContents: `${backendEndpoint}/template-contents/departments/list`,
+  urlUpdatePrintDesigns: `${backendEndpoint}/template-contents/departments/detail`,
+  urlDeletePrintDesigns: `${backendEndpoint}/template-contents/departments/detail`,
+  urlInsertPrintDesigns: `${backendEndpoint}/template-contents/departments/detail/insert`,
 
 }
 

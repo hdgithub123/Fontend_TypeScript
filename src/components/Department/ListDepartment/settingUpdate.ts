@@ -6,7 +6,7 @@ import {
     CheckboxCell,
     TextGroupCell,
 } from 'react-table'
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 
 
 const columns = [
@@ -93,7 +93,7 @@ const columnCheckExistance = [
         columnNames: {
             code: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/department/check-departments',
+        urlCheck: `${backendEndpoint}/auth/department/check-departments`,
         excludeField: 'id',
     },
 ]
@@ -103,21 +103,21 @@ const columnCheckNotExistance = [
         columnNames: {
             oldCode: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/department/check-departments',
+        urlCheck: `${backendEndpoint}/auth/department/check-departments`,
 
     },
     {
         columnNames: {
             _branchCode: 'code',
         },
-        urlCheck: 'http://localhost:3000/auth/branch/check-branches',
+        urlCheck: `${backendEndpoint}/auth/branch/check-branches`,
 
     },
 
 ]
 
 
-const ListIdsConfig = { url: 'http://localhost:3000/auth/department/ids-codes', fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
+const ListIdsConfig = { url: `${backendEndpoint}/auth/department/ids-codes`, fieldGet: 'id', fieldGive: 'oldCode', fieldSet: 'code' };
 
 const sheetName = 'Import department'
 const fileName = "Departments_update_template.xlsx"
@@ -125,7 +125,7 @@ const guideSheet = 'Hướng dẫn'
 const title = 'Sửa đổi khu vực'
 
 const resolveDataFunction = async (department) => {
-    const urlBranchIdCode = 'http://localhost:3000/auth/branch/ids-codes';
+    const urlBranchIdCode = `${backendEndpoint}/auth/branch/ids-codes`;
     // lấy ra danh sách tất cả brachCode và parentCode trong department
     const branchCodes = Array.from(new Set(department.map(item => item._branchCode).filter(code => code)));
     // Gọi API để lấy về danh sách id và code tương ứng
