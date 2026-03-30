@@ -1,7 +1,7 @@
 // validators.ts ✅ Full validation system
 // validators.ts ✅ Full validation system
 import type { SchemaField, MessageFieldRules } from './dataType';
-
+import { autoGenMessageRulesMultiLang } from './autoGenMessageRulesMultiLang';
 
 /**
  * Validate string value against specified format
@@ -83,10 +83,10 @@ export function validateField(
 ): string[] {
   const errors: string[] = [];
   const type = schema.type;
-
+  const translationMessages = autoGenMessageRulesMultiLang({ field: schema }, messages).field || {};
   // 🔒 Required check
   if (schema.required && (value === undefined || value === null || value === '')) {
-    errors.push(messages.required || 'This field is required.');
+    errors.push(translationMessages.required || 'This field is required.');
     return errors;
   }
 
@@ -102,7 +102,7 @@ export function validateField(
     (type === 'string' && typeof value === 'string');
 
   if (!typeValid) {
-    errors.push(messages.type || `Expected type ${type}.`);
+    errors.push(translationMessages.type || `Expected type ${type}.`);
     return errors;
   }
 
@@ -112,30 +112,30 @@ export function validateField(
     const falseVal = value === false || value === 'false' || value === 0 || value === '0';
 
     if (!boolVal && !falseVal) {
-      errors.push(messages.type || 'Invalid boolean value.');
+      errors.push(translationMessages.type || 'Invalid boolean value.');
     }
 
     if (schema.enum && !schema.enum.includes(value)) {
-      errors.push(messages.enum || `Must be one of: ${schema.enum.join(', ')}.`);
+      errors.push(translationMessages.enum || `Must be one of: ${schema.enum.join(', ')}.`);
     }
   }
 
   // 🔢 Number validation
   if (type === 'number') {
     if (isNaN(value)) {
-      errors.push(messages.type || 'Invalid number.');
+      errors.push(translationMessages.type || 'Invalid number.');
     }
 
     if (schema.min !== undefined && value < schema.min) {
-      errors.push(messages.min || `Minimum value is ${schema.min}.`);
+      errors.push(translationMessages.min || `Minimum value is ${schema.min}.`);
     }
 
     if (schema.max !== undefined && value > schema.max) {
-      errors.push(messages.max || `Maximum value is ${schema.max}.`);
+      errors.push(translationMessages.max || `Maximum value is ${schema.max}.`);
     }
 
     if (schema.enum && !schema.enum.includes(value)) {
-      errors.push(messages.enum || `Must be one of: ${schema.enum.join(', ')}.`);
+      errors.push(translationMessages.enum || `Must be one of: ${schema.enum.join(', ')}.`);
     }
   }
 
@@ -144,43 +144,43 @@ export function validateField(
     const strVal = value.trim?.() ?? value;
 
     if (schema.noCheckXSS !== true && containsXSS(strVal)) {
-      errors.push(messages.noCheckXSS || 'Possible XSS content detected.');
+      errors.push(translationMessages.noCheckXSS || 'Possible XSS content detected.');
     }
 
     if (schema.format && !validateFormat(strVal, schema.format)) {
-      errors.push(messages.format || `Invalid ${schema.format} format.`);
+      errors.push(translationMessages.format || `Invalid ${schema.format} format.`);
     }
 
     if (schema.minLength !== undefined && strVal.length < schema.minLength) {
-      errors.push(messages.minLength || `Minimum length is ${schema.minLength}.`);
+      errors.push(translationMessages.minLength || `Minimum length is ${schema.minLength}.`);
     }
 
     if (schema.maxLength !== undefined && strVal.length > schema.maxLength) {
-      errors.push(messages.maxLength || `Maximum length is ${schema.maxLength}.`);
+      errors.push(translationMessages.maxLength || `Maximum length is ${schema.maxLength}.`);
     }
 
     if (schema.enum && !schema.enum.includes(strVal)) {
-      errors.push(messages.enum || `Must be one of: ${schema.enum.join(', ')}.`);
+      errors.push(translationMessages.enum || `Must be one of: ${schema.enum.join(', ')}.`);
     }
 
     if (schema.regex && !new RegExp(schema.regex).test(strVal)) {
-      errors.push(messages.regex || 'Pattern mismatch.');
+      errors.push(translationMessages.regex || 'Pattern mismatch.');
     }
 
     if (schema.hasUpperCase && !/[A-Z]/.test(strVal)) {
-      errors.push(messages.hasUpperCase || 'At least one uppercase letter required.');
+      errors.push(translationMessages.hasUpperCase || 'At least one uppercase letter required.');
     }
 
     if (schema.hasLowerCase && !/[a-z]/.test(strVal)) {
-      errors.push(messages.hasLowerCase || 'At least one lowercase letter required.');
+      errors.push(translationMessages.hasLowerCase || 'At least one lowercase letter required.');
     }
 
     if (schema.hasNumber && !/[0-9]/.test(strVal)) {
-      errors.push(messages.hasNumber || 'At least one digit required.');
+      errors.push(translationMessages.hasNumber || 'At least one digit required.');
     }
 
     if (schema.hasSpecialChar && !/[^\w\s]/.test(strVal)) {
-      errors.push(messages.hasSpecialChar || 'At least one special character required.');
+      errors.push(translationMessages.hasSpecialChar || 'At least one special character required.');
     }
   }
 
@@ -188,7 +188,7 @@ export function validateField(
   if (schema.custom && typeof schema.custom === 'function') {
     const customValid = schema.custom(value);
     if (!customValid) {
-      errors.push(messages.custom || 'Custom validation failed.');
+      errors.push(translationMessages.custom || 'Custom validation failed.');
     }
   }
 
